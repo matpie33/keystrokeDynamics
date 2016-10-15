@@ -50,8 +50,8 @@ public class BasicPanel extends JPanel{
 		c.gridx=0;
 		c.gridy=0;
 		
-		btnContinue = new MyButton (frame,"Continue");
-		btnBack = new MyButton (frame,"Back");
+		btnContinue = new MyButton (frame,"Dalej");
+		btnBack = new MyButton (frame,"Wstecz");
 			
 		setNextPanel();
 		setPreviousPanel();

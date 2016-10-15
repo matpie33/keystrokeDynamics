@@ -32,16 +32,16 @@ import pl.master.thesis.panels.PanelWelcome;
 
 
 public class MainWindow extends JFrame{
+	
 	private final int minimumWidth=340;
 	private final int minimumHeight=313;
-	private CardLayout layout;
+	private final int distanceFromEdges = 20;
+	private JPanel card;
 	
 	public static final String DATA_PANEL = "data panel";
 	public static final String WELCOME_PANEL = "welcome panel";
 	public static final String SUMMARY_PANEL = "summary panel";
-	public static final String CONGRATULATIONS_PANEL = "congratulations panel";	
-	
-	private JPanel card;
+	public static final String CONGRATULATIONS_PANEL = "congratulations panel";			
 	
 	private class MyDispatcher implements KeyEventDispatcher {
 		
@@ -63,93 +63,107 @@ public class MainWindow extends JFrame{
         }
     }
 	
-	private static final long serialVersionUID = -8359166520752108733L;
-
 	public MainWindow (){	
 		
-		setMinimumSize(new Dimension(minimumWidth,minimumHeight));
-		JTextArea textInfo = new JTextArea(5,25);
-		textInfo.setEditable(false);
-		JScrollPane scrollPane =new JScrollPane(textInfo);
-		
-		JPanel wrap = new JPanel(new GridBagLayout()); // main panel, contains panel with cardlayout 
-		wrap.setBackground(Color.BLUE);		
-		
-		layout = new CardLayout();
-		card = new JPanel();
-		card.setLayout(layout);		
-		
-		Border blackline = BorderFactory.createLineBorder(Color.black,5);		
-		card.setBorder(blackline);
+		JPanel mainPanel = new JPanel(new GridBagLayout()); 
+		mainPanel.setBackground(Color.BLUE);		
+				
+		card = initializePanelWithCards();
 		
 		GridBagConstraints cd = new GridBagConstraints();
 		cd.anchor=GridBagConstraints.CENTER;
-		cd.insets=new Insets (20,20,20,20);
+		cd.insets=new Insets (distanceFromEdges,distanceFromEdges,distanceFromEdges,distanceFromEdges);
 		
-		wrap.add (card,cd);			
-						
+		mainPanel.add (card,cd);
+		
+		List <String> strings=createStrings();	
+		LinkedHashMap <JTextField, MyLabel> hmap = createMapWithTextFieldsAndLabels(strings);		
+		createCardsAndPutThemInOrder(strings, hmap);		
+		
+		setContentPane(mainPanel);
+		initializeWindow();
+		
+	}
+	
+	private JTextArea createTextAreaWithKeyPressedInfos(){
+		JTextArea textInfo = new JTextArea(5,25);
+		textInfo.setEditable(false);
 		KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
         manager.addKeyEventDispatcher(new MyDispatcher(textInfo));
-        		
-		this.setTitle("System for content reconstruction");
-		List <String> strings=createStrings();	
-				
-		LinkedHashMap <JTextField,MyLabel> hmap = new LinkedHashMap <JTextField,MyLabel> ();		
-				
+		return textInfo;
+	}
+	
+	private JPanel initializePanelWithCards(){
+		
+		JPanel card = new JPanel();
+		card.setLayout(new CardLayout());		
+		
+		Border blackline = BorderFactory.createLineBorder(Color.black,5);		
+		card.setBorder(blackline);
+		return card;
+		
+	}
+	
+	private LinkedHashMap <JTextField, MyLabel> createMapWithTextFieldsAndLabels (List <String> strings){
+		
+		LinkedHashMap <JTextField,MyLabel> hmap = new LinkedHashMap <JTextField,MyLabel> (); //TODO left side should be map not linkedhashmap		
 		int height=20;	
 		
-		for (int i=0; i<strings.size();i++){
-			
+		for (int i=0; i<strings.size();i++){			
 			String str = strings.get(i);
+			JTextField textField;
+			MyLabel label = new MyLabel (str);
 			
 			if (str.matches(Strings.HASLO+"|"+Strings.POTWIERDZ_HASLO))
-				hmap.put (new JPasswordField (Strings.HASLO,height), new MyLabel(str));
-			
-			else if (str.equals(Strings.DZIEN) || str.equals(Strings.MIESIAC)||
-					str.equals(Strings.ROK))
-				hmap.put(new JTextField (str,4), new MyLabel(str));
-			else 
-				hmap.put(new JTextField (str,height), new MyLabel(str));
+				textField = new JPasswordField (Strings.HASLO, height);			
+			else if (str.matches(Strings.DZIEN+"|"+Strings.MIESIAC+"|"+Strings.ROK))
+				textField = new JTextField (str,4);				
+			else textField = new JTextField (str, height);
+				
+			hmap.put(textField, label);
 				
 		}
-
-//		labels.get(8).setText("PotwierdŸ has³o:");
-//		String [] fonts = GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
-//		for ( int i = 0; i < fonts.length; i++ )
-//	    {
-//	      System.out.println(fonts[i]);
-//	    }
+		return hmap;
+	}
+	
+	private void createCardsAndPutThemInOrder(List <String> strings, LinkedHashMap <JTextField, MyLabel> hmap){
 		
-		PanelWelcome welcomePanel=new PanelWelcome(this);
+		JPanel welcomePanel=new PanelWelcome(this);
+		JTextArea textInfo = createTextAreaWithKeyPressedInfos();
+		JScrollPane scrollPane =new JScrollPane(textInfo);
 //		welcomePanel.add(scrollPane);
 		PanelSummary summaryPanel = new PanelSummary(this);
-//		summaryPanel.add(new JScrollPane(textInfo));
-		BasicPanel dataPanel = new PanelData(this,summaryPanel,hmap, strings);
-		BasicPanel congratsPanel = new PanelCongratulations(this);	
+		JPanel dataPanel = new PanelData(this,summaryPanel,hmap, strings);
+   		JPanel congratsPanel = new PanelCongratulations(this);	
 						
 		card.add(welcomePanel, MainWindow.WELCOME_PANEL);
 		card.add(dataPanel,MainWindow.DATA_PANEL);		
 		card.add(summaryPanel,MainWindow.SUMMARY_PANEL);
 		card.add(congratsPanel,MainWindow.CONGRATULATIONS_PANEL);
 		
-		add(wrap);
-		this.pack();
-		this.setMinimumSize(this.getSize());
-		this.setLocationRelativeTo(null);		
-		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+	}
+	
+	private void initializeWindow(){
+		
+		setMinimumSize(new Dimension(minimumWidth,minimumHeight));
+		pack();
+		setMinimumSize(getSize());
+		setLocationRelativeTo(null);		
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setTitle("System for content reconstruction");
 		
 	}
 	
 	public void nextPanel(){
-		layout.next(card);
+		((CardLayout)card.getLayout()).next(card);
 	}
 	
 	public void previousPanel (){
-		layout.previous(card);
+		((CardLayout)card.getLayout()).previous(card);
 	}
 	
 	public void gotoPanel (String panelName){
-		layout.show(card, panelName);
+		((CardLayout)card.getLayout()).show(card, panelName);
 	}
 	
 	private List <String> createStrings(){

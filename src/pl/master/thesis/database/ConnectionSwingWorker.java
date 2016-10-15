@@ -33,6 +33,7 @@ public class ConnectionSwingWorker extends SwingWorker<Void,Void> {
     				if (connection!=null){
 	    				connection.close();
 	    				connection=null;
+	    				System.out.println("connection closed");
     				}
     			}
     			catch (SQLException ex){

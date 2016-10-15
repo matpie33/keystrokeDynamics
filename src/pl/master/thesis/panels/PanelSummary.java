@@ -38,48 +38,50 @@ import pl.master.thesis.others.Strings;
 public class PanelSummary extends BasicPanel {
 	
 	private static final long serialVersionUID = 3706383803572619289L;
-	private final String propertiesFile = "properties/db properties.xml";
 	private Map <JTextField,MyLabel> hmap;
-	private ConnectionListener clistener;
+	private ConnectionListener connectionListener;
 	
 	class con extends ConnectionSwingWorker{
 		@Override
-		protected void doSqlStatements (Connection con) throws SQLException{
+		protected void doSqlStatements (Connection connection) throws SQLException{
+			
+			String userName = FieldsVerifier.findTextField(Strings.NAZWA_UZYTKOWNIKA, hmap).getText();
+			String password = FieldsVerifier.findTextField(Strings.HASLO, hmap).getText();
+			tryToAddUserToDB(connection, userName, password);			
+			
+		}
+		
+		private void tryToAddUserToDB(Connection connection, String userName, String password){
 			try{
-				String user =FieldsVerifier.findTextField(Strings.NAZWA_UZYTKOWNIKA, hmap).getText();
-				String password =FieldsVerifier.findTextField(Strings.HASLO, hmap).getText();
-				SqlStatements.addUser(con, user, password);
+				SqlStatements.addUser(connection, userName, password);
 				frame.nextPanel();
-				clistener.close();
+				connectionListener.close();
 			}
 			catch (SQLException e1) {
-				e1.printStackTrace();
 				if (e1.getSQLState()=="23505"){
-					clistener.setText("User you specified already exists.");
+					connectionListener.setText("User you specified already exists.");
 					frame.gotoPanel(MainWindow.DATA_PANEL);
 				}
 				else if (e1.getSQLState()=="XJ040"){
-					clistener.setText ("Database is already used by something.");
+					connectionListener.setText ("Database is already used by something.");
 				}
 				else{
-					clistener.setText("Unexpected sql error.");
+					connectionListener.setText("Unexpected sql error.");
 				}
 			}
-			
 		}
 		
 		@Override
 		public void done(){
-//			clistener.setText("Done");
-			clistener.removeGif();
+			connectionListener.removeGif();
 			JButton b = new MyButton(frame,"O.k.");
 			b.addActionListener(new ActionListener (){
 				@Override
 				public void actionPerformed(ActionEvent e){
-					clistener.close();
+					connectionListener.close();
 				}
 			});
-			clistener.addButton(b);
+			connectionListener.addButton(b);
 		}
 	}
 	
@@ -87,9 +89,7 @@ public class PanelSummary extends BasicPanel {
 	public PanelSummary(MainWindow fra){		
 		super(fra);
 		hmap=new LinkedHashMap <JTextField,MyLabel> ();
-		clistener= new ConnectionListener (this, new con());
-		
-		
+		connectionListener= new ConnectionListener (this, new con());		
 	}
 		
 	public void showFieldsValues(Map <JTextField,MyLabel> hmap){
@@ -103,53 +103,62 @@ public class PanelSummary extends BasicPanel {
 		c.anchor=GridBagConstraints.CENTER;
 		c.weighty=1;
 		c.weightx=1;
-//		c.insets=new Insets(0,20,0,20);
 		add(title,c);
+		
 		c.gridwidth=1;
 		c.anchor=GridBagConstraints.WEST;
 		
-		for (Map.Entry<JTextField, MyLabel> entry: hmap.entrySet()){
-
-			MyLabel l = entry.getValue();
-			JTextField t = entry.getKey();
-			
-			if (l.getText().matches(Strings.DZIEN+"|"+
-					Strings.MIESIAC+"|"+Strings.ROK+"|"+Strings.HASLO+"|"+Strings.POTWIERDZ_HASLO)) continue;
-			System.out.println(l.getText());		
-			
-			String text="";
-			if (l.getText().equals(Strings.DATA_URODZENIA)){
-				JTextField day= FieldsVerifier.findTextField(Strings.DZIEN, hmap);
-				JTextField month= FieldsVerifier.findTextField(Strings.MIESIAC, hmap);
-				JTextField year= FieldsVerifier.findTextField(Strings.ROK, hmap);
-				text=day.getText()+"-"+month.getText()+"-"+year.getText();
-				
-			}
-			else text=t.getText();
-			
-			MyLabel newL = new MyLabel (l.getText()+": "+text);
-			c.gridy++;
-			add(newL,c);	
-			
-		}
+		addValuesFromTextFieldsAndLabels(hmap);
 		
-//		c.insets=verticalInsets;
+		
 		c.gridy++;
 		c.gridwidth=1;
 		add(btnBack,c);
 
 		c.anchor=GridBagConstraints.EAST;	
+		JButton btnConnect = createButtonConnect();
+		add(btnConnect,c);
+	}
+	
+	private JButton createButtonConnect (){
 		JButton btnConnect = new MyButton (frame, "Continue");
-		btnConnect.addActionListener(clistener);
+		btnConnect.addActionListener(connectionListener);
 		btnConnect.addActionListener(new ActionListener (){ //TODO do it other way
 			@Override
 			public void actionPerformed (ActionEvent e){
-				clistener.setSwingWorker(new con());
+				connectionListener.setSwingWorker(new con());
 			}
 		});
-		add(btnConnect,c);
+		return btnConnect;
+	}
+
+	private void addValuesFromTextFieldsAndLabels(Map<JTextField, MyLabel> hmap) {
+		for (Map.Entry<JTextField, MyLabel> entry: hmap.entrySet()){
+
+			MyLabel label = entry.getValue();
+			JTextField textField = entry.getKey();
+			
+			if (label.getText().matches(Strings.DZIEN+"|"+
+					Strings.MIESIAC+"|"+Strings.ROK+"|"+Strings.HASLO+"|"+Strings.POTWIERDZ_HASLO)) continue;
+						
+			String text="";
+			if (label.getText().equals(Strings.DATA_URODZENIA)){
+				JTextField day = FieldsVerifier.findTextField(Strings.DZIEN, hmap);
+				JTextField month = FieldsVerifier.findTextField(Strings.MIESIAC, hmap);
+				JTextField year = FieldsVerifier.findTextField(Strings.ROK, hmap);
+				text=day.getText()+"-"+month.getText()+"-"+year.getText();				
+			}
+			else text=textField.getText();
+			
+			MyLabel newL = new MyLabel (label.getText()+": "+text);
+			c.gridy++;
+			add(newL,c);	
+			
+		}
+		
 	}
 		
+	
 }
 
 

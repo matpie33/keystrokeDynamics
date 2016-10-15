@@ -31,9 +31,8 @@ import pl.master.thesis.others.Strings;
 public class PanelWelcome extends BasicPanel {
 	
 	private static final long serialVersionUID = 1L;
-	private ProgressMonitor p;
-	private JPasswordField pass;
-	private JTextField login;	
+	private JPasswordField passField;
+	private JTextField loginField;	
 	private ConnectionListener db;
 	
 	class Con extends ConnectionSwingWorker {
@@ -41,42 +40,40 @@ public class PanelWelcome extends BasicPanel {
 		
 		@Override
 		public void done(){
-//			p.setProgress(0);
         	db.close();			
 		}
 		
 		@Override
 		protected void doSqlStatements(Connection con) throws SQLException{
-			exists = SqlStatements.userExists(con,login.getText(), pass.getPassword());
+			exists = SqlStatements.userExists(con,loginField.getText(), passField.getPassword());
 		}
 		
 		@Override
 		protected void doOtherThings (){
-			if (exists){
-				
+			if (exists){				
 				if (isErrorShowing)	removeError();	
-				frame.gotoPanel(MainWindow.CONGRATULATIONS_PANEL);    				
-				System.out.println("exists");
+				frame.gotoPanel(MainWindow.CONGRATULATIONS_PANEL); 
 			}
 			else {
 				String error = Strings.USER_OR_PASS_INCORRECT;
 				errorLabel.setText(error);
 				
-				if (isErrorShowing==true){							
-//					return;
-				}
-				else isErrorShowing=true;
-				
-				GridBagConstraints cc = new GridBagConstraints();
-				
-				cc.gridy=2;
-				cc.gridwidth=2;
-				cc.insets= new Insets(0,0,10,0);
-							
-				moveElementsDown(1,cc.gridy);
-				add(errorLabel,cc);
+				if (!isErrorShowing)						
+					isErrorShowing=true;				
+				addErrorLabel();				
 
 			}
+		}
+		
+		private void addErrorLabel(){
+			GridBagConstraints c = new GridBagConstraints();
+			
+			c.gridy=2;
+			c.gridwidth=2;
+			c.insets= new Insets(0,0,10,0);
+						
+			moveElementsDown(1,c.gridy);
+			add(errorLabel,c);
 		}
 		
 		
@@ -85,41 +82,19 @@ public class PanelWelcome extends BasicPanel {
 	public PanelWelcome (final MainWindow frame) {
 		
 		super(frame);
-		final BasicPanel pan = this;
-		new Font ("Verdana", Font.PLAIN,20);
 		
-		JTextArea hello = new JTextArea ();
-		String s = "Witam w moim programie. Jeœli masz ju¿ za³o¿one konto, zaloguj siê korzystaj¹c z poni¿szych pól."
-				+ "W przeciwnym przypadku za³ó¿ nowe konto u¿ywaj¹c odpowiedniego przycisku.";
+		JTextArea hello = createWelcomeMessage();
 		
-		hello.setForeground(Color.WHITE);
-		hello.setText(s);
-		hello.setLineWrap(true);
-		hello.setWrapStyleWord(true);
-		hello.setEditable(false);
-		hello.setOpaque(false);
-		hello.setHighlighter(null);
+		MyLabel loginLabel = new MyLabel ("login");
+		MyLabel passLabel = new MyLabel("has³o");
 		
-		MyLabel login = new MyLabel ("login");
-		this.login = new JTextField(15);
-		MyLabel password = new MyLabel("password");
-		pass = new JPasswordField(15);
+		loginField = new JTextField(15);		
+		passField = new JPasswordField(15);
+		btnContinue.setText("Utworz konto");		
+		MyButton btnCreate = createButtonCreate();
 		
-		addFieldFocusListener(this.login);
-		addFieldFocusListener(pass);
-		
-		p = new ProgressMonitor (pan, "Connecting to database...", "", 0, 100);
-		btnContinue.setText("Create account");
-		
-		MyButton btnCreate = new MyButton (frame,"Log in");
-		db=new ConnectionListener(this, new Con());
-		btnCreate.addActionListener(db);
-		btnCreate.addActionListener(new ActionListener (){
-			@Override
-			public void actionPerformed (ActionEvent e){
-				db.setSwingWorker(new Con());
-			}
-		});
+		addFieldFocusListener(loginField);
+		addFieldFocusListener(passField);			
 		
 		c.insets=fieldInsets;
 		c.fill=GridBagConstraints.HORIZONTAL;
@@ -134,31 +109,58 @@ public class PanelWelcome extends BasicPanel {
 		add(btnContinue,c);	
 				
 		c.gridy=2;
-		add(login,c);		
+		add(loginLabel,c);		
 		
 		c.gridx=1;
-		add(this.login,c);
+		add(loginField,c);
 		
 		c.gridy=3;
 		c.gridx=0;
-		add(password,c);
+		add(passLabel,c);
 		
 		c.gridx=1;
-		add(pass,c);
+		add(passField,c);
 		
 		c.gridy=4;
 		add(btnCreate,c);		
 			
 	}
 	
+	private JTextArea createWelcomeMessage(){
+		JTextArea hello = new JTextArea ();
+		String s = "Witam w moim programie. Jeœli masz ju¿ za³o¿one konto, zaloguj siê korzystaj¹c z poni¿szych pól."
+				+ "W przeciwnym przypadku za³ó¿ nowe konto u¿ywaj¹c odpowiedniego przycisku.";
+		
+		hello.setForeground(Color.WHITE);
+		hello.setText(s);
+		hello.setLineWrap(true);
+		hello.setWrapStyleWord(true);
+		hello.setEditable(false);
+		hello.setOpaque(false);
+		hello.setHighlighter(null);
+		
+		return hello;
+	}
+	
+	private MyButton createButtonCreate(){
+		MyButton btnCreate = new MyButton (frame,"Zaloguj sie");
+		db=new ConnectionListener(this, new Con());
+		btnCreate.addActionListener(db);
+		btnCreate.addActionListener(new ActionListener (){
+			@Override
+			public void actionPerformed (ActionEvent e){
+				db.setSwingWorker(new Con());
+			}
+		});
+		return btnCreate;
+	}
+	
 	private JTextField addFieldFocusListener(final JTextField field){
 		FocusAdapter a = new FocusAdapter(){
 			@Override
 			public void focusGained(FocusEvent e){
-				if (isErrorShowing) {
-//					removeError();
-					setErrorText("Proszê wprowadziæ poprawki.");
-				}
+				if (isErrorShowing) 
+					setErrorText("Proszê wprowadziæ poprawki.");				
 			}
 		};
 		field.addFocusListener(a);

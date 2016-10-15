@@ -18,7 +18,6 @@ public class Database {
 	  public String password;
 	  public String urlString;
 	  
-	  private String driver;
 	  private String serverName;
 	  private int portNumber;
 	  private Properties prop;
@@ -31,18 +30,21 @@ public class Database {
 			prop.loadFromXML(stream);
 			dbms=prop.getProperty("dbms");
 			jarFile = prop.getProperty("jar_file");
-			driver=prop.getProperty("driver");
+			prop.getProperty("driver");
 			dbName = prop.getProperty("database_name");
 			serverName = prop.getProperty("server_name");
 			portNumber = Integer.parseInt(prop.getProperty("port_number"));					
 			
-		} catch (FileNotFoundException e) {
+		  } 
+		  catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (InvalidPropertiesFormatException e) {
+		} 
+		  catch (InvalidPropertiesFormatException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (IOException e) {
+		} 
+		  catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

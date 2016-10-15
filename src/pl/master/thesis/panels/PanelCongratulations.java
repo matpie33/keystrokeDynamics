@@ -12,7 +12,6 @@ import pl.master.thesis.frame.MainWindow;
 public class PanelCongratulations extends BasicPanel  {
 
 	private String string = "Gratulacje, pomyœlnie za³o¿ono konto.";
-	private static final long serialVersionUID = 2709763181475553334L;
 
 	public PanelCongratulations(MainWindow fram) {
 		super(fram);
