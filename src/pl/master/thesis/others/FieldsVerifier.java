@@ -10,25 +10,27 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 import pl.master.thesis.buttons.MyLabel;
+import pl.master.thesis.strings.FormsLabels;
+import pl.master.thesis.strings.InputVerifierMessages;
 
 public class FieldsVerifier {
 	
 	public static String verifyFields (Map <JTextField, MyLabel> map){
 		
-		JTextField password = findTextField(Strings.HASLO,map);
-		JTextField retypePassword = findTextField(Strings.POTWIERDZ_HASLO,map);
-		JTextField email = findTextField(Strings.ADRES_EMAIL,map);
-		JTextField days = findTextField(Strings.DZIEN,map);		
-		JTextField months = findTextField(Strings.MIESIAC,map);
-		JTextField years = findTextField(Strings.ROK,map);
+		JTextField password = findTextField(FormsLabels.HASLO,map);
+		JTextField retypePassword = findTextField(FormsLabels.POTWIERDZ_HASLO,map);
+		JTextField email = findTextField(FormsLabels.ADRES_EMAIL,map);
+		JTextField days = findTextField(FormsLabels.DZIEN,map);		
+		JTextField months = findTextField(FormsLabels.MIESIAC,map);
+		JTextField years = findTextField(FormsLabels.ROK,map);
 		
 		String errorText="";
 		if (!DateVerifier.isInteger (days.getText()) || !DateVerifier.isInteger (months.getText()) || 
 				!DateVerifier.isInteger(years.getText()) ){
-			errorText+="Data nie zawiera liczby."+"\n";
+			errorText+=InputVerifierMessages.DATE_IS_NOT_A_NUMBER+"\n";
 		}
 		else if (!DateVerifier.checkDate(days,months,years)){
-			errorText+="Niepoprawna data"+"\n";
+			errorText+=InputVerifierMessages.DATE_INCORRECT_VALUE+"\n";
 		}							
 		
 		List <String> list = findBadValues(map);
@@ -38,13 +40,13 @@ public class FieldsVerifier {
 			errorText+=concatenated+"\n";
 		}
 		if (!email.getText().matches("[a-zA-Z]+@[a-zA-Z]+\\.[a-zA-Z]+")){
-			errorText+="Niepoprawny adres e-mail. Musz¹ w nim wystêpowaæ znaki: @ oraz ."+"\n";
+			errorText+=InputVerifierMessages.EMAIL_INCORRECT+"\n";
 		}
 		if (password.getText().length()<8 || password.getText().length()>30){
-			errorText+="Has³o powinno zawieraæ od 8 do 30 znaków."+"\n";
+			errorText+=InputVerifierMessages.PASSWORD_INCORRECT+"\n";
 		}
 		if (!retypePassword.getText().equals(password.getText())){
-			errorText+="Powtórzone has³o nie zgadza siê z poprzednim has³em."+"\n";
+			errorText+=InputVerifierMessages.REPEATED_PASSWORD_INCORRECT+"\n";
 		}
 		
 		return errorText;
@@ -68,7 +70,7 @@ public class FieldsVerifier {
 			String label = entries.getValue().getText();
 			String fieldText=entries.getKey().getText();
 			if (fieldText.equals(label) && 
-					!label.equals(Strings.DATA_URODZENIA)){
+					!label.equals(FormsLabels.DATA_URODZENIA)){
 				list.add(entries.getValue().getText());
 			}
 		}
@@ -77,11 +79,11 @@ public class FieldsVerifier {
 	}
 	
 	private static String concatenateFieldNames (List <String> list){
-		String e="Nie wype³niono ";
+		String e=InputVerifierMessages.INPUT_NOT_PROVIDED;
 		if (list.size()==1)
-			e+= "pola "+list.get(0)+"\n";	
+			e+= InputVerifierMessages.FIELD_SINGULAR + " " + list.get(0);	
 		else{
-			e+= "pól ";
+			e+= InputVerifierMessages.FIELD_PLURAR+": ";
 				for (int i=0; i<list.size(); i++){
 					if (i<list.size()-1)
 						e+=list.get(i)+", ";
@@ -90,6 +92,7 @@ public class FieldsVerifier {
 					
 				}				
 		}
+		e+=".";
 		return e;
 	}
 	

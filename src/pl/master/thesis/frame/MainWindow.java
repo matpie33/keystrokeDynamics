@@ -23,12 +23,13 @@ import javax.swing.JTextField;
 import javax.swing.border.Border;
 
 import pl.master.thesis.buttons.MyLabel;
-import pl.master.thesis.others.Strings;
 import pl.master.thesis.panels.BasicPanel;
 import pl.master.thesis.panels.PanelCongratulations;
 import pl.master.thesis.panels.PanelData;
 import pl.master.thesis.panels.PanelSummary;
 import pl.master.thesis.panels.PanelWelcome;
+import pl.master.thesis.strings.FormsLabels;
+import pl.master.thesis.strings.Prompts;
 
 
 public class MainWindow extends JFrame{
@@ -114,9 +115,9 @@ public class MainWindow extends JFrame{
 			JTextField textField;
 			MyLabel label = new MyLabel (str);
 			
-			if (str.matches(Strings.HASLO+"|"+Strings.POTWIERDZ_HASLO))
-				textField = new JPasswordField (Strings.HASLO, height);			
-			else if (str.matches(Strings.DZIEN+"|"+Strings.MIESIAC+"|"+Strings.ROK))
+			if (str.matches(FormsLabels.HASLO+"|"+FormsLabels.POTWIERDZ_HASLO))
+				textField = new JPasswordField (FormsLabels.HASLO, height);			
+			else if (str.matches(FormsLabels.DZIEN+"|"+FormsLabels.MIESIAC+"|"+FormsLabels.ROK))
 				textField = new JTextField (str,4);				
 			else textField = new JTextField (str, height);
 				
@@ -150,7 +151,7 @@ public class MainWindow extends JFrame{
 		setMinimumSize(getSize());
 		setLocationRelativeTo(null);		
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setTitle("System for content reconstruction");
+		setTitle(Prompts.TITLE_APPLICATION);
 		
 	}
 	
@@ -169,18 +170,18 @@ public class MainWindow extends JFrame{
 	private List <String> createStrings(){
 		
 		List <String> strings = new ArrayList <String> ();
-		strings.add(Strings.IMIE);
-		strings.add(Strings.NAZWISKO);
-		strings.add(Strings.DATA_URODZENIA);
-		strings.add(Strings.DZIEN);
-		strings.add(Strings.MIESIAC);
-		strings.add(Strings.ROK);
-		strings.add(Strings.ADRES_EMAIL);
-		strings.add(Strings.NAZWA_UZYTKOWNIKA);
-		strings.add(Strings.HASLO);
-		strings.add(Strings.POTWIERDZ_HASLO);
-		strings.add(Strings.PYTANIE_POMOCNICZE);
-		strings.add(Strings.ODPOWIEDZ);
+		strings.add(FormsLabels.IMIE);
+		strings.add(FormsLabels.NAZWISKO);
+		strings.add(FormsLabels.DATA_URODZENIA);
+		strings.add(FormsLabels.DZIEN);
+		strings.add(FormsLabels.MIESIAC);
+		strings.add(FormsLabels.ROK);
+		strings.add(FormsLabels.ADRES_EMAIL);
+		strings.add(FormsLabels.NAZWA_UZYTKOWNIKA);
+		strings.add(FormsLabels.HASLO);
+		strings.add(FormsLabels.POTWIERDZ_HASLO);
+		strings.add(FormsLabels.PYTANIE_POMOCNICZE);
+		strings.add(FormsLabels.ODPOWIEDZ);
 		return strings;
 		
 	}

@@ -16,7 +16,7 @@ import javax.swing.SpringLayout;
 
 import pl.master.thesis.buttons.ErrorLabel;
 import pl.master.thesis.buttons.MyButton;
-import pl.master.thesis.dialogs.WaitingDialog;
+import pl.master.thesis.dialogs.MyDialog;
 import pl.master.thesis.frame.MainWindow;
 
 public class BasicPanel extends JPanel{
@@ -99,6 +99,10 @@ public class BasicPanel extends JPanel{
 		}
 		repaint();
 		revalidate();
+	}
+	
+	public MainWindow getParentFrame(){
+		return frame;
 	}
 	
 

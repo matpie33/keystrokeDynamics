@@ -21,11 +21,14 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import pl.master.thesis.buttons.MyButton;
 import pl.master.thesis.buttons.MyLabel;
+import pl.master.thesis.dialogs.MyDialog;
 import pl.master.thesis.frame.MainWindow;
 import pl.master.thesis.others.DateVerifier;
 import pl.master.thesis.others.FieldsVerifier;
-import pl.master.thesis.others.Strings;
+import pl.master.thesis.strings.FormsLabels;
+import pl.master.thesis.strings.Prompts;
 
 public class PanelData extends BasicPanel{
 
@@ -41,10 +44,10 @@ public class PanelData extends BasicPanel{
 		fields.addAll(hmap.keySet());	
 		
 		JPanel datePanel = createDatePanel();	
-		MyLabel title = new MyLabel ("Dane osobowe");
+		MyLabel title = new MyLabel (Prompts.TITLE_DATA);
 		JButton exampleInput = createButtonForExampleInput(hmap); //TODO REMOVE IT WHEN APPLICATION IS FINISHED	
 			
-		addActionListenerToButtonContinue(hmap, summaryPanel, this);	
+		MyButton btnContinue = createButtonContinue(summaryPanel);	
 		for (int i=0; i<fields.size();i++){
 			JTextField field = fields.get(i);
 			addListenerDefaultValueIfEmpty(field);		
@@ -81,9 +84,9 @@ public class PanelData extends BasicPanel{
 		datePanel.setOpaque(false);
 		datePanel.setLayout(new BorderLayout(10,0));
 		
-		JTextField days = createTextfieldWithMaxCharacters(Strings.DZIEN, 2);
-		JTextField months = createTextfieldWithMaxCharacters(Strings.MIESIAC, 2);
-		JTextField years = createTextfieldWithMaxCharacters(Strings.ROK, 4);
+		JTextField days = createTextfieldWithMaxCharacters(FormsLabels.DZIEN, 2);
+		JTextField months = createTextfieldWithMaxCharacters(FormsLabels.MIESIAC, 2);
+		JTextField years = createTextfieldWithMaxCharacters(FormsLabels.ROK, 4);
 			
 		datePanel.add(years,BorderLayout.EAST);
 		datePanel.add(months,BorderLayout.CENTER);			
@@ -116,44 +119,67 @@ public class PanelData extends BasicPanel{
 		
 	}
 	
+	private MyButton createButtonContinue(final PanelSummary summaryPanel){
+		MyButton button = new MyButton (frame, Prompts.BTN_CONTINUE);
+		final BasicPanel dataPanel = this;
+		button.addActionListener (new ActionListener(){
+			@Override
+			public void actionPerformed (ActionEvent event){
+				
+				summaryPanel.showFieldsValues(hmap);			
+				
+				String errorText=FieldsVerifier.verifyFields(hmap);
+				if (!errorText.isEmpty()){
+					MyDialog dialog = new MyDialog(dataPanel);	
+					dialog.createMsgDialog(errorText);
+					dialog.setVisible(true);
+				}	
+				else frame.nextPanel();
+								
+			}		
+			
+		});
+		return button;
+	}
+	
 	private void setExampleValuesToTextFields(Map <JTextField, MyLabel> hmap){
 		
 		for (Map.Entry<JTextField, MyLabel> entries: hmap.entrySet()){
 			String s = entries.getValue().getText();
-			if (s.equals(Strings.IMIE)){
+			if (s.equals(FormsLabels.IMIE)){
 				entries.getKey().setText("Kamil");
 			}
-			if (s.equals(Strings.ADRES_EMAIL)){
+			if (s.equals(FormsLabels.ADRES_EMAIL)){
 				entries.getKey().setText("Spaaw@poczta.fm");
 			}
-			if (s.equals(Strings.NAZWA_UZYTKOWNIKA)){
+			if (s.equals(FormsLabels.NAZWA_UZYTKOWNIKA)){
 				entries.getKey().setText("Kamilo123");
 			}
-			if (s.equals(Strings.IMIE)){
+			if (s.equals(FormsLabels.IMIE)){
 				entries.getKey().setText("Kamil");
 			}
-			if (s.equals(Strings.NAZWISKO)){
+			if (s.equals(FormsLabels.NAZWISKO)){
 				entries.getKey().setText("NOWAK");
 			}
-			if (s.equals(Strings.DZIEN)){
+			if (s.equals(FormsLabels.DZIEN)){
 				entries.getKey().setText("14");
 			}
-			if (s.equals(Strings.MIESIAC)){
+			if (s.equals(FormsLabels.MIESIAC)){
 				entries.getKey().setText("06");
 			}
-			if (s.equals(Strings.ROK)){
+			if (s.equals(FormsLabels.ROK)){
 				entries.getKey().setText("1984");
 			}
-			if (s.equals(Strings.HASLO)){
+			if (s.equals(FormsLabels.HASLO)){
 				entries.getKey().setText("degdras11");
 			}
-			if (s.equals(Strings.POTWIERDZ_HASLO)){
+			if (s.equals(FormsLabels.POTWIERDZ_HASLO)){
 				entries.getKey().setText("degdras11");
 			}
-			if (s.equals(Strings.ODPOWIEDZ)){
+			if (s.equals(FormsLabels.ODPOWIEDZ)){
 				entries.getKey().setText("3");
 			}
-			if (s.equals(Strings.PYTANIE_POMOCNICZE)){
+			if (s.equals(FormsLabels.PYTANIE_POMOCNICZE)){
 				entries.getKey().setText("Ile masz zwierz¹t w domu?");
 			}			
 		}
@@ -164,21 +190,7 @@ public class PanelData extends BasicPanel{
 					final JPanel panel){
 		//TODO it adds, not sets it, meaning it will have the listener defined at basePanel (unexpected behaviour)
 		//TODO instead of btnContinue create new button and add this listener
-		btnContinue.addActionListener (new ActionListener(){
-			@Override
-			public void actionPerformed (ActionEvent event){
-				
-				summaryPanel.showFieldsValues(hmap);			
-				
-				String errorText=FieldsVerifier.verifyFields(hmap);
-				if (!errorText.isEmpty()){
-					JOptionPane.showMessageDialog(panel, errorText, "B³¹d", JOptionPane.ERROR_MESSAGE);
-					frame.previousPanel(); //TODO we go to next panel, and here we go previous too, meaning we stay the same
-				}					
-								
-			}		
-			
-		});
+		
 	}
 	
 	private void addTextFieldsAndLabelsFromMap (Map <JTextField, MyLabel> hmap, JPanel datePanel){
@@ -186,8 +198,8 @@ public class PanelData extends BasicPanel{
 			
 			MyLabel label = set.getValue();
 			JTextField field = set.getKey();
-			if (label.getText().equals(Strings.DZIEN) || label.getText().equals(Strings.MIESIAC) || 
-					label.getText().equals(Strings.ROK))
+			if (label.getText().equals(FormsLabels.DZIEN) || label.getText().equals(FormsLabels.MIESIAC) || 
+					label.getText().equals(FormsLabels.ROK))
 				continue;
 			
 			c.gridy++;
@@ -201,7 +213,7 @@ public class PanelData extends BasicPanel{
 			c.gridx=1;				
 			c.insets=fieldInsets;
 			
-			if (label.getText().equals(Strings.DATA_URODZENIA))								
+			if (label.getText().equals(FormsLabels.DATA_URODZENIA))								
 				add(datePanel,c);		
 			else	add(field,c);				
 					

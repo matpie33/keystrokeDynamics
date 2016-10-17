@@ -1,7 +1,6 @@
 package pl.master.thesis.panels;
 
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -9,75 +8,23 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
-import java.sql.Connection;
-import java.sql.SQLException;
-
 import javax.swing.JPasswordField;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.ProgressMonitor;
 import javax.swing.SwingWorker;
 
-import pl.masater.thesis.listeners.ConnectionListener;
 import pl.master.thesis.buttons.MyButton;
 import pl.master.thesis.buttons.MyLabel;
-import pl.master.thesis.database.ConnectionSwingWorker;
-import pl.master.thesis.database.Database;
-import pl.master.thesis.database.SqlStatements;
-import pl.master.thesis.dialogs.WaitingDialog;
+import pl.master.thesis.dialogs.MyDialog;
 import pl.master.thesis.frame.MainWindow;
-import pl.master.thesis.others.Strings;
+import pl.master.thesis.strings.Prompts;
+import pl.master.thesis.swingWorkers.UserCheckWorker;
 
 public class PanelWelcome extends BasicPanel {
 	
 	private static final long serialVersionUID = 1L;
 	private JPasswordField passField;
-	private JTextField loginField;	
-	private ConnectionListener db;
-	
-	class Con extends ConnectionSwingWorker {
-		private boolean exists;
-		
-		@Override
-		public void done(){
-        	db.close();			
-		}
-		
-		@Override
-		protected void doSqlStatements(Connection con) throws SQLException{
-			exists = SqlStatements.userExists(con,loginField.getText(), passField.getPassword());
-		}
-		
-		@Override
-		protected void doOtherThings (){
-			if (exists){				
-				if (isErrorShowing)	removeError();	
-				frame.gotoPanel(MainWindow.CONGRATULATIONS_PANEL); 
-			}
-			else {
-				String error = Strings.USER_OR_PASS_INCORRECT;
-				errorLabel.setText(error);
-				
-				if (!isErrorShowing)						
-					isErrorShowing=true;				
-				addErrorLabel();				
-
-			}
-		}
-		
-		private void addErrorLabel(){
-			GridBagConstraints c = new GridBagConstraints();
-			
-			c.gridy=2;
-			c.gridwidth=2;
-			c.insets= new Insets(0,0,10,0);
-						
-			moveElementsDown(1,c.gridy);
-			add(errorLabel,c);
-		}
-		
-		
-	}
+	private JTextField loginField;		
 	
 	public PanelWelcome (final MainWindow frame) {
 		
@@ -85,12 +32,12 @@ public class PanelWelcome extends BasicPanel {
 		
 		JTextArea hello = createWelcomeMessage();
 		
-		MyLabel loginLabel = new MyLabel ("login");
-		MyLabel passLabel = new MyLabel("has³o");
+		MyLabel loginLabel = new MyLabel (Prompts.LABEL_LOGIN);
+		MyLabel passLabel = new MyLabel(Prompts.PASSWORD_LABEL);
 		
 		loginField = new JTextField(15);		
 		passField = new JPasswordField(15);
-		btnContinue.setText("Utworz konto");		
+		btnContinue.setText(Prompts.BTN_CREATE_ACCOUNT);		
 		MyButton btnCreate = createButtonCreate();
 		
 		addFieldFocusListener(loginField);
@@ -128,11 +75,9 @@ public class PanelWelcome extends BasicPanel {
 	
 	private JTextArea createWelcomeMessage(){
 		JTextArea hello = new JTextArea ();
-		String s = "Witam w moim programie. Jeœli masz ju¿ za³o¿one konto, zaloguj siê korzystaj¹c z poni¿szych pól."
-				+ "W przeciwnym przypadku za³ó¿ nowe konto u¿ywaj¹c odpowiedniego przycisku.";
 		
 		hello.setForeground(Color.WHITE);
-		hello.setText(s);
+		hello.setText(Prompts.WELCOME_PROMPT);
 		hello.setLineWrap(true);
 		hello.setWrapStyleWord(true);
 		hello.setEditable(false);
@@ -143,13 +88,17 @@ public class PanelWelcome extends BasicPanel {
 	}
 	
 	private MyButton createButtonCreate(){
-		MyButton btnCreate = new MyButton (frame,"Zaloguj sie");
-		db=new ConnectionListener(this, new Con());
-		btnCreate.addActionListener(db);
+		MyButton btnCreate = new MyButton (frame,Prompts.BTN_LOGIN);
+		final PanelWelcome panel = this;
+	
 		btnCreate.addActionListener(new ActionListener (){
 			@Override
 			public void actionPerformed (ActionEvent e){
-				db.setSwingWorker(new Con());
+				MyDialog dialog = new MyDialog(panel);
+				dialog.createWaitingPanel();
+				SwingWorker s = new UserCheckWorker(panel,dialog);
+				s.execute();
+				dialog.setVisible(true);
 			}
 		});
 		return btnCreate;
@@ -160,14 +109,14 @@ public class PanelWelcome extends BasicPanel {
 			@Override
 			public void focusGained(FocusEvent e){
 				if (isErrorShowing) 
-					setErrorText("Proszê wprowadziæ poprawki.");				
+					setErrorText(Prompts.MESSAGE_CORRECTION_NEEDED);				
 			}
 		};
 		field.addFocusListener(a);
 		return field;
 	}
 	
-	private void removeError (){
+	public void removeError (){
 		
 		GridBagLayout g = (GridBagLayout)getLayout();
 		g.removeLayoutComponent(errorLabel);
@@ -175,6 +124,26 @@ public class PanelWelcome extends BasicPanel {
 		repaint();
 //		revalidate(); //TODO dont revalidate intentionally
 		isErrorShowing=false;
+	}
+	
+	public boolean isErrorShowing(){
+		return isErrorShowing;
+	}
+	
+	public void setText (String text){
+		errorLabel.setText(text);
+		isErrorShowing = true;
+	}
+	
+	public void addErrorLabel(){
+		GridBagConstraints c = new GridBagConstraints();
+		
+		c.gridy=2;
+		c.gridwidth=2;
+		c.insets= new Insets(0,0,10,0);
+					
+		moveElementsDown(1, c.gridy);			
+		add(errorLabel,c);
 	}
 			
 	private void setErrorText (String errorText){
@@ -184,6 +153,14 @@ public class PanelWelcome extends BasicPanel {
 		isErrorShowing=false;
 	}
 	
+	public String getUserName (){
+		return loginField.getText();
+	}
+	
+	
+	public char [] getPassword(){
+		return passField.getPassword();
+	}
 	
 		
 

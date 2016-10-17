@@ -5,8 +5,7 @@ import pl.master.thesis.frame.MainWindow;
 
 
 public class Master {
-	
-	
+		
 	public static void main (String arg[]){
 		SwingUtilities.invokeLater(new Runnable() {
 
