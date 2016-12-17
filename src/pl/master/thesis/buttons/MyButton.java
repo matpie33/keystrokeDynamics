@@ -5,17 +5,10 @@ import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
 import javax.swing.JButton;
-import javax.swing.JFrame;
-
-import pl.master.thesis.frame.MainWindow;
-import pl.master.thesis.panels.BasicPanel;
 
 public class MyButton extends JButton{
 	
@@ -23,11 +16,9 @@ public class MyButton extends JButton{
 	private final Color defaultColor;
 	private final Color hoverColor;
 	private final Color clickedColor;
-	private MainWindow frame;
 	
-	public MyButton (MainWindow frame){
+	public MyButton (){
 		
-		this.frame=frame;
 		addListeners();
 		setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));				
 		defaultColor=Color.YELLOW;
@@ -39,8 +30,8 @@ public class MyButton extends JButton{
 		setBackground(defaultColor);
 	}
 	
-	public MyButton(MainWindow frame,String name){
-		this(frame);
+	public MyButton(String name){
+		this();
 		setText(name);	
 	}
 	
@@ -56,14 +47,6 @@ public class MyButton extends JButton{
         super.paintComponent(g2d);
     }
 	
-	public void setDestinationPanel (final BasicPanel panel){
-		addActionListener(new ActionListener (){
-			@Override
-			public void actionPerformed (ActionEvent e){
-				frame.nextPanel();				
-			}
-		});
-	}
 	
 	private void addListeners (){
 		addMouseListener(new MouseAdapter (){

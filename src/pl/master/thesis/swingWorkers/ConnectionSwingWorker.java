@@ -7,8 +7,6 @@ import javax.swing.ProgressMonitor;
 import javax.swing.SwingWorker;
 
 import pl.master.thesis.database.Database;
-import pl.master.thesis.dialogs.MyDialog;
-import pl.master.thesis.panels.BasicPanel;
 
 public class ConnectionSwingWorker extends SwingWorker<Void,Void> {
 	
@@ -26,6 +24,7 @@ public class ConnectionSwingWorker extends SwingWorker<Void,Void> {
     		
     		catch (SQLException e2) {
     			e2.printStackTrace();
+    			
     		}
     		
     		finally {

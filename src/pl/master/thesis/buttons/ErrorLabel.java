@@ -8,15 +8,12 @@ import javax.swing.JLabel;
 public class ErrorLabel extends JLabel{
 		
 	private static final long serialVersionUID = 754204639716407901L;
-		private Font myFont;
-		private Color myColor;
+	
 		
 		public ErrorLabel (){
 			super();
-			myFont = new Font("Segoe ui light",Font.BOLD, 15);
-			myColor = Color.RED;
-			setFont (myFont);
-			setForeground (myColor);
+			setFont (new Font("Segoe ui light",Font.BOLD, 15));			
+			setForeground (Color.RED);
 			
 		}
 		

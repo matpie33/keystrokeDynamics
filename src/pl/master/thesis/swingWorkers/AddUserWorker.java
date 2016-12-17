@@ -8,7 +8,6 @@ import java.util.Map;
 
 import javax.swing.JButton;
 import javax.swing.JTextField;
-import javax.swing.SwingWorker;
 
 import pl.master.thesis.buttons.MyButton;
 import pl.master.thesis.buttons.MyLabel;
@@ -68,7 +67,7 @@ public class AddUserWorker extends ConnectionSwingWorker{
 		@Override
 		public void done(){
 			waitingDialog.removeGif();
-			JButton b = new MyButton(frame,"O.k.");
+			JButton b = new MyButton("O.k.");
 			b.addActionListener(new ActionListener (){
 				@Override
 				public void actionPerformed(ActionEvent e){

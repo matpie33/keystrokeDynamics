@@ -14,8 +14,7 @@ public class SqlStatements {
 				+ "VALUES ('"+username+"','"+password+"','"+question+"','"+answer+"')";
 		
 		s=connection.createStatement();
-		s.executeUpdate(query);
-		
+		s.executeUpdate(query);		
 	}
 	
 	

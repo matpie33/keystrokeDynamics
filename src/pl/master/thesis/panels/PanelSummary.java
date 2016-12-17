@@ -1,88 +1,55 @@
 package pl.master.thesis.panels;
 
 import java.awt.GridBagConstraints;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.swing.JButton;
 import javax.swing.JTextField;
-import javax.swing.SwingWorker;
 
-import pl.master.thesis.buttons.MyButton;
 import pl.master.thesis.buttons.MyLabel;
-import pl.master.thesis.dialogs.MyDialog;
 import pl.master.thesis.frame.MainWindow;
+import pl.master.thesis.listeners.ActionListeners;
+import pl.master.thesis.others.ElementsMaker;
 import pl.master.thesis.others.FieldsVerifier;
+import pl.master.thesis.others.MainPanel;
+import pl.master.thesis.others.MyColors;
 import pl.master.thesis.strings.FormsLabels;
 import pl.master.thesis.strings.Prompts;
-import pl.master.thesis.swingWorkers.AddUserWorker;
 
 public class PanelSummary extends BasicPanel {
 	
 	private static final long serialVersionUID = 3706383803572619289L;
 	private Map <JTextField,MyLabel> hmap;
-//	private ConnectionListener connectionListener;
+	private MainPanel panel;
 	
 	
 	
 
-	public PanelSummary(MainWindow fra){		
+	public PanelSummary(MainWindow fra, Map <JTextField, MyLabel> map){		
 		super(fra);
-		hmap=new LinkedHashMap <JTextField,MyLabel> ();
+		panel = new MainPanel(MyColors.DARK_BLUE);
+		hmap=map;
+		c.insets=verticalInsets;
+		
 //		connectionListener= new ConnectionListener (this, new con());		
 	}
 		
-	public void showFieldsValues(Map <JTextField,MyLabel> hmap){
-		
-		removeAll();
-		
-		this.hmap=hmap;
-		
-		c.insets=verticalInsets;
-		MyLabel title = new MyLabel ("Podsumowanie");	
-		c.anchor=GridBagConstraints.CENTER;
-		c.weighty=1;
-		c.weightx=1;
-		add(title,c);
-		
-		c.gridwidth=1;
-		c.anchor=GridBagConstraints.WEST;
-		
+	public void showFieldsValues(){
+	
+		panel.getPanel().removeAll();	
+		MyLabel title = ElementsMaker.createLabel (Prompts.TITLE_SUMMARY);		
+		panel.createRow(GridBagConstraints.CENTER,1,title);		
 		addValuesFromTextFieldsAndLabels(hmap);
-		
-		
-		c.gridy++;
-		c.gridwidth=1;
-		add(btnBack,c);
+		JButton btnConnect = ElementsMaker.createButton(Prompts.BTN_CONTINUE, 
+				ActionListeners.createListenerConnect(this));
+		panel.createRow(GridBagConstraints.CENTER, 1,btnBack,btnConnect);
 
-		c.anchor=GridBagConstraints.EAST;	
-		JButton btnConnect = createButtonConnect();
-		add(btnConnect,c);
-	}
-	
-	private JButton createButtonConnect (){
-		JButton btnConnect = new MyButton (frame, Prompts.BTN_CONTINUE);
-		final BasicPanel panel = this;
-	
-		btnConnect.addActionListener(new ActionListener (){ 
-			@Override
-			public void actionPerformed (ActionEvent e){
-				MyDialog myDialog = new MyDialog(panel);	
-				myDialog.createWaitingPanel();
-				
-				SwingWorker s = new AddUserWorker(panel, myDialog, hmap);
-				s.execute();
-				myDialog.setVisible(true);	
-			}
-		});
-		return btnConnect;
-	}
+	}	
 
 	private void addValuesFromTextFieldsAndLabels(Map<JTextField, MyLabel> hmap) {
+		System.out.println(hmap.size());
 		for (Map.Entry<JTextField, MyLabel> entry: hmap.entrySet()){
-
+			
 			MyLabel label = entry.getValue();
 			JTextField textField = entry.getKey();
 			
@@ -99,11 +66,18 @@ public class PanelSummary extends BasicPanel {
 			else text=textField.getText();
 			
 			MyLabel newL = new MyLabel (label.getText()+": "+text);
-			c.gridy++;
-			add(newL,c);	
+			panel.createRow(newL);
 			
 		}
 		
+	}
+	
+	public Map <JTextField, MyLabel> getMap (){
+		return hmap;
+	}
+	
+	public MainPanel getPanel (){
+		return panel;
 	}
 		
 	

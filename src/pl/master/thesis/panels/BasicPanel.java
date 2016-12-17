@@ -12,11 +12,9 @@ import java.util.Map;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.SpringLayout;
 
 import pl.master.thesis.buttons.ErrorLabel;
 import pl.master.thesis.buttons.MyButton;
-import pl.master.thesis.dialogs.MyDialog;
 import pl.master.thesis.frame.MainWindow;
 
 public class BasicPanel extends JPanel{
@@ -50,8 +48,8 @@ public class BasicPanel extends JPanel{
 		c.gridx=0;
 		c.gridy=0;
 		
-		btnContinue = new MyButton (frame,"Dalej");
-		btnBack = new MyButton (frame,"Wstecz");
+		btnContinue = new MyButton ("Dalej");
+		btnBack = new MyButton ("Wstecz");
 			
 		setNextPanel();
 		setPreviousPanel();
@@ -75,7 +73,7 @@ public class BasicPanel extends JPanel{
 			}
 		});
 	}
-	/*
+	/**
 	 * @param amount shows how much rows each row should be shifted; it can be negative value as well - in that case
 	 * shift is done up direction, however if any component ends up with gridy negative we dont shift anything
 	 */

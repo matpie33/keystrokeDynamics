@@ -5,23 +5,24 @@ public class Prompts {
 	
 	public static final String TITLE_APPLICATION = "System for content reconstruction";
 	public static final String TITLE_DATA = "Dane osobowe";
+	public static final String TITLE_SUMMARY = "Podsumowanie";
 	
 	public static final String LABEL_LOGIN = "login";
-	public static final String PASSWORD_LABEL = "has≥o";
+	public static final String PASSWORD_LABEL = "has≈Ço";
 	
-	public static final String BTN_CREATE_ACCOUNT = "UtwÛrz konto";
-	public static final String BTN_LOGIN = "Zaloguj sie";
+	public static final String BTN_CREATE_ACCOUNT = "Utw√≥rz konto";
+	public static final String BTN_LOGIN = "Zaloguj siƒô";
 	public static final String BTN_CONTINUE = "Dalej";
 	public static final String BTN_APPROVE = "Ok";	
 	
-	public static final String WELCOME_PROMPT = "Witam w moim programie. Jeúli masz juø za≥oøone konto, zaloguj siÍ korzystajπc z poniøszych pÛl."
-			+ "W przeciwnym przypadku za≥Ûø nowe konto uøywajπc odpowiedniego przycisku.";
-	public static final String CONNECTING_PROMPT = "£aczenie z baza danych";
-	public static final String MESSAGE_CORRECTION_NEEDED = "ProszÍ wprowadziÊ poprawki.";	
-	public static final String ACCOUNT_CREATED_SUCCESSFULLY_PROMPT = "Gratulacje, pomyúlnie za≥oøono konto.";
-	public static final String ERROR_SQL_USER_EXISTS = "Podany uøytkownik juø istnieje.";
-	public static final String ERROR_SQL_DATABASE_IN_USE = "Baza danych jest juø w uøyciu. Prosze sprÛbowac pozniej";
-	public static final String ERROR_SQL_UNKNOWN_ERROR = "Nieznany blad. Prosze sprobowac pozniej.";
-	public static final String USER_OR_PASS_INCORRECT = "Podany login lub has≥o jest nieprawid≥owe.";
+	public static final String WELCOME_PROMPT = "Witam w moim programie. Je≈õli masz ju≈º za≈Ço≈ºone konto, zaloguj siƒô korzystajƒÖc z poni≈ºszych p√≥l."
+			+ "W przeciwnym przypadku za≈Ç√≥≈º nowe konto u≈ºywajƒÖc odpowiedniego przycisku.";
+	public static final String CONNECTING_PROMPT = "≈ÅƒÖczenie z bazƒÖ danych";
+	public static final String MESSAGE_CORRECTION_NEEDED = "Proszƒô wprowadziƒá poprawki.";	
+	public static final String ACCOUNT_CREATED_SUCCESSFULLY_PROMPT = "Gratulacje, pomy≈õlnie za≈Ço≈ºono konto.";
+	public static final String ERROR_SQL_USER_EXISTS = "Podany u≈ºytkownik ju≈º istnieje.";
+	public static final String ERROR_SQL_DATABASE_IN_USE = "Baza danych jest ju≈º w u≈ºyciu. Prosze spr√≥bowaƒá p√≥≈∫niej";
+	public static final String ERROR_SQL_UNKNOWN_ERROR = "Nieznany b≈ÇƒÖd. Proszƒô spr√≥bowaƒá p√≥≈∫niej.";
+	public static final String USER_OR_PASS_INCORRECT = "Podany login lub has≈Ço jest nieprawid≈Çowe.";
 
 }

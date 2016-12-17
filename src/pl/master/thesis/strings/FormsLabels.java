@@ -1,18 +1,44 @@
 package pl.master.thesis.strings;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class FormsLabels {
 	
-	public static String DZIEN = "DzieÒ";
-	public static String MIESIAC = "Miesiπc";
+	public static String DZIEN = "Dzie≈Ñ";
+	public static String MIESIAC = "MiesiƒÖc";
 	public static String ROK = "Rok";
-	public static String IMIE = "ImiÍ";
+	public static String IMIE = "Imiƒô";
 	public static String NAZWISKO = "Nazwisko";
 	public static String DATA_URODZENIA = "Data urodzenia";
 	public static String ADRES_EMAIL = "Adres e-mail";
-	public static String NAZWA_UZYTKOWNIKA = "Nazwa uøytkownika";
-	public static String HASLO = "Has≥o";
-	public static String POTWIERDZ_HASLO = "Potwierdü has≥o";
+	public static String NAZWA_UZYTKOWNIKA = "Nazwa u≈ºytkownika";
+	public static String HASLO = "Has≈Ço";
+	public static String POTWIERDZ_HASLO = "Potwierd≈∫ has≈Ço";
 	public static String PYTANIE_POMOCNICZE = "Pytanie pomocnicze";
-	public static String ODPOWIEDZ = "Odpowiedü";
+	public static String ODPOWIEDZ = "Odpowied≈∫";
+	
+	
+	public static Map <String, String> defaultValues;
+	
+	public static Map <String, String> getDefaultValues(){
+		
+		if (defaultValues==null){
+			defaultValues = new HashMap <String, String> ();
+			defaultValues.put(IMIE, "Jacek");
+			defaultValues.put(ADRES_EMAIL, "Spaaw@poczta.fm");
+			defaultValues.put(NAZWA_UZYTKOWNIKA, "Kamilo123");
+			defaultValues.put(NAZWISKO, "Nowak");
+			defaultValues.put(DZIEN, "14");
+			defaultValues.put(MIESIAC, "6");
+			defaultValues.put(ROK, "1984");
+			defaultValues.put(HASLO, "degdras11");
+			defaultValues.put(POTWIERDZ_HASLO, "degdras11");
+			defaultValues.put(PYTANIE_POMOCNICZE, "Ile masz zwierzƒÖt w domu");
+			defaultValues.put(ODPOWIEDZ, "3");			
+		}
+		
+		return defaultValues;
+	}
 
 }

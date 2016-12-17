@@ -12,8 +12,8 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
@@ -23,7 +23,7 @@ import javax.swing.JTextField;
 import javax.swing.border.Border;
 
 import pl.master.thesis.buttons.MyLabel;
-import pl.master.thesis.panels.BasicPanel;
+import pl.master.thesis.others.ElementsMaker;
 import pl.master.thesis.panels.PanelCongratulations;
 import pl.master.thesis.panels.PanelData;
 import pl.master.thesis.panels.PanelSummary;
@@ -79,6 +79,7 @@ public class MainWindow extends JFrame{
 		
 		List <String> strings=createStrings();	
 		LinkedHashMap <JTextField, MyLabel> hmap = createMapWithTextFieldsAndLabels(strings);		
+		ElementsMaker.setTextFieldToLabelMap(hmap);
 		createCardsAndPutThemInOrder(strings, hmap);		
 		
 		setContentPane(mainPanel);
@@ -129,17 +130,17 @@ public class MainWindow extends JFrame{
 	
 	private void createCardsAndPutThemInOrder(List <String> strings, LinkedHashMap <JTextField, MyLabel> hmap){
 		
-		JPanel welcomePanel=new PanelWelcome(this);
+		PanelWelcome welcomePanel=new PanelWelcome(this);
 		JTextArea textInfo = createTextAreaWithKeyPressedInfos();
 		JScrollPane scrollPane =new JScrollPane(textInfo);
 //		welcomePanel.add(scrollPane);
-		PanelSummary summaryPanel = new PanelSummary(this);
-		JPanel dataPanel = new PanelData(this,summaryPanel,hmap, strings);
+		PanelSummary summaryPanel = new PanelSummary(this, hmap);
+		PanelData dataPanel = new PanelData(this,summaryPanel,hmap, strings);
    		JPanel congratsPanel = new PanelCongratulations(this);	
 						
-		card.add(welcomePanel, MainWindow.WELCOME_PANEL);
-		card.add(dataPanel,MainWindow.DATA_PANEL);		
-		card.add(summaryPanel,MainWindow.SUMMARY_PANEL);
+		card.add(welcomePanel.getPanel().getPanel(), MainWindow.WELCOME_PANEL);
+		card.add(dataPanel.getPanel().getPanel(),MainWindow.DATA_PANEL);		
+		card.add(summaryPanel.getPanel().getPanel(),MainWindow.SUMMARY_PANEL);
 		card.add(congratsPanel,MainWindow.CONGRATULATIONS_PANEL);
 		
 	}
