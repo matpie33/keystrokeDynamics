@@ -1,4 +1,4 @@
-package pl.master.thesis.buttons;
+package pl.master.thesis.guiElements;
 
 import java.awt.Color;
 import java.awt.Cursor;

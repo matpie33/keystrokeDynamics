@@ -3,7 +3,6 @@ package pl.master.thesis.panels;
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -11,28 +10,23 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import pl.master.thesis.buttons.MyButton;
-import pl.master.thesis.buttons.MyLabel;
 import pl.master.thesis.frame.MainWindow;
+import pl.master.thesis.guiElements.MyButton;
+import pl.master.thesis.guiElements.MyLabel;
 import pl.master.thesis.listeners.ActionListeners;
 import pl.master.thesis.listeners.FocusListeners;
 import pl.master.thesis.others.ElementsMaker;
-import pl.master.thesis.others.MainPanel;
-import pl.master.thesis.others.MyColors;
 import pl.master.thesis.strings.FormsLabels;
 import pl.master.thesis.strings.Prompts;
 
 public class PanelData extends BasicPanel{
 
-	private Map <JTextField, MyLabel> hmap;
-	private MainPanel panel;
+	private Map <JTextField, MyLabel> hmap;	
 	
-	
-	public PanelData(final MainWindow frame, final PanelSummary summaryPanel, final HashMap <JTextField,MyLabel> hmap, 
+	public PanelData(final MainWindow frame, final PanelSummary summaryPanel, final Map <JTextField,MyLabel> hmap, 
 			final List <String> strings){
 		
 		super(frame);	
-		panel = new MainPanel(MyColors.DARK_BLUE);
 		this.hmap = hmap;
 		List <JTextField> fields = new ArrayList <JTextField>();
 		fields.addAll(hmap.keySet());	
@@ -56,7 +50,7 @@ public class PanelData extends BasicPanel{
 		panel.createRow(GridBagConstraints.WEST, 1, exampleInput);
 		panel.createRow(GridBagConstraints.CENTER, 1, title);	
 		addTextFieldsAndLabelsFromMap (hmap, datePanel);	
-		panel.createRow(GridBagConstraints.CENTER, 1,  btnBack, btnContinue);
+		panel.createRowOn2Sides(btnBack, btnContinue);
 	
 	}
 	
@@ -75,11 +69,8 @@ public class PanelData extends BasicPanel{
 		datePanel.add(days,BorderLayout.WEST);
 		return datePanel;
 		
-	}
-	
-	
-	
-		
+	}	
+				
 	private void addTextFieldsAndLabelsFromMap (Map <JTextField, MyLabel> hmap, JPanel datePanel){
 		for (Map.Entry<JTextField, MyLabel> set: hmap.entrySet()) {
 			
@@ -94,12 +85,6 @@ public class PanelData extends BasicPanel{
 			else	panel.createRow(label, field);			
 					
 		}
-	}
+	}		
 		
-	public MainPanel getPanel(){
-		return panel;
-	}
-	
-	
-	
 }

@@ -1,22 +1,23 @@
 package pl.master.thesis.panels;
 
 import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 
+import javax.swing.AbstractAction;
 import javax.swing.JPasswordField;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.SwingWorker;
 
-import pl.master.thesis.buttons.MyButton;
-import pl.master.thesis.buttons.MyLabel;
 import pl.master.thesis.dialogs.MyDialog;
 import pl.master.thesis.frame.MainWindow;
+import pl.master.thesis.guiElements.MyButton;
+import pl.master.thesis.guiElements.MyLabel;
+import pl.master.thesis.listeners.KeyListeners;
 import pl.master.thesis.others.ElementsMaker;
-import pl.master.thesis.others.MainPanel;
-import pl.master.thesis.others.MyColors;
 import pl.master.thesis.strings.Prompts;
 import pl.master.thesis.swingWorkers.UserCheckWorker;
 
@@ -25,12 +26,10 @@ public class PanelWelcome extends BasicPanel {
 	private static final long serialVersionUID = 1L;
 	private JPasswordField passField;
 	private JTextField loginField;	
-	private MainPanel panel;
 	
 	public PanelWelcome (final MainWindow frame) {
 		
 		super(frame);
-		panel = new MainPanel(MyColors.DARK_GREEN);
 		JTextArea hello = ElementsMaker.createWelcomeMessage(Prompts.WELCOME_PROMPT);
 		
 		MyLabel loginLabel = ElementsMaker.createLabel (Prompts.LABEL_LOGIN);
@@ -38,23 +37,29 @@ public class PanelWelcome extends BasicPanel {
 		
 		loginField = new JTextField(15);		
 		passField = new JPasswordField(15);
-		btnContinue.setText(Prompts.BTN_CREATE_ACCOUNT);		
-		MyButton btnCreate = createButtonCreate();
+		ActionListener action = createButtonCreate();
+		KeyListeners.addKeyBindings(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,0), (AbstractAction)action,
+				passField, loginField);
+			
+		MyButton btnCreate = ElementsMaker.createButton (Prompts.BTN_LOGIN, action);
+		
+		btnContinue.setText(Prompts.BTN_CREATE_ACCOUNT);	
 			
 		panel.createRow(hello);
 		panel.createRow(GridBagConstraints.WEST,1,btnContinue);
 		panel.createRow(loginLabel,loginField);
 		panel.createRow(passLabel,passField);
 		panel.createRow(GridBagConstraints.EAST,1,btnCreate);
+		panel.createRow(errorLabel);
 
 	}
 	
 	
-	private MyButton createButtonCreate(){
-		MyButton btnCreate = new MyButton (Prompts.BTN_LOGIN);
+	private AbstractAction createButtonCreate(){
+		
 		final PanelWelcome panel = this;
 	
-		btnCreate.addActionListener(new ActionListener (){
+		return new AbstractAction (){
 			@Override
 			public void actionPerformed (ActionEvent e){
 				MyDialog dialog = new MyDialog(panel);
@@ -63,34 +68,24 @@ public class PanelWelcome extends BasicPanel {
 				s.execute();
 				dialog.setVisible(true);
 			}
-		});
-		return btnCreate;
-	}
-	
+		};
+		
+	}	
 	
 	public void removeError (){
-		
-		GridBagLayout g = (GridBagLayout)getLayout();
-		g.removeLayoutComponent(errorLabel);
-		remove(errorLabel);
-		repaint();
-//		revalidate(); //TODO dont revalidate intentionally
 		isErrorShowing=false;
 	}
 	
 	public boolean isErrorShowing(){
 		return isErrorShowing;
 	}
-	
-	
-	public void addErrorLabel(){
-		panel.createRow(GridBagConstraints.CENTER,1,errorLabel);
+		
+	public void addErrorLabel(){		
+		errorLabel.setVisible(true);
 	}
 			
 	public void setErrorText (String errorText){
 		errorLabel.setText(errorText);
-		repaint();
-		revalidate();
 		isErrorShowing=true;
 	}
 	
@@ -103,9 +98,7 @@ public class PanelWelcome extends BasicPanel {
 		return passField.getPassword();
 	}
 	
-	public MainPanel getPanel (){
-		return panel;
-	}
+	
 	
 		
 

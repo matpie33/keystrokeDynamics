@@ -1,6 +1,5 @@
 package pl.master.thesis.others;
 
-import java.awt.Color;
 import java.awt.event.ActionListener;
 import java.util.Map;
 
@@ -9,8 +8,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-import pl.master.thesis.buttons.MyButton;
-import pl.master.thesis.buttons.MyLabel;
+import pl.master.thesis.guiElements.MyButton;
+import pl.master.thesis.guiElements.MyLabel;
 import pl.master.thesis.listeners.KeyListeners;
 
 public class ElementsMaker {
@@ -25,8 +24,6 @@ public class ElementsMaker {
 		JTextArea textArea = new JTextArea(text, rows, columns);
 		textArea.setWrapStyleWord(true);
 		textArea.setLineWrap(true);
-		textArea.setOpaque(false);
-		textArea.setForeground(Color.WHITE);
 		return textArea;
 	}
 	
@@ -44,7 +41,6 @@ public class ElementsMaker {
 	public static JScrollPane wrapComponent(JComponent c){
 		JScrollPane j = new JScrollPane(c);
 		j.getViewport().setOpaque(false);
-		j.setBackground(Color.BLACK);
 		return j;
 	}
 	

@@ -1,7 +1,6 @@
 package pl.master.thesis.others;
 
 import java.util.Calendar;
-import java.util.List;
 
 import javax.swing.JTextField;
 
@@ -14,8 +13,7 @@ public class DateVerifier {
 		}
 		catch (NumberFormatException nex){
 			return false;
-		}
-					
+		}					
 				
 	}
 	

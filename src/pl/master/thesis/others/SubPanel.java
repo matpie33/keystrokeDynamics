@@ -6,25 +6,25 @@ import javax.swing.JPanel;
 
 public class SubPanel {
 	
-	private MainPanel leftPanel;
-	private MainPanel rightPanel;
+	private PanelCreator leftPanel;
+	private PanelCreator rightPanel;
 	private JPanel panel;
 	
 	public SubPanel (){
 		super();
 		panel = new JPanel();
 		panel.setLayout(new GridLayout(1,2));
-		leftPanel = new MainPanel(MyColors.LIGHT_VIOLET);
-		rightPanel = new MainPanel(MyColors.LIGHT_BLUE);
+		leftPanel = new PanelCreator(MyColors.LIGHT_VIOLET);
+		rightPanel = new PanelCreator(MyColors.LIGHT_BLUE);
 		panel.add (leftPanel.getPanel());
 		panel.add (rightPanel.getPanel());
 	}
 	
-	public MainPanel getLeft (){
+	public PanelCreator getLeft (){
 		return leftPanel;
 	}
 	
-	public MainPanel getRight(){
+	public PanelCreator getRight(){
 		return rightPanel;
 	}
 	

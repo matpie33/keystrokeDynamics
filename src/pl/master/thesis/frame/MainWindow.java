@@ -3,15 +3,13 @@ package pl.master.thesis.frame;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
@@ -22,14 +20,17 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
 
-import pl.master.thesis.buttons.MyLabel;
+import pl.master.thesis.guiElements.MyLabel;
 import pl.master.thesis.others.ElementsMaker;
+import pl.master.thesis.others.MyColors;
+import pl.master.thesis.others.PanelCreator;
 import pl.master.thesis.panels.PanelCongratulations;
 import pl.master.thesis.panels.PanelData;
 import pl.master.thesis.panels.PanelSummary;
 import pl.master.thesis.panels.PanelWelcome;
 import pl.master.thesis.strings.FormsLabels;
 import pl.master.thesis.strings.Prompts;
+import pl.master.thesis.timing.Timing;
 
 
 public class MainWindow extends JFrame{
@@ -38,16 +39,17 @@ public class MainWindow extends JFrame{
 	private final int minimumHeight=313;
 	private final int distanceFromEdges = 20;
 	private JPanel card;
-	
+	private PanelCreator panel;
+	private Timing timing;	
+		
 	public static final String DATA_PANEL = "data panel";
 	public static final String WELCOME_PANEL = "welcome panel";
 	public static final String SUMMARY_PANEL = "summary panel";
-	public static final String CONGRATULATIONS_PANEL = "congratulations panel";			
+	public static final String CONGRATULATIONS_PANEL = "congratulations panel";		
 	
 	private class MyDispatcher implements KeyEventDispatcher {
 		
-		private JTextArea textArea;
-		private long time;
+		private JTextArea textArea;	
 		
 		private MyDispatcher (JTextArea jt){
 			textArea=jt;
@@ -55,36 +57,37 @@ public class MainWindow extends JFrame{
 		
         @Override
         public boolean dispatchKeyEvent(KeyEvent e) {
-            if (e.getID() == KeyEvent.KEY_PRESSED) {
-            	time=System.nanoTime();
-            } else if (e.getID() == KeyEvent.KEY_RELEASED) {
-            	textArea.append(""+e.getKeyChar()+":"+((double)System.nanoTime()-(double)time)/1000000000+"\n");
+        	
+        	
+            if (e.getID() == KeyEvent.KEY_PRESSED) {       
+            	timing.recordKeyPress(e);
+            	System.out.println("Pressed: "+e.getKeyChar());
+            } 
+            else if (e.getID() == KeyEvent.KEY_RELEASED) {
+            	timing.recordKeyRelease(e);
+//            	textArea.append(""+e.getKeyChar()+":"+((double)System.nanoTime()-(double)time)/1000000000+"\n");
             } 
             return false;
-        }
+        }                
+        
     }
 	
-	public MainWindow (){	
+	public MainWindow (){			
 		
-		JPanel mainPanel = new JPanel(new GridBagLayout()); 
-		mainPanel.setBackground(Color.BLUE);		
-				
-		card = initializePanelWithCards();
+		timing = new Timing();
+		panel = new PanelCreator(MyColors.DARK_GREEN);				
+		card = initializePanelWithCards();		
+		panel.createRow(0,card);	
 		
-		GridBagConstraints cd = new GridBagConstraints();
-		cd.anchor=GridBagConstraints.CENTER;
-		cd.insets=new Insets (distanceFromEdges,distanceFromEdges,distanceFromEdges,distanceFromEdges);
-		
-		mainPanel.add (card,cd);
-		
+		initializeAllPanelsElements();									
+		setWindowProperties();
+	}
+	
+	private void initializeAllPanelsElements(){
 		List <String> strings=createStrings();	
-		LinkedHashMap <JTextField, MyLabel> hmap = createMapWithTextFieldsAndLabels(strings);		
+		Map <JTextField, MyLabel> hmap = createMapWithTextFieldsAndLabels(strings);		
 		ElementsMaker.setTextFieldToLabelMap(hmap);
-		createCardsAndPutThemInOrder(strings, hmap);		
-		
-		setContentPane(mainPanel);
-		initializeWindow();
-		
+		createCardsAndPutThemInOrder(strings, hmap);
 	}
 	
 	private JTextArea createTextAreaWithKeyPressedInfos(){
@@ -106,10 +109,10 @@ public class MainWindow extends JFrame{
 		
 	}
 	
-	private LinkedHashMap <JTextField, MyLabel> createMapWithTextFieldsAndLabels (List <String> strings){
+	private Map <JTextField, MyLabel> createMapWithTextFieldsAndLabels (List <String> strings){
 		
-		LinkedHashMap <JTextField,MyLabel> hmap = new LinkedHashMap <JTextField,MyLabel> (); //TODO left side should be map not linkedhashmap		
-		int height=20;	
+		Map <JTextField,MyLabel> hmap = new LinkedHashMap <JTextField,MyLabel> (); //TODO left side should be map not linkedhashmap		
+		int height=15;	
 		
 		for (int i=0; i<strings.size();i++){			
 			String str = strings.get(i);
@@ -128,32 +131,31 @@ public class MainWindow extends JFrame{
 		return hmap;
 	}
 	
-	private void createCardsAndPutThemInOrder(List <String> strings, LinkedHashMap <JTextField, MyLabel> hmap){
+	private void createCardsAndPutThemInOrder(List <String> strings, Map <JTextField, MyLabel> hmap){
 		
 		PanelWelcome welcomePanel=new PanelWelcome(this);
 		JTextArea textInfo = createTextAreaWithKeyPressedInfos();
 		JScrollPane scrollPane =new JScrollPane(textInfo);
-//		welcomePanel.add(scrollPane);
+//		welcomePanel.getPanel().add(scrollPane);
 		PanelSummary summaryPanel = new PanelSummary(this, hmap);
 		PanelData dataPanel = new PanelData(this,summaryPanel,hmap, strings);
-   		JPanel congratsPanel = new PanelCongratulations(this);	
+   		PanelCongratulations congratsPanel = new PanelCongratulations(this);	
 						
-		card.add(welcomePanel.getPanel().getPanel(), MainWindow.WELCOME_PANEL);
-		card.add(dataPanel.getPanel().getPanel(),MainWindow.DATA_PANEL);		
-		card.add(summaryPanel.getPanel().getPanel(),MainWindow.SUMMARY_PANEL);
-		card.add(congratsPanel,MainWindow.CONGRATULATIONS_PANEL);
+		card.add(welcomePanel.getPanel(), MainWindow.WELCOME_PANEL);
+		card.add(dataPanel.getPanel(),MainWindow.DATA_PANEL);		
+		card.add(summaryPanel.getPanel(),MainWindow.SUMMARY_PANEL);
+		card.add(congratsPanel.getPanel(),MainWindow.CONGRATULATIONS_PANEL);
 		
 	}
 	
-	private void initializeWindow(){
-		
+	private void setWindowProperties(){		
+		setContentPane(panel.getPanel());
 		setMinimumSize(new Dimension(minimumWidth,minimumHeight));
 		pack();
 		setMinimumSize(getSize());
 		setLocationRelativeTo(null);		
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setTitle(Prompts.TITLE_APPLICATION);
-		
+		setTitle(Prompts.TITLE_APPLICATION);		
 	}
 	
 	public void nextPanel(){
@@ -186,5 +188,9 @@ public class MainWindow extends JFrame{
 		return strings;
 		
 	}
+	
+	
+	
+	
 
 }

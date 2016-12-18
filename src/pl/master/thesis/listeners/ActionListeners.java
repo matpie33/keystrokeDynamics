@@ -8,9 +8,9 @@ import java.util.Map;
 import javax.swing.JTextField;
 import javax.swing.SwingWorker;
 
-import pl.master.thesis.buttons.MyLabel;
 import pl.master.thesis.dialogs.MyDialog;
 import pl.master.thesis.frame.MainWindow;
+import pl.master.thesis.guiElements.MyLabel;
 import pl.master.thesis.others.FieldsVerifier;
 import pl.master.thesis.panels.BasicPanel;
 import pl.master.thesis.panels.PanelSummary;
@@ -33,6 +33,15 @@ public class ActionListeners {
 			@Override
 			public void actionPerformed(ActionEvent e){
 				frame.nextPanel();	
+			}
+		};
+	}
+	
+	public static ActionListener createPreviousPanelListener(final MainWindow frame){
+		return new ActionListener (){
+			@Override
+			public void actionPerformed(ActionEvent e){
+				frame.previousPanel();
 			}
 		};
 	}

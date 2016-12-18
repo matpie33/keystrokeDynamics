@@ -13,23 +13,31 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-public class MainPanel {
+public class PanelCreator {
 	
 	private List<JPanel> rows;
 	private JPanel panel;
 
-	public MainPanel(Color color) {
-//		super();
+	public PanelCreator(Color color) {
 		panel = new JPanel();
 		panel.setBackground(color);
 		panel.setLayout(new GridBagLayout());
 		rows = new LinkedList<JPanel>();
 	}
-
+	
+	public void createRowOn2Sides(JComponent ... components){
+		JPanel p = addComponentsOn2Sides(components);
+		createConstraintsAndAdd(p, 0);
+		updateView();		
+	}
 	
 	public void createRow(JComponent ... components){
+		createRow(0, components);
+	}
+	
+	public void createRow (int weighty, JComponent ... components){
 		JPanel p = addComponentsToSinglePanel(components);
-		createConstraintsAndAdd(p, 0);
+		createConstraintsAndAdd(p, weighty);
 		updateView();
 	}
 
@@ -38,6 +46,32 @@ public class MainPanel {
 		createConstraintsAndAdd(p, anchor, weighty);
 		updateView();
 
+	}
+	
+	private JPanel addComponentsOn2Sides(JComponent[] components) {
+		if (components.length!=2){
+			return addComponentsToSinglePanel(components);			
+		}
+		
+		JPanel p = new JPanel();
+		p.setOpaque(false);
+		p.setLayout(new GridBagLayout());
+		
+		GridBagConstraints gbc = new GridBagConstraints();
+		JComponent c1 = components[0];
+		JComponent c2 = components[1];
+		gbc.anchor=GridBagConstraints.WEST;
+		
+		gbc.gridx=0;
+		gbc.weightx=1;
+		p.add(c1, gbc);
+		 
+		gbc.gridx=1;
+		gbc.anchor=GridBagConstraints.EAST;
+		p.add(c2,gbc);
+		return p;
+		
+		
 	}
 
 	private JPanel addComponentsToSinglePanel(JComponent[] components) {
@@ -80,10 +114,13 @@ public class MainPanel {
 		rows.add(p);
 	}
 	
+	
 	private void createConstraintsAndAdd(JPanel p,int weighty) {
 		GridBagConstraints c = createConstraints(rows.size());		
 		c.weightx = 1;
-		c.fill= GridBagConstraints.BOTH;
+		c.weighty=weighty;
+		c.anchor= GridBagConstraints.SOUTH;
+		c.fill= GridBagConstraints.HORIZONTAL;
 		panel.add(p, c);
 		rows.add(p);
 	}
@@ -96,8 +133,11 @@ public class MainPanel {
 		return c;
 	}
 
+	public void setAsLastRow (JComponent ... components){
+		setAsRow(rows.size(),components);
+	}
 
-	public MainPanel setAsRow(int number, JComponent... components) {
+	public PanelCreator setAsRow(int number, JComponent... components) {
     	if (rows.size()<number+1){
 		    createRow(GridBagConstraints.WEST, 1, components);
 		    return this;

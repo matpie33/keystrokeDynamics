@@ -1,5 +1,6 @@
 package pl.master.thesis.dialogs;
 
+import java.awt.GridBagConstraints;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -11,12 +12,12 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
-import pl.master.thesis.buttons.MyButton;
-import pl.master.thesis.buttons.MyLabel;
+import pl.master.thesis.guiElements.MyButton;
+import pl.master.thesis.guiElements.MyLabel;
 import pl.master.thesis.listeners.ActionListeners;
 import pl.master.thesis.others.ElementsMaker;
-import pl.master.thesis.others.MainPanel;
 import pl.master.thesis.others.MyColors;
+import pl.master.thesis.others.PanelCreator;
 import pl.master.thesis.panels.BasicPanel;
 import pl.master.thesis.strings.Prompts;
 import pl.master.thesis.strings.WindowLabels;
@@ -31,7 +32,7 @@ public class MyDialog extends JDialog{
 	private int gapx=20;
 	private int gapy=20;
 	private BasicPanel parent;
-	private MainPanel mainPanel;
+	private PanelCreator mainPanel;
 	
 	public MyDialog (BasicPanel parent){
 		setUpDialog(parent);
@@ -39,7 +40,7 @@ public class MyDialog extends JDialog{
 	}
 
 	private void setUpDialog(BasicPanel parent){
-		mainPanel = new MainPanel(MyColors.LIGHT_BLUE);
+		mainPanel = new PanelCreator(MyColors.LIGHT_BLUE);
 		this.parent = parent;				
 	}
 	
@@ -50,8 +51,8 @@ public class MyDialog extends JDialog{
 			e.printStackTrace();
 		}
 		text = new MyLabel(Prompts.CONNECTING_PROMPT);
-		mainPanel.setAsRow(0, text);
-		mainPanel.setAsRow(1, gif);
+		mainPanel.createRow(GridBagConstraints.CENTER,1, text);
+		mainPanel.createRow(GridBagConstraints.CENTER,1, gif);
 		setProperties();
 	}
 	
@@ -63,8 +64,8 @@ public class MyDialog extends JDialog{
 		MyButton confirm = ElementsMaker.createButton(Prompts.BTN_APPROVE, 
 				ActionListeners.createDisposeListener(this));
 		
-		mainPanel.setAsRow(0, j);
-		mainPanel.setAsRow(1, confirm);
+		mainPanel.createRow(1,j);
+		mainPanel.createRow(GridBagConstraints.CENTER,1, confirm);
 		setProperties();
 	}
 	
@@ -79,7 +80,7 @@ public class MyDialog extends JDialog{
 	private void setProperties(){
 		setContentPane(mainPanel.getPanel());
 		pack();
-		setLocationRelativeTo(parent);
+		setLocationRelativeTo(parent.getPanel());
 		setModal(true);
 		setTitle(WindowLabels.CONNECTING_TO_DB_TITLE);		
 	}
@@ -89,6 +90,8 @@ public class MyDialog extends JDialog{
 				ActionListeners.createDisposeListener(this));
 		mainPanel.setAsRow(0, new MyLabel(text));
 		mainPanel.setAsRow(1, confirm);	
+		pack();
+		setLocationRelativeTo(parent.getPanel());
 	}
 	
 	public void removeGif(){

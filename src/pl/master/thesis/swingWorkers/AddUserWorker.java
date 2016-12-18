@@ -9,11 +9,11 @@ import java.util.Map;
 import javax.swing.JButton;
 import javax.swing.JTextField;
 
-import pl.master.thesis.buttons.MyButton;
-import pl.master.thesis.buttons.MyLabel;
 import pl.master.thesis.database.SqlStatements;
 import pl.master.thesis.dialogs.MyDialog;
 import pl.master.thesis.frame.MainWindow;
+import pl.master.thesis.guiElements.MyButton;
+import pl.master.thesis.guiElements.MyLabel;
 import pl.master.thesis.others.FieldsVerifier;
 import pl.master.thesis.panels.BasicPanel;
 import pl.master.thesis.strings.FormsLabels;

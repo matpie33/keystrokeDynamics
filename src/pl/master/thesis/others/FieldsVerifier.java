@@ -9,7 +9,7 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
-import pl.master.thesis.buttons.MyLabel;
+import pl.master.thesis.guiElements.MyLabel;
 import pl.master.thesis.strings.FormsLabels;
 import pl.master.thesis.strings.InputVerifierMessages;
 
