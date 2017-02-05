@@ -6,8 +6,11 @@ import java.util.Map;
 import javax.swing.JButton;
 import javax.swing.JTextField;
 
+import com.guimaker.row.RowMaker;
+
 import pl.master.thesis.frame.MainWindow;
 import pl.master.thesis.guiElements.MyLabel;
+import pl.master.thesis.helpers.PasswordMasker;
 import pl.master.thesis.listeners.ActionListeners;
 import pl.master.thesis.others.ElementsMaker;
 import pl.master.thesis.others.FieldsVerifier;
@@ -18,6 +21,8 @@ public class PanelSummary extends BasicPanel {
 	
 	private static final long serialVersionUID = 3706383803572619289L;
 	private Map <JTextField,MyLabel> hmap;		
+	private final String DATE_SEPARATOR="-";
+	private final String LABEL_FROM_VALUE_SEPARATOR=": ";
 	
 	public PanelSummary(MainWindow fra, Map <JTextField, MyLabel> map){		
 		super(fra);
@@ -27,36 +32,41 @@ public class PanelSummary extends BasicPanel {
 	public void showFieldsValues(){
 	
 		panel.getPanel().removeAll();	
-		MyLabel title = ElementsMaker.createLabel (Prompts.TITLE_SUMMARY);		
-		panel.createRow(GridBagConstraints.CENTER,1,title);		
-		addValuesFromTextFieldsAndLabels(hmap);
+		MyLabel title = ElementsMaker.createLabel (Prompts.TITLE_SUMMARY);	
 		JButton btnConnect = ElementsMaker.createButton(Prompts.BTN_CONTINUE, 
 				ActionListeners.createListenerConnect(this));
-		panel.createRowOn2Sides(btnBack,btnConnect);
+		
+		panel.addRow(RowMaker.createUnfilledRow(GridBagConstraints.CENTER, title));
+		addValuesFromTextFieldsAndLabels(hmap);		
+		panel.addRow(RowMaker.createUnfilledRow(GridBagConstraints.CENTER, btnBack,btnConnect));
 
 	}	
 
 	private void addValuesFromTextFieldsAndLabels(Map<JTextField, MyLabel> hmap) {
-		System.out.println(hmap.size());
 		for (Map.Entry<JTextField, MyLabel> entry: hmap.entrySet()){
 			
 			MyLabel label = entry.getValue();
 			JTextField textField = entry.getKey();
 			
-			if (label.getText().matches(FormsLabels.DZIEN+"|"+
-					FormsLabels.MIESIAC+"|"+FormsLabels.ROK+"|"+FormsLabels.HASLO+"|"+FormsLabels.POTWIERDZ_HASLO)) continue;
-						
-			String text="";
-			if (label.getText().equals(FormsLabels.DATA_URODZENIA)){
-				JTextField day = FieldsVerifier.findTextField(FormsLabels.DZIEN, hmap);
-				JTextField month = FieldsVerifier.findTextField(FormsLabels.MIESIAC, hmap);
-				JTextField year = FieldsVerifier.findTextField(FormsLabels.ROK, hmap);
-				text=day.getText()+"-"+month.getText()+"-"+year.getText();				
+			if (label.getText().matches(FormsLabels.DAY+"|"+
+					FormsLabels.MONTH+"|"+FormsLabels.YEAR+"|"+
+					FormsLabels.REPEAT_PASSWORD)) continue;
+			
+			String text="";			
+			
+			if (label.getText().equals(FormsLabels.DATE_OF_BIRTH)){
+				JTextField day = FieldsVerifier.findTextField(FormsLabels.DAY, hmap);
+				JTextField month = FieldsVerifier.findTextField(FormsLabels.MONTH, hmap);
+				JTextField year = FieldsVerifier.findTextField(FormsLabels.YEAR, hmap);
+				text=day.getText()+DATE_SEPARATOR+month.getText()+DATE_SEPARATOR+year.getText();				
+			}
+			else if (label.getText().equals(FormsLabels.PASSWORD)){
+				text=PasswordMasker.maskPassword();
 			}
 			else text=textField.getText();
 			
-			MyLabel newL = new MyLabel (label.getText()+": "+text);
-			panel.createRow(1,newL);
+			MyLabel newL = new MyLabel (label.getText()+LABEL_FROM_VALUE_SEPARATOR+text);
+			panel.addRow(RowMaker.createHorizontallyFilledRow(newL));
 			
 		}
 		

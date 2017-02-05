@@ -20,10 +20,12 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
 
+import com.guimaker.panels.MainPanel;
+import com.guimaker.row.RowMaker;
+
 import pl.master.thesis.guiElements.MyLabel;
 import pl.master.thesis.others.ElementsMaker;
 import pl.master.thesis.others.MyColors;
-import pl.master.thesis.others.PanelCreator;
 import pl.master.thesis.panels.PanelCongratulations;
 import pl.master.thesis.panels.PanelData;
 import pl.master.thesis.panels.PanelSummary;
@@ -39,8 +41,9 @@ public class MainWindow extends JFrame{
 	private final int minimumHeight=313;
 	private final int distanceFromEdges = 20;
 	private JPanel card;
-	private PanelCreator panel;
+	private MainPanel panel;
 	private Timing timing;	
+	private PanelCongratulations congratsPanel;
 		
 	public static final String DATA_PANEL = "data panel";
 	public static final String WELCOME_PANEL = "welcome panel";
@@ -49,11 +52,6 @@ public class MainWindow extends JFrame{
 	
 	private class MyDispatcher implements KeyEventDispatcher {
 		
-		private JTextArea textArea;	
-		
-		private MyDispatcher (JTextArea jt){
-			textArea=jt;
-		}
 		
         @Override
         public boolean dispatchKeyEvent(KeyEvent e) {
@@ -65,7 +63,6 @@ public class MainWindow extends JFrame{
             } 
             else if (e.getID() == KeyEvent.KEY_RELEASED) {
             	timing.recordKeyRelease(e);
-//            	textArea.append(""+e.getKeyChar()+":"+((double)System.nanoTime()-(double)time)/1000000000+"\n");
             } 
             return false;
         }                
@@ -75,9 +72,9 @@ public class MainWindow extends JFrame{
 	public MainWindow (){			
 		
 		timing = new Timing();
-		panel = new PanelCreator(MyColors.DARK_GREEN);				
-		card = initializePanelWithCards();		
-		panel.createRow(0,card);	
+		panel = new MainPanel(MyColors.DARK_GREEN);				
+		card = initializePanelWithCards();
+		panel.addRow(RowMaker.createBothSidesFilledRow(card));
 		
 		initializeAllPanelsElements();									
 		setWindowProperties();
@@ -94,7 +91,7 @@ public class MainWindow extends JFrame{
 		JTextArea textInfo = new JTextArea(5,25);
 		textInfo.setEditable(false);
 		KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
-        manager.addKeyEventDispatcher(new MyDispatcher(textInfo));
+        manager.addKeyEventDispatcher(new MyDispatcher());
 		return textInfo;
 	}
 	
@@ -119,9 +116,9 @@ public class MainWindow extends JFrame{
 			JTextField textField;
 			MyLabel label = new MyLabel (str);
 			
-			if (str.matches(FormsLabels.HASLO+"|"+FormsLabels.POTWIERDZ_HASLO))
-				textField = new JPasswordField (FormsLabels.HASLO, height);			
-			else if (str.matches(FormsLabels.DZIEN+"|"+FormsLabels.MIESIAC+"|"+FormsLabels.ROK))
+			if (str.matches(FormsLabels.PASSWORD+"|"+FormsLabels.REPEAT_PASSWORD))
+				textField = new JPasswordField (FormsLabels.PASSWORD, height);			
+			else if (str.matches(FormsLabels.DAY+"|"+FormsLabels.MONTH+"|"+FormsLabels.YEAR))
 				textField = new JTextField (str,4);				
 			else textField = new JTextField (str, height);
 				
@@ -139,7 +136,7 @@ public class MainWindow extends JFrame{
 //		welcomePanel.getPanel().add(scrollPane);
 		PanelSummary summaryPanel = new PanelSummary(this, hmap);
 		PanelData dataPanel = new PanelData(this,summaryPanel,hmap, strings);
-   		PanelCongratulations congratsPanel = new PanelCongratulations(this);	
+   		congratsPanel = new PanelCongratulations(this, timing);	
 						
 		card.add(welcomePanel.getPanel(), MainWindow.WELCOME_PANEL);
 		card.add(dataPanel.getPanel(),MainWindow.DATA_PANEL);		
@@ -160,6 +157,9 @@ public class MainWindow extends JFrame{
 	
 	public void nextPanel(){
 		((CardLayout)card.getLayout()).next(card);
+		congratsPanel.update();
+		System.out.println("updating");
+		
 	}
 	
 	public void previousPanel (){
@@ -167,30 +167,28 @@ public class MainWindow extends JFrame{
 	}
 	
 	public void gotoPanel (String panelName){
-		((CardLayout)card.getLayout()).show(card, panelName);
+		((CardLayout)card.getLayout()).show(card, panelName);	
+		congratsPanel.update();
 	}
+	
 	
 	private List <String> createStrings(){
 		
 		List <String> strings = new ArrayList <String> ();
-		strings.add(FormsLabels.IMIE);
-		strings.add(FormsLabels.NAZWISKO);
-		strings.add(FormsLabels.DATA_URODZENIA);
-		strings.add(FormsLabels.DZIEN);
-		strings.add(FormsLabels.MIESIAC);
-		strings.add(FormsLabels.ROK);
-		strings.add(FormsLabels.ADRES_EMAIL);
-		strings.add(FormsLabels.NAZWA_UZYTKOWNIKA);
-		strings.add(FormsLabels.HASLO);
-		strings.add(FormsLabels.POTWIERDZ_HASLO);
-		strings.add(FormsLabels.PYTANIE_POMOCNICZE);
-		strings.add(FormsLabels.ODPOWIEDZ);
+		strings.add(FormsLabels.FIRST_NAME);
+		strings.add(FormsLabels.LAST_NAME);
+		strings.add(FormsLabels.DATE_OF_BIRTH);
+		strings.add(FormsLabels.DAY);
+		strings.add(FormsLabels.MONTH);
+		strings.add(FormsLabels.YEAR);
+		strings.add(FormsLabels.EMAIL_ADDRESS);
+		strings.add(FormsLabels.USERNAME);
+		strings.add(FormsLabels.PASSWORD);
+		strings.add(FormsLabels.REPEAT_PASSWORD);
+		strings.add(FormsLabels.RECOVERY_QUESTION);
+		strings.add(FormsLabels.ANSWER);
 		return strings;
 		
-	}
-	
-	
-	
-	
+	}	
 
 }

@@ -13,7 +13,7 @@ public class MyLabel extends JLabel {
 	public MyLabel (){
 		super();
 		myFont = new Font("Segoe ui light",Font.BOLD, 15);
-		myColor = new Color(0,255,255);
+		myColor = Color.WHITE;
 		setFont (myFont);
 		setForeground (myColor);
 		

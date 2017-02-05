@@ -7,7 +7,7 @@ import javax.swing.JTextField;
 
 public class FocusListeners {
 
-	public static FocusListener createListenerDefaultValueIfEmpty (final JTextField field){
+	public static FocusListener defaultValueIfEmpty (final JTextField field){
 		final String oldValue = field.getText();
 		return new FocusListener (){
 			@Override

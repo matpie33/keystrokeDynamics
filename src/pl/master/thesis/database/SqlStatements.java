@@ -15,6 +15,8 @@ public class SqlStatements {
 		
 		s=connection.createStatement();
 		s.executeUpdate(query);		
+		s.close();
+		connection.close();
 	}
 	
 	
@@ -29,6 +31,7 @@ public class SqlStatements {
 		
 		
 		ResultSet r = s.executeQuery(query);
+//		connection.close();
 		return r.next();
 	}
 

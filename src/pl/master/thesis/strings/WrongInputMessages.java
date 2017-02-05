@@ -1,6 +1,6 @@
 package pl.master.thesis.strings;
 
-public class InputVerifierMessages {
+public class WrongInputMessages {
 	public static final String DATE_IS_NOT_A_NUMBER="Data nie zawiera liczby.";
 	public static final String DATE_INCORRECT_VALUE="Niepoprawna data.";
 	public static final String EMAIL_INCORRECT="Niepoprawny adres e-mail. Muszą w nim występować znaki: @ oraz .";

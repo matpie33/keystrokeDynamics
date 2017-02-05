@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import pl.master.thesis.database.SqlStatements;
-import pl.master.thesis.dialogs.MyDialog;
 import pl.master.thesis.frame.MainWindow;
 import pl.master.thesis.panels.BasicPanel;
 import pl.master.thesis.panels.PanelWelcome;
@@ -15,17 +14,17 @@ public class UserCheckWorker extends ConnectionSwingWorker {
 		private boolean userExists;
 		private PanelWelcome panel;
 		private MainWindow frame;
-		private MyDialog dialog;
 		
-		public UserCheckWorker(PanelWelcome panel, MyDialog dialog){	
+		public UserCheckWorker(PanelWelcome panel){	
 			this.panel = panel;
 			this.frame = ((BasicPanel)panel).getParentFrame();
-			this.dialog = dialog;			
 		}
 		
 		@Override
 		public void done(){
-        	dialog.dispose();		
+			System.out.println("dialog should be closed");
+			panel.closeDialog();
+			
 		}
 		
 		@Override
@@ -37,6 +36,7 @@ public class UserCheckWorker extends ConnectionSwingWorker {
 		protected void doOtherThings (){
 			if (userExists){				
 				if (panel.isErrorShowing())	panel.removeError();	
+				
 				frame.gotoPanel(MainWindow.CONGRATULATIONS_PANEL); 
 			}
 			else {
@@ -45,6 +45,7 @@ public class UserCheckWorker extends ConnectionSwingWorker {
 				panel.addErrorLabel();				
 
 			}
+			panel.closeDialog();
 		}	
 						
 	}

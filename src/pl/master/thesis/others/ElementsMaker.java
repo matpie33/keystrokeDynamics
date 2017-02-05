@@ -56,7 +56,7 @@ public class ElementsMaker {
 
 	public static JTextField createTextField (String textFieldType, int limit){
 		JTextField textField = FieldsVerifier.findTextField(textFieldType, hmap);	
-		textField.addKeyListener(KeyListeners.createKeyAdapterMaximumLength(textField, limit));
+		textField.addKeyListener(KeyListeners.textfieldLimitAdapter(textField, limit));
 		return textField;
 	}
 }

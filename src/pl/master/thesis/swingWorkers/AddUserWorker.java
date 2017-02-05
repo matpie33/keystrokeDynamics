@@ -1,18 +1,13 @@
 package pl.master.thesis.swingWorkers;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Map;
 
-import javax.swing.JButton;
 import javax.swing.JTextField;
 
 import pl.master.thesis.database.SqlStatements;
-import pl.master.thesis.dialogs.MyDialog;
 import pl.master.thesis.frame.MainWindow;
-import pl.master.thesis.guiElements.MyButton;
 import pl.master.thesis.guiElements.MyLabel;
 import pl.master.thesis.others.FieldsVerifier;
 import pl.master.thesis.panels.BasicPanel;
@@ -21,14 +16,12 @@ import pl.master.thesis.strings.Prompts;
 
 public class AddUserWorker extends ConnectionSwingWorker{
 	
-	private MyDialog waitingDialog;	
 	private BasicPanel panel;
 	private Map <JTextField, MyLabel> hmap;
 	private MainWindow frame;
 	
-	public AddUserWorker (BasicPanel panel, MyDialog wd, Map<JTextField, MyLabel> hmap){
+	public AddUserWorker (BasicPanel panel,  Map<JTextField, MyLabel> hmap){
 		this.panel = panel;
-		waitingDialog=wd;
 		this.hmap = hmap;
 		frame = ((BasicPanel)panel).getParentFrame();
 	}
@@ -40,41 +33,37 @@ public class AddUserWorker extends ConnectionSwingWorker{
 		}
 		
 		private void tryToAddUserToDB(Connection connection){
-			String userName = FieldsVerifier.findTextField(FormsLabels.NAZWA_UZYTKOWNIKA, hmap).getText();
-			String password = FieldsVerifier.findTextField(FormsLabels.HASLO, hmap).getText();
-			String question = FieldsVerifier.findTextField(FormsLabels.PYTANIE_POMOCNICZE, hmap).getText();
-			String answer = FieldsVerifier.findTextField(FormsLabels.ODPOWIEDZ, hmap).getText();
+			String userName = FieldsVerifier.findTextField(FormsLabels.USERNAME, hmap).getText();
+			String password = FieldsVerifier.findTextField(FormsLabels.PASSWORD, hmap).getText();
+			String question = FieldsVerifier.findTextField(FormsLabels.RECOVERY_QUESTION, hmap).getText();
+			String answer = FieldsVerifier.findTextField(FormsLabels.ANSWER, hmap).getText();
 			try{
 				SqlStatements.addUser(connection, userName, password,question,answer);				
 				frame.nextPanel();
-				waitingDialog.dispose();
+				panel.closeDialog();
 			}
 			catch (SQLException e1) { //TODO do rollback IF ANY SQL EXCEPTION OCCURS
+				panel.closeDialog();
+				frame.previousPanel();
+				
 				if (e1.getSQLState()=="23505"){
-					waitingDialog.setLabelText(Prompts.ERROR_SQL_USER_EXISTS);
-					frame.gotoPanel(MainWindow.DATA_PANEL);
+					panel.showShortMessageDialog(Prompts.ERROR_SQL_USER_EXISTS);
+					
 				}
 				else if (e1.getSQLState()=="XJ040"){
-					waitingDialog.setLabelText (Prompts.ERROR_SQL_DATABASE_IN_USE);
+					panel.showShortMessageDialog(Prompts.ERROR_SQL_DATABASE_IN_USE);
 				}
 				else{
-					waitingDialog.setLabelText(Prompts.ERROR_SQL_UNKNOWN_ERROR);
+					panel.showShortMessageDialog(Prompts.ERROR_SQL_UNKNOWN_ERROR);
 					e1.printStackTrace();
 				}
+				
 			}
 		}
 		
 		@Override
 		public void done(){
-			waitingDialog.removeGif();
-			JButton b = new MyButton("O.k.");
-			b.addActionListener(new ActionListener (){
-				@Override
-				public void actionPerformed(ActionEvent e){
-					waitingDialog.dispose();
-				}
-			});
-			waitingDialog.addButton(b);
+			panel.closeDialog();
 		}
 	}
 

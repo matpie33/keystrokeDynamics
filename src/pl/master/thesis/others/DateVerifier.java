@@ -5,6 +5,9 @@ import java.util.Calendar;
 import javax.swing.JTextField;
 
 public class DateVerifier {
+	
+	private static final int MIN_AGE=10;
+	private static final int MAX_AGE=100;
 
 	public static boolean isLeapYear(String selectedItem) {
 		try{
@@ -17,16 +20,7 @@ public class DateVerifier {
 				
 	}
 	
-	public static boolean isInteger (String text){
-		try {
-			Integer.parseInt(text);
-			return true;
-			
-		}
-		catch (NumberFormatException ex){
-			return false;
-		}
-	}
+	
 	
 	public static boolean checkDate(JTextField days, JTextField months,
 			JTextField years) {
@@ -36,16 +30,14 @@ public class DateVerifier {
 		String year = years.getText();
 		Calendar c = Calendar.getInstance();
 		c.getTime();
-		int u = c.get(Calendar.YEAR);
-		int minAge=10;
-		int maxAge=100;
+		int u = c.get(Calendar.YEAR);		
 		
 		int intDay = Integer.parseInt(day);
 		int intMonth = Integer.parseInt(month);
 		int intYear = Integer.parseInt(year);
 		
-		if (intMonth>12 || intYear<u-maxAge || intYear>u-minAge){
-			System.out.println((intYear<u-maxAge) +" "+ (intYear>u-minAge));
+		if (intMonth>12 || intYear<u-MAX_AGE || intYear>u-MIN_AGE){
+			System.out.println((intYear<u-MAX_AGE) +" "+ (intYear>u-MIN_AGE));
 			
 			return false;}
 		

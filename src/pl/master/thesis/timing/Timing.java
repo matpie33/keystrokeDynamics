@@ -18,6 +18,11 @@ public class Timing {
 	private long lastKeyReleasedTime;
 	private long lastKeyPressedTime;
 	private long maxBreakTime = 2_000;
+	private double meanTypeSpeed;
+	private int breaks;
+	private int errors;
+	private int sumTypedWords;
+	
 	
 	public Timing(){
 		isRunning = false;
@@ -52,15 +57,27 @@ public class Timing {
 	    timer.scheduleAtFixedRate(task, 0, TIME_DELAY);
 	}
 
-	private void stopTimerAndCalculateSpeed(){
-		timer.cancel();
+	public void stopTimerAndCalculateSpeed(){
+		
+		if (!isRunning){
+			return;
+		}
+		long breakk = System.nanoTime()-lastKeyReleasedTime;
+//		typingTime-=breakk;
+		sumTypedWords+=keysTyped;
 		isRunning = false;
+		timer.cancel();
+		
 		long sum = 0;
 		for (Long l: intervals){
 			sum+=l;
 		}
+		double mean =((double)keysTyped/((double)typingTime/1000D/60D));
+		meanTypeSpeed*=breaks++;
+		meanTypeSpeed+=mean;
+		meanTypeSpeed/=breaks;
 		System.out.println("typed: "+keysTyped+" in time: "+typingTime);
-		System.out.println(intervals.size());
+		System.out.println("srednio: "+ mean);
 	}
 	
 	public void recordKeyPress(KeyEvent e){
@@ -69,7 +86,7 @@ public class Timing {
 			System.out.println("SHIFT lub ALT");
 			return;
 		}
-		if (e.getKeyCode()==KeyEvent.VK_BACK_SPACE){
+		if (e.getKeyCode()==KeyEvent.VK_BACK_SPACE || e.getKeyCode() == KeyEvent.VK_DELETE){
 			System.out.println("Backspace");
 			recordMistypedKey();
 			return;
@@ -93,9 +110,20 @@ public class Timing {
 	}
 	
 	private void recordMistypedKey(){
-		
+		errors++;
 	}
 	
+	public double getMeanTypeSpeed(){
+		return meanTypeSpeed;
+	}
+	
+	public int getErrors(){
+		return errors;
+	}
+	
+	public int getNumberOfTypedKeys(){
+		return sumTypedWords;
+	}
 	
 	
 }

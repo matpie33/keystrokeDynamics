@@ -15,6 +15,7 @@ public class Prompts {
 	public static final String BTN_CONTINUE = "Dalej";
 	public static final String BTN_APPROVE = "Ok";	
 	public static final String BTN_GO_BACK = "Wstecz";
+	public static final String BTN_GO_HOME = "Powrót na główną";
 	
 	public static final String WELCOME_PROMPT = "Witam w moim programie. Jeśli masz już założone konto, zaloguj się korzystając z poniższych pól."
 			+ "W przeciwnym przypadku załóż nowe konto używając odpowiedniego przycisku.";

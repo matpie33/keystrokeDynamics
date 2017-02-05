@@ -8,7 +8,7 @@ import javax.swing.SwingWorker;
 
 import pl.master.thesis.database.Database;
 
-public class ConnectionSwingWorker extends SwingWorker<Void,Void> {
+public abstract class ConnectionSwingWorker extends SwingWorker<Void,Void> {
 	
 	private final String propertiesFile = "properties/db properties.xml";
 	protected ProgressMonitor p;
@@ -27,33 +27,29 @@ public class ConnectionSwingWorker extends SwingWorker<Void,Void> {
     			
     		}
     		
-    		finally {
-    			tryToCloseConnection(connection);
-    		}
+//    		finally {
+//    			tryToCloseConnection(connection);
+//    		}
             
             return null;
         }
 		
 		private void tryToCloseConnection(Connection connection){
-			try { 
-				if (connection!=null){
-    				connection.close();
-    				connection=null;
-    				System.out.println("connection is closed");
-				}
-			}
-			catch (SQLException ex){
-				ex.printStackTrace();
-			}
+//			try { 
+//				if (connection!=null){
+//    				connection.close();
+//    				connection=null;
+//    				System.out.println("connection is closed");
+//				}
+//			}
+//			catch (SQLException ex){
+//				ex.printStackTrace();
+//			}
 		}
 
-        protected void doOtherThings() {
-			//override it
-		}
+        protected void doOtherThings() {};
 
-		protected void doSqlStatements(Connection connection) throws SQLException {
-			//override it
-		}
+		protected abstract void doSqlStatements(Connection connection) throws SQLException;
 
 		@Override
         public void done() {

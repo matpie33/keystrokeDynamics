@@ -8,7 +8,6 @@ import java.util.Map;
 import javax.swing.JTextField;
 import javax.swing.SwingWorker;
 
-import pl.master.thesis.dialogs.MyDialog;
 import pl.master.thesis.frame.MainWindow;
 import pl.master.thesis.guiElements.MyLabel;
 import pl.master.thesis.others.FieldsVerifier;
@@ -24,6 +23,15 @@ public class ActionListeners {
 			@Override
 			public void actionPerformed (ActionEvent e){
 				window.dispose();
+			}
+		};
+	}
+	
+	public static ActionListener createGoHomeListener(final MainWindow frame){
+		return new ActionListener (){
+			@Override
+			public void actionPerformed(ActionEvent e){
+				frame.gotoPanel(MainWindow.WELCOME_PANEL);	
 			}
 		};
 	}
@@ -50,12 +58,9 @@ public class ActionListeners {
 		return new ActionListener (){
 			@Override
 			public void actionPerformed (ActionEvent e){
-				MyDialog myDialog = new MyDialog(panel);	
-				myDialog.createWaitingPanel();
-				
-				SwingWorker s = new AddUserWorker(panel, myDialog, panel.getMap());
+				SwingWorker s = new AddUserWorker(panel,  panel.getMap());
 				s.execute();
-				myDialog.setVisible(true);
+				panel.showConnectingDialog();
 			}
 		};
 	}
@@ -70,9 +75,8 @@ public class ActionListeners {
 				
 				String errorText=FieldsVerifier.verifyFields(summaryPanel.getMap());
 				if (!errorText.isEmpty()){
-					MyDialog dialog = new MyDialog(dataPanel);	
-					dialog.createMsgDialog(errorText);
-					dialog.setVisible(true);
+
+					dataPanel.showLongMessageDialog(errorText);
 				}	
 				else dataPanel.getParentFrame().nextPanel();
 								

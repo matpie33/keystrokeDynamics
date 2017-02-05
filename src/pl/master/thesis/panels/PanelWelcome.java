@@ -12,7 +12,8 @@ import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.SwingWorker;
 
-import pl.master.thesis.dialogs.MyDialog;
+import com.guimaker.row.RowMaker;
+
 import pl.master.thesis.frame.MainWindow;
 import pl.master.thesis.guiElements.MyButton;
 import pl.master.thesis.guiElements.MyLabel;
@@ -40,17 +41,20 @@ public class PanelWelcome extends BasicPanel {
 		ActionListener action = createButtonCreate();
 		KeyListeners.addKeyBindings(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,0), (AbstractAction)action,
 				passField, loginField);
+		KeyListeners.addListeners(KeyListeners.removeErrorWhenTyped(this), loginField, passField);
 			
 		MyButton btnCreate = ElementsMaker.createButton (Prompts.BTN_LOGIN, action);
 		
 		btnContinue.setText(Prompts.BTN_CREATE_ACCOUNT);	
 			
-		panel.createRow(hello);
-		panel.createRow(GridBagConstraints.WEST,1,btnContinue);
-		panel.createRow(loginLabel,loginField);
-		panel.createRow(passLabel,passField);
-		panel.createRow(GridBagConstraints.EAST,1,btnCreate);
-		panel.createRow(errorLabel);
+		panel.addRow(RowMaker.createHorizontallyFilledRow( hello));
+		panel.addRow(RowMaker.createUnfilledRow(GridBagConstraints.WEST, btnContinue));
+		panel.addRow(RowMaker.createHorizontallyFilledRow(loginLabel, loginField).
+				fillHorizontallySomeElements(loginField));
+		panel.addRow(RowMaker.createHorizontallyFilledRow(passLabel, passField).
+				fillHorizontallySomeElements(passField));
+		panel.addRow(RowMaker.createUnfilledRow(GridBagConstraints.CENTER, btnCreate));
+		panel.addRow(RowMaker.createUnfilledRow(GridBagConstraints.EAST, errorLabel));
 
 	}
 	
@@ -62,23 +66,17 @@ public class PanelWelcome extends BasicPanel {
 		return new AbstractAction (){
 			@Override
 			public void actionPerformed (ActionEvent e){
-				MyDialog dialog = new MyDialog(panel);
-				dialog.createWaitingPanel();
-				SwingWorker s = new UserCheckWorker(panel,dialog);
+				
+				SwingWorker s = new UserCheckWorker(panel);
 				s.execute();
-				dialog.setVisible(true);
+				panel.showConnectingDialog();
 			}
 		};
 		
 	}	
 	
-	public void removeError (){
-		isErrorShowing=false;
-	}
 	
-	public boolean isErrorShowing(){
-		return isErrorShowing;
-	}
+	
 		
 	public void addErrorLabel(){		
 		errorLabel.setVisible(true);

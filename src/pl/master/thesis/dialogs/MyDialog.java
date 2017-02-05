@@ -6,18 +6,21 @@ import java.net.URL;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+import com.guimaker.panels.MainPanel;
+import com.guimaker.row.RowMaker;
+
 import pl.master.thesis.guiElements.MyButton;
 import pl.master.thesis.guiElements.MyLabel;
 import pl.master.thesis.listeners.ActionListeners;
 import pl.master.thesis.others.ElementsMaker;
 import pl.master.thesis.others.MyColors;
-import pl.master.thesis.others.PanelCreator;
 import pl.master.thesis.panels.BasicPanel;
 import pl.master.thesis.strings.Prompts;
 import pl.master.thesis.strings.WindowLabels;
@@ -32,7 +35,7 @@ public class MyDialog extends JDialog{
 	private int gapx=20;
 	private int gapy=20;
 	private BasicPanel parent;
-	private PanelCreator mainPanel;
+	private MainPanel mainPanel;
 	
 	public MyDialog (BasicPanel parent){
 		setUpDialog(parent);
@@ -40,33 +43,40 @@ public class MyDialog extends JDialog{
 	}
 
 	private void setUpDialog(BasicPanel parent){
-		mainPanel = new PanelCreator(MyColors.LIGHT_BLUE);
+		mainPanel = new MainPanel(MyColors.LIGHT_BLUE);
 		this.parent = parent;				
 	}
 	
-	public void createWaitingPanel(){
+	public void createWaitingDialog(){
 		try {
 			createGifLabel();
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
 		text = new MyLabel(Prompts.CONNECTING_PROMPT);
-		mainPanel.createRow(GridBagConstraints.CENTER,1, text);
-		mainPanel.createRow(GridBagConstraints.CENTER,1, gif);
+		mainPanel.addRow(RowMaker.createUnfilledRow(GridBagConstraints.CENTER, text));
+		mainPanel.addRow(RowMaker.createUnfilledRow(GridBagConstraints.CENTER, gif));
 		setProperties();
 	}
 	
-	public void createMsgDialog(String text){
-			
+	public void createLongMessageDialog(String text){
 		JTextArea prompt = ElementsMaker.createTextArea(text, 10, 30);		
 		JScrollPane j = ElementsMaker.wrapComponent(prompt);
-		
+		createMsgDialog(j);
+	}
+	
+	private void createMsgDialog(JComponent textComponent){
 		MyButton confirm = ElementsMaker.createButton(Prompts.BTN_APPROVE, 
 				ActionListeners.createDisposeListener(this));
 		
-		mainPanel.createRow(1,j);
-		mainPanel.createRow(GridBagConstraints.CENTER,1, confirm);
+		mainPanel.addRow(RowMaker.createBothSidesFilledRow(textComponent));
+		mainPanel.addRow(RowMaker.createUnfilledRow(GridBagConstraints.CENTER, confirm));
 		setProperties();
+	}
+	
+	public void createShortMessageDialog(String text){
+		JLabel label = ElementsMaker.createLabel(text);
+		createMsgDialog(label);
 	}
 	
 	
@@ -88,13 +98,14 @@ public class MyDialog extends JDialog{
 	public void setLabelText (String text){
 		MyButton confirm = ElementsMaker.createButton(Prompts.BTN_APPROVE, 
 				ActionListeners.createDisposeListener(this));
-		mainPanel.setAsRow(0, new MyLabel(text));
-		mainPanel.setAsRow(1, confirm);	
+		mainPanel.addRow(RowMaker.createHorizontallyFilledRow(new MyLabel(text)));
+		mainPanel.addRow(RowMaker.createUnfilledRow(GridBagConstraints.CENTER, confirm));
 		pack();
 		setLocationRelativeTo(parent.getPanel());
 	}
 	
 	public void removeGif(){
+		mainPanel.removeRowWithElements(gif);
 		update();	
 	}
 	

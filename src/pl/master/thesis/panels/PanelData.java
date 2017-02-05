@@ -1,6 +1,5 @@
 package pl.master.thesis.panels;
 
-import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +8,9 @@ import java.util.Map;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+
+import com.guimaker.panels.MainPanel;
+import com.guimaker.row.RowMaker;
 
 import pl.master.thesis.frame.MainWindow;
 import pl.master.thesis.guiElements.MyButton;
@@ -21,13 +23,11 @@ import pl.master.thesis.strings.Prompts;
 
 public class PanelData extends BasicPanel{
 
-	private Map <JTextField, MyLabel> hmap;	
 	
 	public PanelData(final MainWindow frame, final PanelSummary summaryPanel, final Map <JTextField,MyLabel> hmap, 
-			final List <String> strings){
+			final List <String> strings){ 
 		
 		super(frame);	
-		this.hmap = hmap;
 		List <JTextField> fields = new ArrayList <JTextField>();
 		fields.addAll(hmap.keySet());	
 		
@@ -44,29 +44,28 @@ public class PanelData extends BasicPanel{
 				
 		for (int i=0; i<fields.size();i++){
 			JTextField field = fields.get(i);
-			field.addFocusListener(FocusListeners.createListenerDefaultValueIfEmpty(field));	
+			field.addFocusListener(FocusListeners.defaultValueIfEmpty(field));	
 		}
 	
-		panel.createRow(GridBagConstraints.WEST, 1, exampleInput);
-		panel.createRow(GridBagConstraints.CENTER, 1, title);	
+		panel.addRow(RowMaker.createUnfilledRow(GridBagConstraints.WEST, exampleInput));
+		panel.addRow(RowMaker.createUnfilledRow(GridBagConstraints.CENTER, title));
 		addTextFieldsAndLabelsFromMap (hmap, datePanel);	
-		panel.createRowOn2Sides(btnBack, btnContinue);
+//		panel.createRowOn2Sides(btnBack, btnContinue); //TODO create
+		panel.addRow(RowMaker.createUnfilledRow(GridBagConstraints.EAST, btnBack, btnContinue));
 	
 	}
 	
 	private JPanel createDatePanel (){
 		
-		JPanel datePanel = new JPanel();
-		datePanel.setOpaque(false);
-		datePanel.setLayout(new BorderLayout(10,0));
+		MainPanel date = new MainPanel(null);
+		date.setGapsBetweenRowsTo0();
+		JPanel datePanel = date.getPanel();
 		
-		JTextField days = ElementsMaker.createTextField(FormsLabels.DZIEN, 2);
-		JTextField months = ElementsMaker.createTextField(FormsLabels.MIESIAC, 2);
-		JTextField years = ElementsMaker.createTextField(FormsLabels.ROK, 4);
+		JTextField days = ElementsMaker.createTextField(FormsLabels.DAY, 2);
+		JTextField months = ElementsMaker.createTextField(FormsLabels.MONTH, 2);
+		JTextField years = ElementsMaker.createTextField(FormsLabels.YEAR, 4);
 			
-		datePanel.add(years,BorderLayout.EAST);
-		datePanel.add(months,BorderLayout.CENTER);			
-		datePanel.add(days,BorderLayout.WEST);
+		date.addRow(RowMaker.createHorizontallyFilledRow(years,months,days).fillHorizontallyEqually());
 		return datePanel;
 		
 	}	
@@ -76,13 +75,16 @@ public class PanelData extends BasicPanel{
 			
 			MyLabel label = set.getValue();
 			JTextField field = set.getKey();
-			if (label.getText().equals(FormsLabels.DZIEN) || label.getText().equals(FormsLabels.MIESIAC) || 
-					label.getText().equals(FormsLabels.ROK))
+			if (label.getText().equals(FormsLabels.DAY) || label.getText().equals(FormsLabels.MONTH) || 
+					label.getText().equals(FormsLabels.YEAR))
 				continue;			
 			
-			if (label.getText().equals(FormsLabels.DATA_URODZENIA))								
-				panel.createRow(label,datePanel);		
-			else	panel.createRow(label, field);			
+			if (label.getText().equals(FormsLabels.DATE_OF_BIRTH))								
+				panel.addRow(RowMaker.createHorizontallyFilledRow(label,datePanel).
+						fillHorizontallySomeElements(datePanel));
+			else panel.addRow(RowMaker.createHorizontallyFilledRow(label,field).
+					fillHorizontallySomeElements(field));
+			
 					
 		}
 	}		

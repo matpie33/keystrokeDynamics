@@ -8,9 +8,23 @@ import javax.swing.JComponent;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 
-public class KeyListeners {
+import pl.master.thesis.panels.BasicPanel;
 
-	public static KeyAdapter createKeyAdapterMaximumLength(final JTextField field, final int limit){
+public class KeyListeners {
+	
+
+	public static KeyAdapter removeErrorWhenTyped(final BasicPanel panel){
+		return new KeyAdapter(){
+			@Override
+			public void keyTyped (KeyEvent e){
+				if (panel.isErrorShowing()){
+					panel.removeError();
+				}
+			}
+		};	
+	}
+
+	public static KeyAdapter textfieldLimitAdapter(final JTextField field, final int limit){
 		return new KeyAdapter(){
 			@Override
 			public void keyTyped (KeyEvent e){
@@ -25,8 +39,13 @@ public class KeyListeners {
 		for (JComponent c1: c){
 			c1.getInputMap().put(key, "name");
 			c1.getActionMap().put("name", action);
-		}
-		
+		}		
+	}
+	
+	public static void addListeners (KeyAdapter action, JTextField... c){
+		for (JTextField c1: c){
+			c1.addKeyListener(action);
+		}		
 	}
 	
 }
