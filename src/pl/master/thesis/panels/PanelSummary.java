@@ -20,21 +20,20 @@ import pl.master.thesis.strings.Prompts;
 public class PanelSummary extends BasicPanel {
 	
 	private static final long serialVersionUID = 3706383803572619289L;
-	private Map <JTextField,MyLabel> hmap;		
+			
 	private final String DATE_SEPARATOR="-";
 	private final String LABEL_FROM_VALUE_SEPARATOR=": ";
 	
-	public PanelSummary(MainWindow fra, Map <JTextField, MyLabel> map){		
+	public PanelSummary(MainWindow fra){		
 		super(fra);
-		hmap=map;		
 	}
 		
-	public void showFieldsValues(){
-	
+	public void showFieldsValues(Map <JTextField, MyLabel> hmap){
+
 		panel.getPanel().removeAll();	
 		MyLabel title = ElementsMaker.createLabel (Prompts.TITLE_SUMMARY);	
 		JButton btnConnect = ElementsMaker.createButton(Prompts.BTN_CONTINUE, 
-				ActionListeners.createListenerConnect(this));
+				ActionListeners.createListenerConnect(this, hmap));
 		
 		panel.addRow(RowMaker.createUnfilledRow(GridBagConstraints.CENTER, title));
 		addValuesFromTextFieldsAndLabels(hmap);		
@@ -65,16 +64,14 @@ public class PanelSummary extends BasicPanel {
 			}
 			else text=textField.getText();
 			
-			MyLabel newL = new MyLabel (label.getText()+LABEL_FROM_VALUE_SEPARATOR+text);
-			panel.addRow(RowMaker.createHorizontallyFilledRow(newL));
+			MyLabel newLabel = new MyLabel (label.getText()+LABEL_FROM_VALUE_SEPARATOR+text);
+			panel.addRow(RowMaker.createHorizontallyFilledRow(newLabel));
 			
 		}
 		
 	}
 	
-	public Map <JTextField, MyLabel> getMap (){
-		return hmap;
-	}			
+				
 	
 }
 

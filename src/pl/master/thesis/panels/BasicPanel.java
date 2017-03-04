@@ -17,8 +17,8 @@ import pl.master.thesis.others.ElementsMaker;
 import pl.master.thesis.others.MyColors;
 import pl.master.thesis.strings.Prompts;
 
-public class BasicPanel {
 	
+public class BasicPanel {
 	private static final long serialVersionUID = 1L;
 	protected MyButton btnContinue;
 	protected MyButton btnBack;

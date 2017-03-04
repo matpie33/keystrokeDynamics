@@ -26,7 +26,7 @@ public class FieldsVerifier {
 			errorText+=WrongInputMessages.DATE_IS_NOT_A_NUMBER+"\n";
 		}
 		else if (!DateVerifier.checkDate(days,months,years)){
-			errorText+=WrongInputMessages.DATE_INCORRECT_VALUE+"\n";
+			errorText+=DateVerifier.getErrorMessage()+"\n";
 		}							
 		
 		List <String> list = findEmptyValues(map);
@@ -81,7 +81,6 @@ public class FieldsVerifier {
 				list.add(entries.getValue().getText());
 			}
 		}
-		System.out.println(list);
 		return list;
 	}
 	

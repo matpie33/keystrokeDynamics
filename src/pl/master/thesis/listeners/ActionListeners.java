@@ -11,7 +11,7 @@ import javax.swing.SwingWorker;
 import pl.master.thesis.frame.MainWindow;
 import pl.master.thesis.guiElements.MyLabel;
 import pl.master.thesis.others.FieldsVerifier;
-import pl.master.thesis.panels.BasicPanel;
+import pl.master.thesis.panels.PanelData;
 import pl.master.thesis.panels.PanelSummary;
 import pl.master.thesis.strings.FormsLabels;
 import pl.master.thesis.swingWorkers.AddUserWorker;
@@ -54,28 +54,27 @@ public class ActionListeners {
 		};
 	}
 	
-	public static ActionListener createListenerConnect(final PanelSummary panel){
+	public static ActionListener createListenerConnect(final PanelSummary panel, 
+			Map <JTextField, MyLabel> map){
 		return new ActionListener (){
 			@Override
 			public void actionPerformed (ActionEvent e){
-				SwingWorker s = new AddUserWorker(panel,  panel.getMap());
+				SwingWorker s = new AddUserWorker(panel,  map);
 				s.execute();
 				panel.showConnectingDialog();
 			}
 		};
 	}
 	
-	public static ActionListener createListenerGoToNextPanel(final BasicPanel dataPanel, final PanelSummary summaryPanel){
+	public static ActionListener createListenerGoToNextPanel(final PanelData dataPanel, final PanelSummary summaryPanel){
 		
 		return new ActionListener(){
 			@Override
 			public void actionPerformed (ActionEvent event){
 				
-				summaryPanel.showFieldsValues();			
-				
-				String errorText=FieldsVerifier.verifyFields(summaryPanel.getMap());
+				summaryPanel.showFieldsValues(dataPanel.getMap());			
+				String errorText=FieldsVerifier.verifyFields(dataPanel.getMap());
 				if (!errorText.isEmpty()){
-
 					dataPanel.showLongMessageDialog(errorText);
 				}	
 				else dataPanel.getParentFrame().nextPanel();

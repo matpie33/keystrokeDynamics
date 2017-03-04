@@ -1,5 +1,6 @@
 package pl.master.thesis.dialogs;
 
+import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -20,7 +21,6 @@ import pl.master.thesis.guiElements.MyButton;
 import pl.master.thesis.guiElements.MyLabel;
 import pl.master.thesis.listeners.ActionListeners;
 import pl.master.thesis.others.ElementsMaker;
-import pl.master.thesis.others.MyColors;
 import pl.master.thesis.panels.BasicPanel;
 import pl.master.thesis.strings.Prompts;
 import pl.master.thesis.strings.WindowLabels;
@@ -39,11 +39,10 @@ public class MyDialog extends JDialog{
 	
 	public MyDialog (BasicPanel parent){
 		setUpDialog(parent);
-		
 	}
 
 	private void setUpDialog(BasicPanel parent){
-		mainPanel = new MainPanel(MyColors.LIGHT_BLUE);
+		mainPanel = new MainPanel(Color.BLACK);
 		this.parent = parent;				
 	}
 	
@@ -61,6 +60,7 @@ public class MyDialog extends JDialog{
 	
 	public void createLongMessageDialog(String text){
 		JTextArea prompt = ElementsMaker.createTextArea(text, 10, 30);		
+		prompt.setEditable(false);
 		JScrollPane j = ElementsMaker.wrapComponent(prompt);
 		createMsgDialog(j);
 	}
@@ -69,7 +69,7 @@ public class MyDialog extends JDialog{
 		MyButton confirm = ElementsMaker.createButton(Prompts.BTN_APPROVE, 
 				ActionListeners.createDisposeListener(this));
 		
-		mainPanel.addRow(RowMaker.createBothSidesFilledRow(textComponent));
+		mainPanel.addRow(RowMaker.createUnfilledRow(GridBagConstraints.CENTER, textComponent));
 		mainPanel.addRow(RowMaker.createUnfilledRow(GridBagConstraints.CENTER, confirm));
 		setProperties();
 	}
@@ -85,7 +85,6 @@ public class MyDialog extends JDialog{
 		ImageIcon imageIcon = new ImageIcon(url);
 		gif = new JLabel(imageIcon);
 	}
-	
 	
 	private void setProperties(){
 		setContentPane(mainPanel.getPanel());

@@ -10,6 +10,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
 import com.guimaker.row.RowMaker;
@@ -56,6 +57,16 @@ public class PanelWelcome extends BasicPanel {
 		panel.addRow(RowMaker.createUnfilledRow(GridBagConstraints.CENTER, btnCreate));
 		panel.addRow(RowMaker.createUnfilledRow(GridBagConstraints.EAST, errorLabel));
 
+		giveFocusToField();
+	}
+	
+	private void giveFocusToField(){
+		SwingUtilities.invokeLater(new Runnable (){
+			@Override
+			public void run (){
+				loginField.requestFocusInWindow();
+			}
+		});
 	}
 	
 	

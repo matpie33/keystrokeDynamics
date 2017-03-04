@@ -40,7 +40,6 @@ public class ElementsMaker {
 	
 	public static JScrollPane wrapComponent(JComponent c){
 		JScrollPane j = new JScrollPane(c);
-		j.getViewport().setOpaque(false);
 		return j;
 	}
 	

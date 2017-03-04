@@ -1,3 +1,6 @@
 testdbb/
 bin/**
 derby.log
+/target/
+
+bin

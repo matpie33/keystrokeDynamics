@@ -9,18 +9,18 @@ import com.guimaker.row.RowMaker;
 
 import pl.master.thesis.frame.MainWindow;
 import pl.master.thesis.guiElements.MyLabel;
+import pl.master.thesis.keyEventHandler.KeyEventHandler;
 import pl.master.thesis.listeners.ActionListeners;
 import pl.master.thesis.others.ElementsMaker;
 import pl.master.thesis.strings.Prompts;
 import pl.master.thesis.strings.TypingStatisticsFormat;
-import pl.master.thesis.timing.Timing;
 
 public class PanelCongratulations extends BasicPanel  {
 	private JLabel speed;
 	private JLabel errors;
-	private Timing time;
-
-	public PanelCongratulations(MainWindow frame, Timing time) {
+	private KeyEventHandler time;
+	
+	public PanelCongratulations(MainWindow frame, KeyEventHandler time) {
 		super(frame);
 		this.time=time;
 		
@@ -34,6 +34,7 @@ public class PanelCongratulations extends BasicPanel  {
 		panel.addRow(RowMaker.createUnfilledRow(GridBagConstraints.CENTER, speed));
 		panel.addRow(RowMaker.createUnfilledRow(GridBagConstraints.CENTER, errors));
 		panel.addRow(RowMaker.createUnfilledRow(GridBagConstraints.CENTER, btnHome));
+		
 	}
 		
 	public void update(){
@@ -41,6 +42,8 @@ public class PanelCongratulations extends BasicPanel  {
 		speed.setText(String.format(TypingStatisticsFormat.TYPING_SPEED, time.getMeanTypeSpeed()));
 		errors.setText(String.format(TypingStatisticsFormat.NUMBER_OF_ERRORS, time.getErrors(), 
 				time.getNumberOfTypedKeys()));
+		time.calculateFrequenciesMap();
+		time.show();
 	}
 
 }
