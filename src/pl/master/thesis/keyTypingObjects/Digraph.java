@@ -43,4 +43,9 @@ public class Digraph {
 	public int hashCode(){
 		return Objects.hash(firstKey, secondKey);
 	}
+	
+	public boolean isSameKey(){
+		return firstKey.equals(secondKey);
+	}
+	
 }

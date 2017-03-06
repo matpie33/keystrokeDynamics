@@ -35,7 +35,8 @@ public class FieldsVerifier {
 			String concatenated = concatenateFieldNames(list);
 			errorText+=concatenated+"\n";
 		}
-		if (!email.getText().matches("[a-zA-Z]+@[a-zA-Z]+\\.[a-zA-Z]+")){
+		if (!email.getText().matches("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\."
+				+ "[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$")){
 			errorText+=WrongInputMessages.EMAIL_INCORRECT+"\n";
 		}
 		if (password.getText().length()<8 || password.getText().length()>30){

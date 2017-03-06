@@ -9,16 +9,20 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 import pl.master.thesis.guiElements.MyLabel;
+import pl.master.thesis.keyEventHandler.KeyEventHandler;
+import pl.master.thesis.keyTypingObjects.WordType;
+import pl.master.thesis.listeners.MouseListeners;
 import pl.master.thesis.strings.FormsLabels;
 
 public class FieldsInitializer {
 
 	private List <String> defaultValues;
-	Map <JTextField,MyLabel> hmap;
+	private Map <JTextField,MyLabel> hmap;
+	private final String OR ="|";
 	
-	public FieldsInitializer(){
+	public FieldsInitializer(KeyEventHandler handler){
 		createDefaultValues();
-		createMapWithTextFieldsAndLabels();
+		createMapWithTextFieldsAndLabels(handler);
 	}
 	
 	private List <String> createDefaultValues(){
@@ -38,7 +42,7 @@ public class FieldsInitializer {
 		return defaultValues;
 	}	
 	
-	private void createMapWithTextFieldsAndLabels (){
+	private void createMapWithTextFieldsAndLabels (KeyEventHandler handler){
 		
 		Map <JTextField,MyLabel> hmap = new LinkedHashMap <JTextField,MyLabel> (); 
 		int maxFieldCharacters=15;
@@ -53,6 +57,7 @@ public class FieldsInitializer {
 			else if (str.matches(FormsLabels.DAY+"|"+FormsLabels.MONTH+"|"+FormsLabels.YEAR))
 				textField = new JTextField ("", maxDateFieldCharacters);				
 			else textField = new JTextField ("", maxFieldCharacters);
+			textField.addMouseListener(MouseListeners.notStartedWithTabKeyIfClicked(handler));
 			hmap.put(textField, label);
 		}
 		this.hmap = hmap;
@@ -73,6 +78,23 @@ public class FieldsInitializer {
 	
 	public Map <JTextField, MyLabel> getFieldsToLabelMap(){
 		return hmap;		
+	}
+	
+	public WordType getTextFieldType(JTextField fiel){
+		String labelsText = hmap.get(fiel).getText();
+		if (labelsText.matches(FormsLabels.PASSWORD+"|"+FormsLabels.REPEAT_PASSWORD)){
+			return WordType.PASSWORD;
+		}
+		else if (labelsText.matches(FormsLabels.DAY+OR+FormsLabels.MONTH+OR+FormsLabels.YEAR)){
+			return WordType.DATE;
+		}
+		else if (labelsText.equals(FormsLabels.EMAIL_ADDRESS)){
+			return WordType.EMAIL;
+		}
+		else if (labelsText.equals(FormsLabels.USERNAME)){
+			return WordType.USERNAME;
+		}
+		else return WordType.OTHER;
 	}
 	
 }

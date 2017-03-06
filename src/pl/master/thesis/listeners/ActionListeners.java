@@ -10,6 +10,7 @@ import javax.swing.SwingWorker;
 
 import pl.master.thesis.frame.MainWindow;
 import pl.master.thesis.guiElements.MyLabel;
+import pl.master.thesis.keyEventHandler.KeyEventHandler;
 import pl.master.thesis.others.FieldsVerifier;
 import pl.master.thesis.panels.PanelData;
 import pl.master.thesis.panels.PanelSummary;
@@ -66,7 +67,8 @@ public class ActionListeners {
 		};
 	}
 	
-	public static ActionListener createListenerGoToNextPanel(final PanelData dataPanel, final PanelSummary summaryPanel){
+	public static ActionListener createListenerGoToNextPanel(final PanelData dataPanel, 
+			final PanelSummary summaryPanel, final KeyEventHandler handler){
 		
 		return new ActionListener(){
 			@Override
@@ -77,7 +79,12 @@ public class ActionListeners {
 				if (!errorText.isEmpty()){
 					dataPanel.showLongMessageDialog(errorText);
 				}	
-				else dataPanel.getParentFrame().nextPanel();
+				else {
+					handler.done();
+					dataPanel.getParentFrame().nextPanel();
+					
+				}
+				
 								
 			}		
 			

@@ -42,7 +42,6 @@ public class PanelCongratulations extends BasicPanel  {
 		speed.setText(String.format(TypingStatisticsFormat.TYPING_SPEED, time.getMeanTypeSpeed()));
 		errors.setText(String.format(TypingStatisticsFormat.NUMBER_OF_ERRORS, time.getErrors(), 
 				time.getNumberOfTypedKeys()));
-		time.calculateFrequenciesMap();
 		time.show();
 	}
 

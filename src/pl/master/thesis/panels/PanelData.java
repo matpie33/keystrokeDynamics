@@ -16,7 +16,6 @@ import com.guimaker.row.RowMaker;
 import pl.master.thesis.frame.MainWindow;
 import pl.master.thesis.guiElements.MyButton;
 import pl.master.thesis.guiElements.MyLabel;
-import pl.master.thesis.keyEventHandler.SavingMode;
 import pl.master.thesis.listeners.ActionListeners;
 import pl.master.thesis.listeners.FocusListeners;
 import pl.master.thesis.others.ElementsMaker;
@@ -44,11 +43,11 @@ public class PanelData extends BasicPanel{
 		MyButton btnContinue = ElementsMaker.createButton(Prompts.BTN_CONTINUE, 
 				ActionListeners.
 //				createNextPanelListener(getParentFrame()));
-				createListenerGoToNextPanel(this, summaryPanel));
+				createListenerGoToNextPanel(this, summaryPanel, frame.getKeyEventHandler()));
 				
 		for (int i=0; i<fields.size();i++){
 			JTextField field = fields.get(i);
-			field.addFocusListener(FocusListeners.defaultValueIfEmpty(field));	
+			field.addFocusListener(FocusListeners.defaultValueIfEmpty(field, frame.getKeyEventHandler()));	
 		}
 	
 		panel.addRow(RowMaker.createUnfilledRow(GridBagConstraints.WEST, exampleInput));
@@ -88,18 +87,6 @@ public class PanelData extends BasicPanel{
 		for (Map.Entry<JTextField, MyLabel> set: hmap.entrySet()) {
 			MyLabel label = set.getValue();
 			JTextField field = set.getKey();
-			if (label.getText().matches(FormsLabels.PASSWORD )){
-				field.addFocusListener(FocusListeners.switchSavingMode(field, frame.getKeyEventHandler(), 
-						SavingMode.PASSWORD));
-			}
-			if (label.getText().matches(FormsLabels.REPEAT_PASSWORD)){
-				field.addFocusListener(FocusListeners.switchSavingMode(field, frame.getKeyEventHandler(), 
-						SavingMode.REPEAT_PASSWORD));
-			}
-			if (label.getText().equals(FormsLabels.USERNAME)){
-				field.addFocusListener(FocusListeners.switchSavingMode(field, frame.getKeyEventHandler(),
-						SavingMode.USERNAME));
-			}
 			if (label.getText().equals(FormsLabels.DAY) || label.getText().equals(FormsLabels.MONTH) || 
 					label.getText().equals(FormsLabels.YEAR))
 				continue;			

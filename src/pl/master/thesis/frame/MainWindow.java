@@ -38,7 +38,7 @@ public class MainWindow extends JFrame{
 	private final int distanceFromEdges = 20;
 	private JPanel card;
 	private MainPanel panel;
-	private KeyEventHandler timing;	
+	private KeyEventHandler keyHandler;	
 	private PanelCongratulations congratsPanel;
 	private PanelData panelData;
 	private FieldsInitializer fieldsInitializer;
@@ -52,18 +52,20 @@ public class MainWindow extends JFrame{
         @Override
         public boolean dispatchKeyEvent(KeyEvent e) {
             if (e.getID() == KeyEvent.KEY_PRESSED) {       
-            	timing.recordKeyPress(e);
+            	keyHandler.recordKeyPress(e);
             } 
             else if (e.getID() == KeyEvent.KEY_RELEASED) {
-            	timing.recordKeyRelease(e);
+            	keyHandler.recordKeyRelease(e);
             } 
             return false;
         }                
     }
 	
-	public MainWindow (){			
-		fieldsInitializer = new FieldsInitializer();
-		timing = new KeyEventHandler();
+	public MainWindow (){	
+		
+		fieldsInitializer = new FieldsInitializer(keyHandler);
+		keyHandler = new KeyEventHandler(fieldsInitializer);
+		
 		panel = new MainPanel(MyColors.DARK_GREEN);				
 		card = initializePanelWithCards();
 		panel.addRow(RowMaker.createBothSidesFilledRow(card));
@@ -101,7 +103,7 @@ public class MainWindow extends JFrame{
 		JScrollPane scrollPane =new JScrollPane(textInfo);
 		PanelSummary summaryPanel = new PanelSummary(this);
 		panelData = new PanelData(this, summaryPanel, hmap);
-   		congratsPanel = new PanelCongratulations(this, timing);	
+   		congratsPanel = new PanelCongratulations(this, keyHandler);	
 		card.add(welcomePanel.getPanel(), MainWindow.WELCOME_PANEL);
 		card.add(panelData.getPanel(),MainWindow.DATA_PANEL);		
 		card.add(summaryPanel.getPanel(),MainWindow.SUMMARY_PANEL);
@@ -138,7 +140,7 @@ public class MainWindow extends JFrame{
 	}
 
 	public KeyEventHandler getKeyEventHandler(){
-		return timing;
+		return keyHandler;
 	}
 	
 }

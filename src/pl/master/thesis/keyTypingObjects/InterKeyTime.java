@@ -61,6 +61,10 @@ public class InterKeyTime {
 	public long getInterKeyTime() {
 		return interKeyTime;
 	}
+	
+	public boolean isItTimeBetweenSameKey(){
+		return digraph.isSameKey();
+	}
 
 
 }
