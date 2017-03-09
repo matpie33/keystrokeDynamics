@@ -1,17 +1,17 @@
 package pl.master.thesis.classifier;
 
-import java.util.List;
-
 import pl.master.thesis.keyTypingObjects.WordKeystrokeData;
 
 public class MyOwnClassifier {
 
 	private DataDivider dataDivider;
 	private double percentOfConsecutiveKeysHold;
+	private StatisticsCalculator statisticsCalculator;
 	
 	public MyOwnClassifier (){
 		percentOfConsecutiveKeysHold=0;
 		dataDivider = new DataDivider();
+		statisticsCalculator = new StatisticsCalculator();
 	}
 	
 	public void addKeystrokeData (WordKeystrokeData newData){
@@ -22,14 +22,10 @@ public class MyOwnClassifier {
 		dataDivider.divideDataToTestAndTrainingSet();
 	}
 	
-	public void calculate(List <WordKeystrokeData> wordKeystrokeDatas){
-		int tabs = 0;
-		for (WordKeystrokeData data: wordKeystrokeDatas){
-			if (data.isStartedWithTab()){
-				tabs++;
-			}
-		}
-		System.out.println("tabs pressed: "+tabs);
+	public void calculateStatisticsForSets(){
+		dataDivider.divideDataToTestAndTrainingSet();
+		DataStatistics test = statisticsCalculator.calculate(dataDivider.getTestData());
+		DataStatistics training = statisticsCalculator.calculate(dataDivider.getTrainingData());
 	}
 	
 }

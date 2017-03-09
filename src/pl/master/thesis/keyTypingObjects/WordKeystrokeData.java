@@ -27,7 +27,9 @@ public class WordKeystrokeData {
 	}
 
 	public void addInterKeyTime(InterKeyTime inter){
-		interKeyTimes.add(inter);
+		if (!inter.isItTimeBetweenSameKey()){
+			interKeyTimes.add(inter);
+		}
 	}
 	
 	public void addKeyHoldTime(KeyHoldingTime holdTime){

@@ -51,7 +51,8 @@ public class InterKeyTime {
 		}
 	
 	public String toString(){
-		return digraph+" time: "+interKeyTime;
+//		return digraph+" time: "+interKeyTime;
+		return ""+interKeyTime;
 	}
 
 	public Digraph getDigraph() {

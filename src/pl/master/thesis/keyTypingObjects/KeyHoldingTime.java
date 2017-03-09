@@ -26,6 +26,7 @@ public class KeyHoldingTime {
 	
 	@Override
 	public String toString(){
-		return "Key: "+key+ " hold time: "+holdTime;
+//		return "Key: "+key+ " hold time: "+holdTime;
+		return ""+holdTime;
 	}
 }

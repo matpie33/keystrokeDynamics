@@ -71,5 +71,13 @@ public class DataDivider {
 			trainingData.add(data);
 		}
 	}
+	
+	public List <WordKeystrokeData> getTestData(){
+		return testData;
+	}
+	
+	public List <WordKeystrokeData> getTrainingData(){
+		return trainingData;
+	}
 
 }

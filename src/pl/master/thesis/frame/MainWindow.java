@@ -62,9 +62,9 @@ public class MainWindow extends JFrame{
     }
 	
 	public MainWindow (){	
-		
-		fieldsInitializer = new FieldsInitializer(keyHandler);
-		keyHandler = new KeyEventHandler(fieldsInitializer);
+		keyHandler = new KeyEventHandler();
+		fieldsInitializer = new FieldsInitializer(keyHandler);		
+		keyHandler.setFieldsInitializer(fieldsInitializer);
 		
 		panel = new MainPanel(MyColors.DARK_GREEN);				
 		card = initializePanelWithCards();

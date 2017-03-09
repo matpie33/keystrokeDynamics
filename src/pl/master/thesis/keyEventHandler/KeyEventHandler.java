@@ -35,14 +35,18 @@ public class KeyEventHandler {
 	private boolean focusLost;
 	private FieldsInitializer textFieldsInformationHolder;
 	
-	public KeyEventHandler(FieldsInitializer fieldsInitializer){
-		textFieldsInformationHolder = fieldsInitializer;
+	public KeyEventHandler(){
+		
 		currentlyTypedWordData = new WordKeystrokeData("", false);
 		classifier = new MyOwnClassifier();
 		keyHoldingTime = new ArrayList <>();
 		currentlyPressedKeys=new HashMap <>();
 		lastKeyPressed = "";
 		focusLost = true;
+	}
+	
+	public void setFieldsInitializer(FieldsInitializer fieldsInitializer){
+		textFieldsInformationHolder = fieldsInitializer;
 	}
 
 	public void stopTimerAndCalculateSpeed(){
@@ -182,8 +186,8 @@ public class KeyEventHandler {
 	}
 	
 	public void show(){
-		classifier.showData();
 		//TODO remove it later
+		classifier.calculateStatisticsForSets();
 //		System.out.println("pass interkeys: "+passwordFeatures.getInterKeyTimes());
 //		System.out.println("pass hold times: "+passwordFeatures.getKeyHoldTimes());
 //		System.out.println("username  interkeys: "+userNameFeatures.getInterKeyTimes());
