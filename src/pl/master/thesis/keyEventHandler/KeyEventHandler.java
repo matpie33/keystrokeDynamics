@@ -187,7 +187,6 @@ public class KeyEventHandler {
 	
 	public void show(){
 		//TODO remove it later
-		classifier.calculateStatisticsForSets();
 //		System.out.println("pass interkeys: "+passwordFeatures.getInterKeyTimes());
 //		System.out.println("pass hold times: "+passwordFeatures.getKeyHoldTimes());
 //		System.out.println("username  interkeys: "+userNameFeatures.getInterKeyTimes());
@@ -203,6 +202,10 @@ public class KeyEventHandler {
 	public void focusLost (){
 		System.out.println("focus is lost");
 		focusLost = true;
+	}
+	
+	public MyOwnClassifier getClassifier (){
+		return classifier;
 	}
 	
 }

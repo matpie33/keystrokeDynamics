@@ -14,14 +14,14 @@ public abstract class ConnectionSwingWorker extends SwingWorker<Void,Void> {
 	protected ProgressMonitor p;
 			
 		@Override
-        public Void doInBackground() {
+        public Void doInBackground() throws SQLException {
 		Connection connection = null;
     		try {
     			connection = createConnection();     			
     			doSqlStatements(connection);
     			doOtherThings();    			
     		} 
-    		
+//    		
     		catch (SQLException e2) {
     			e2.printStackTrace();
     			

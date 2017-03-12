@@ -1,12 +1,20 @@
 package pl.master.thesis.main;
+import java.io.IOException;
+
 import javax.swing.SwingUtilities;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.xml.sax.SAXException;
 
 import pl.master.thesis.frame.MainWindow;
+import pl.master.thesis.others.DataSaver;
 
 
-public class Master {
+public class KeystrokeDynamics {
 		
-	public static void main (String arg[]){
+	public static void main (String arg[]) throws ParserConfigurationException, SAXException, IOException{
+		DataSaver d = new DataSaver();
+		d.readFromXml("usersData/abacad.xml");
 //		System.out.println("equals: "+new Digraph("a","c").equals(new Digraph("a","c")));
 //		RealMatrix mx = MatrixUtils.createRealMatrix(new double [][]{
 //			{1,2,3,4,5},

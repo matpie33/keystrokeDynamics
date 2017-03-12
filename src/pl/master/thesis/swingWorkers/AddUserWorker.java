@@ -3,6 +3,7 @@ package pl.master.thesis.swingWorkers;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import javax.swing.JTextField;
 
@@ -38,7 +39,8 @@ public class AddUserWorker extends ConnectionSwingWorker{
 		String question = FieldsVerifier.findTextField(FormsLabels.RECOVERY_QUESTION, hmap).getText();
 		String answer = FieldsVerifier.findTextField(FormsLabels.ANSWER, hmap).getText();
 		try{
-			SqlStatements.addUser(connection, userName, password,question,answer);				
+			SqlStatements.addUser(connection, userName, password,question,answer);		
+			
 			frame.nextPanel();
 			frame.clearData();
 			panel.closeDialog();
@@ -59,11 +61,22 @@ public class AddUserWorker extends ConnectionSwingWorker{
 			}
 			
 		}
+		System.out.println("save");
+		frame.getKeyEventHandler().getClassifier().saveDataToFile(userName);
 	}
 	
 	@Override
 	public void done(){
 		panel.closeDialog();
+		try { 
+             get(); // this line can throw InterruptedException or ExecutionException
+        } 
+        catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        catch (InterruptedException ie) {
+            // TODO handle the case where the background task was interrupted as you want to
+        }
 	}
 }
 

@@ -1,29 +1,39 @@
 package pl.master.thesis.classifier;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import pl.master.thesis.features.Feature;
+
 public class DataStatistics {
 	
-	private double meanInterKeyTime;
-	private double meanHoldTime;
-	private double tabsPercent;
-	
-	public DataStatistics(double meanInterKeyTime, double meanHoldTime, double tabsPercent){
-		this.meanHoldTime = meanHoldTime;
-		this.meanInterKeyTime = meanInterKeyTime;
-		this.tabsPercent = tabsPercent;
+	private List <Feature> features;
+	private String userId;
+
+	public DataStatistics(String userId){
+		this.userId = userId;
+		features = new ArrayList <>();
 	}
 
-	public double getMeanInterKeyTime() {
-		return meanInterKeyTime;
+	public void addFeature (Feature f){
+		features.add(f);
 	}
 
-	public double getMeanHoldTime() {
-		return meanHoldTime;
-	}
-
-	public double getTabsAmount() {
-		return tabsPercent;
+	public String getUserId() {
+		return userId;
 	}
 	
+	public List <Feature> getFeatures(){
+		return features;
+	}
+	
+	public void setFeatureWeight(String featureName, double weight){
+		for (Feature f: features){
+			if (f.getName().equals(featureName)){
+				f.setWeight(weight);
+			}
+		}
+	}
 	
 
 }

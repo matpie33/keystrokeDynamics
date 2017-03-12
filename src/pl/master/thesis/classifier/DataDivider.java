@@ -79,5 +79,10 @@ public class DataDivider {
 	public List <WordKeystrokeData> getTrainingData(){
 		return trainingData;
 	}
+	
+	public List <WordKeystrokeData> getWholeData(){
+		System.out.println("whole data");
+		return wholeData;
+	}
 
 }

@@ -2,14 +2,17 @@ package pl.master.thesis.classifier;
 
 import java.util.List;
 
+import pl.master.thesis.features.Feature;
 import pl.master.thesis.keyTypingObjects.InterKeyTime;
 import pl.master.thesis.keyTypingObjects.KeyHoldingTime;
 import pl.master.thesis.keyTypingObjects.WordKeystrokeData;
+import pl.master.thesis.strings.FeaturesNames;
 
 public class StatisticsCalculator {
 	
-	public DataStatistics calculate(List <WordKeystrokeData> wordKeystrokeDatas){
+	public DataStatistics calculate(List <WordKeystrokeData> wordKeystrokeDatas, String userName){
 		
+		System.out.println("calculating");
 		double tabsPercent = 0;
 		double meanInterKeyTime = 0;
 		double meanHoldTime = 0;
@@ -33,9 +36,13 @@ public class StatisticsCalculator {
 		System.out.println("mean inter time is: "+meanInterKeyTime);
 		System.out.println("mean hold time is: "+meanHoldTime);
 		System.out.println("tabs percent: "+tabsPercent);
+		DataStatistics statistics = new DataStatistics(userName);
+		statistics.addFeature(new Feature(FeaturesNames.INTER_KEY_TIME, meanInterKeyTime));
+		statistics.addFeature(new Feature(FeaturesNames.HOLD_TIME, meanHoldTime));
+		statistics.addFeature(new Feature(FeaturesNames.TABS_PRESSED_PERCENT, tabsPercent));
+		System.out.println("add features");
 		
-		
-		return new DataStatistics(meanInterKeyTime, meanHoldTime, tabsPercent);
+		return statistics;
 		
 	}
 	
