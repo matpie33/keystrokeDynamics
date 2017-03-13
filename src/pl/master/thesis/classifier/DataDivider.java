@@ -84,5 +84,9 @@ public class DataDivider {
 		System.out.println("whole data");
 		return wholeData;
 	}
+	
+	public boolean noData(){
+		return wholeData.isEmpty();
+	}
 
 }
