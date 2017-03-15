@@ -3,6 +3,8 @@ package pl.master.thesis.keyTypingObjects;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
+
 public class WordKeystrokeData {
 	
 	private List <InterKeyTime> interKeyTimes;
@@ -45,12 +47,53 @@ public class WordKeystrokeData {
 	}
 	
 	public void closeAndCalculate(){
+		System.out.println(interKeyTimes);
+		recalculateNumberOfInterKeyTimes();
+		removeOutliers();
+	}
+	
+	private void recalculateNumberOfInterKeyTimes(){
 		numberOfInterKeyTimesBetweenTwoDifferentKeys = interKeyTimes.size();
 		for (InterKeyTime inter: interKeyTimes){
 			if (inter.isItTimeBetweenSameKey()){
 				numberOfInterKeyTimesBetweenTwoDifferentKeys--;
 			}
 		}
+	}
+	
+	private void removeOutliers(){
+		double [] arrayInterKeyTime = new double [interKeyTimes.size()];
+		int i = 0 ;
+		for (InterKeyTime interKeyTime: interKeyTimes){
+			arrayInterKeyTime[i] = interKeyTime.getInterKeyTime();
+			i++;
+		}
+		
+		double [] arrayHoldTimes = new double [holdTimes.size()];
+		i=0;
+		for (KeyHoldingTime k: holdTimes){
+			arrayHoldTimes[i] = k.getHoldTime();
+			i++;
+		}
+		
+		DescriptiveStatistics d = new DescriptiveStatistics(arrayInterKeyTime);
+		double medianInterKeyTime = d.getPercentile(50.0);
+		double standDeviationInterKeyTime = d.getStandardDeviation();
+		DescriptiveStatistics d2 = new DescriptiveStatistics(arrayHoldTimes);
+		double medianHoldTime =  d2.getPercentile(50.0);
+		double standDeviationHoldTime = d2.getStandardDeviation();
+//		System.out.println("median: "+medianInterKeyTime);
+//		System.out.println("standard deviation: "+standDeviationInterKeyTime);
+		
+		for (InterKeyTime interTime: interKeyTimes){
+//			System.out.println("inter time: "+interTime.getInterKeyTime());
+			if ((interTime.getInterKeyTime()>medianInterKeyTime + 3*standDeviationInterKeyTime) ||
+					(interTime.getInterKeyTime()< medianInterKeyTime -
+							3*standDeviationInterKeyTime)) {
+				System.out.println("Outlier!: "+interTime.getDigraph());
+			}
+		}
+		
 	}
 	
 	public int getNumberOfInterKeyTimesBetweenTwoDifferentKeys(){
@@ -86,9 +129,7 @@ public class WordKeystrokeData {
 	
 	@Override
 	public String toString(){
-		System.out.println("inters: "+interKeyTimes);
-		System.out.println("holds: "+holdTimes);
-		return "Word: "+word+" type: "+wordType;
+		return "Word: "+word+" type: "+wordType+" interKeyTimes: "+interKeyTimes+ " hold times: "+holdTimes;
 	}
 	
 }

@@ -37,7 +37,6 @@ public class DataSaver {
 	private String extension = ".xml";
 	
 	public void saveDataToFile(DataStatistics data){
-		System.out.println("trying to save");
 		    Document dom;
 		    
 		    DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -77,7 +76,6 @@ public class DataSaver {
 		    	pce.printStackTrace();
 		    }
 		    
-		    System.out.println("success creating xml");
 		}
 	
 	private void createFeature (Element e, Document dom, String featureName, double value, double weight){

@@ -14,7 +14,6 @@ public class MyOwnClassifier {
 	private StatisticsCalculator statisticsCalculator;
 	private DataSaver dataSaver;
 	
-	
 	public MyOwnClassifier (){
 		percentOfConsecutiveKeysHold=0;
 		dataDivider = new DataDivider();
@@ -39,16 +38,18 @@ public class MyOwnClassifier {
 	}
 	
 	private void getAndCompareDataSets(){
-		KeystrokeDataArray testDataArray = convertListToArray(dataDivider.getTestData());
-		KeystrokeDataArray trainingDataArray = convertListToArray(dataDivider.getTrainingData());
+		KeystrokeDataArray testDataArray = convertListOfKeystrokeDataToArrays(dataDivider.getTestData());
+		KeystrokeDataArray trainingDataArray = convertListOfKeystrokeDataToArrays(dataDivider.getTrainingData());
+		testDataArray.removeOutliers();
+		trainingDataArray.removeOutliers();
 		boolean same1 = testIfSamplesHaveSameMeans(testDataArray.getHoldTimes(), 
 				trainingDataArray.getHoldTimes());
 		boolean same2 = testIfSamplesHaveSameMeans(testDataArray.getInterKeyTimes(), 
 				trainingDataArray.getInterKeyTimes());
-		System.out.println("same: "+same1 + same2);
+		System.out.println("are same: "+same1+same2);
 	}
 			
-	private KeystrokeDataArray convertListToArray(List <WordKeystrokeData> data){
+	private KeystrokeDataArray convertListOfKeystrokeDataToArrays(List <WordKeystrokeData> data){
 		KeystrokeDataArray dataArray = new KeystrokeDataArray();
 		dataArray.convertWordKeystrokeDataToArrays(data);
 		return dataArray;
@@ -57,15 +58,13 @@ public class MyOwnClassifier {
 	private boolean testIfSamplesHaveSameMeans(double [] sample1, double [] sample2){
 		TTest test = new TTest();
 		double d = test.tTest(sample1, sample2);
-		System.out.println("oduble: "+d);
-		System.out.println(test.homoscedasticTTest(sample1, sample2));
+		System.out.println("prawdopodobienstwo jest: "+d);
+		
 		return test.homoscedasticTTest(sample1, sample2, 0.05);
 	}
 	
 	public void saveDataToFile(String username){
-		System.out.println("will try to save");
 		DataStatistics d = statisticsCalculator.calculate(dataDivider.getWholeData(), username);
-		System.out.println("data stats: "+d);
 		dataSaver.saveDataToFile(d);
 	}
 	

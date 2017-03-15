@@ -15,7 +15,6 @@ public class KeystrokeDynamics {
 	public static void main (String arg[]) throws ParserConfigurationException, SAXException, IOException{
 		DataSaver d = new DataSaver();
 		d.readFromXml("usersData/abacad.xml");
-//		System.out.println("equals: "+new Digraph("a","c").equals(new Digraph("a","c")));
 //		RealMatrix mx = MatrixUtils.createRealMatrix(new double [][]{
 //			{1,2,3,4,5},
 //			{2,3,4,5,6},

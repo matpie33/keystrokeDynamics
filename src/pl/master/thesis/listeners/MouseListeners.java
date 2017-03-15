@@ -12,7 +12,6 @@ public class MouseListeners {
 		return new MouseAdapter (){
 			@Override
 			public void mouseClicked (MouseEvent e){
-				System.out.println("mouse click");
 				if (e.getComponent()==null){
 					return;
 				}

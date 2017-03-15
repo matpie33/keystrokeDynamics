@@ -15,7 +15,6 @@ public class FocusListeners {
 		return new FocusListener (){
 			@Override
 			public void focusGained (FocusEvent e){
-				System.out.println("focus gained");
 				if (field.getText().equals(oldValue))
 				field.setText("");
 			}

@@ -65,13 +65,11 @@ public class KeyEventHandler {
 	}
 	
 	public void recordKeyPress(KeyEvent e){		
-		System.out.println("kod: "+e.getKeyCode());
 		//TODO handle right alt properly: it sends alt + ctrl scancodes together
 		String currentKey = getKeyName(e.getKeyCode());
 		
 		long interKeyTime = calculateInterKeyTime();
 		if (currentlyPressedKeys.containsKey(currentKey)){
-			System.out.println("returning coz i have: "+currentKey);
 			return;
 		}
 		
@@ -83,11 +81,9 @@ public class KeyEventHandler {
 		}
 		lastKeyPressed = currentKey;
 		if (e.getKeyCode()==KeyEvent.VK_TAB){
-			System.out.println("Started with tab: "+currentlyTypedWordData);
 			if (e.getComponent() instanceof JTextField){
 				JTextField f = (JTextField)e.getComponent();
 				WordType type = textFieldsInformationHolder.getTextFieldType(f);
-				System.out.println(type);
 				savePreviousWordAndWatchNext(currentKey, true, type);
 			}
 			
@@ -111,7 +107,6 @@ public class KeyEventHandler {
 	
 	private void addKeyToCurrentlyPressedList(String currentKey){
 		currentlyPressedKeys.put(currentKey, lastKeyPressedTime);
-		System.out.println("currently pressed: "+currentlyPressedKeys);
 		if (currentlyPressedKeys.size()>1){
 			currentlyTypedWordData.increaseTwoConsecutiveKeysHold();
 		}
@@ -160,16 +155,12 @@ public class KeyEventHandler {
 	}
 	
 	
-	public void setMode(SavingMode mode){
-		System.out.println("mode now: "+mode.name());
-	}
 	
 	public void textFieldClicked(Component c){
 		if (focusLost){
 			if (c instanceof JTextField){
 				JTextField f = (JTextField)c;
 				WordType type = textFieldsInformationHolder.getTextFieldType(f);
-				System.out.println(type);
 				savePreviousWordAndWatchNext("", false, type);
 			}
 		}
@@ -178,7 +169,6 @@ public class KeyEventHandler {
 	
 	private void savePreviousWordAndWatchNext(String currentKey, boolean startedWithTab, WordType type){
 		focusLost = false;
-		System.out.println("focus is not lost");
 		classifier.addKeystrokeData(currentlyTypedWordData);
 		currentlyTypedWordData.closeAndCalculate();
 		currentlyTypedWordData.setType(type);
@@ -188,20 +178,14 @@ public class KeyEventHandler {
 	public void show(){
 		//TODO remove it later
 		classifier.compareData();
-//		System.out.println("pass interkeys: "+passwordFeatures.getInterKeyTimes());
-//		System.out.println("pass hold times: "+passwordFeatures.getKeyHoldTimes());
-//		System.out.println("username  interkeys: "+userNameFeatures.getInterKeyTimes());
-//		System.out.println("username hold times: "+userNameFeatures.getKeyHoldTimes());
 	}
 	
 	public void done(){
-		System.out.println("doned");
 		savePreviousWordAndWatchNext("", false, WordType.OTHER);
 	}
 	
 	
 	public void focusLost (){
-		System.out.println("focus is lost");
 		focusLost = true;
 	}
 	

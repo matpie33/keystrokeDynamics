@@ -11,6 +11,11 @@ public class KeystrokeDataArray {
 	
 	private double [] arrayKeyHoldTimes;
 	private double [] arrayInterKeyTimes;
+	private StatisticsCalculator statisticsCalculator;
+	
+	public KeystrokeDataArray (){
+		statisticsCalculator = new StatisticsCalculator ();
+	}
 	
 	public void convertWordKeystrokeDataToArrays(List <WordKeystrokeData> wordKeystrokeData){
 		List <Double> listHoldTimes = new ArrayList <>();
@@ -43,6 +48,15 @@ public class KeystrokeDataArray {
 	
 	public double [] getHoldTimes(){
 		return arrayKeyHoldTimes;
+	}
+	
+	public void removeOutliers(){
+		System.out.println("arrays size was hold: "+arrayKeyHoldTimes.length);
+		System.out.println("arrays size was inter: "+arrayInterKeyTimes.length);
+		arrayKeyHoldTimes = statisticsCalculator.removeOutliers(arrayKeyHoldTimes);
+		arrayInterKeyTimes = statisticsCalculator.removeOutliers(arrayInterKeyTimes);
+		System.out.println("arrays now hold: "+arrayKeyHoldTimes.length);
+		System.out.println("arrays now inter: "+arrayInterKeyTimes.length);
 	}
 	
 	

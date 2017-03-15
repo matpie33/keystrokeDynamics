@@ -61,7 +61,6 @@ public class AddUserWorker extends ConnectionSwingWorker{
 			}
 			
 		}
-		System.out.println("save");
 		frame.getKeyEventHandler().getClassifier().saveDataToFile(userName);
 	}
 	

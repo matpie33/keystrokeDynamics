@@ -47,8 +47,6 @@ public class DataDivider {
 				break;
 			}
 		}
-		System.out.println("trainig data: "+trainingData);
-		System.out.println("test data: "+testData);
 	}
 	
 	private void addDataBasedOnCounter(WordKeystrokeData data, int counter){
@@ -81,7 +79,6 @@ public class DataDivider {
 	}
 	
 	public List <WordKeystrokeData> getWholeData(){
-		System.out.println("whole data");
 		return wholeData;
 	}
 	

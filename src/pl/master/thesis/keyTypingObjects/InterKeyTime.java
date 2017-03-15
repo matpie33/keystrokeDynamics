@@ -25,7 +25,6 @@ public class InterKeyTime {
 		}
 		Map <Digraph, Integer> sorted = sortByValues(frequenciesMap);
 
-		System.out.println("frequencies map: "+sorted);
 		return frequenciesMap;
 	}
 	
@@ -51,8 +50,7 @@ public class InterKeyTime {
 		}
 	
 	public String toString(){
-//		return digraph+" time: "+interKeyTime;
-		return ""+interKeyTime;
+		return digraph+" time: "+interKeyTime;
 	}
 
 	public Digraph getDigraph() {

@@ -39,7 +39,6 @@ public abstract class ConnectionSwingWorker extends SwingWorker<Void,Void> {
 //				if (connection!=null){
 //    				connection.close();
 //    				connection=null;
-//    				System.out.println("connection is closed");
 //				}
 //			}
 //			catch (SQLException ex){

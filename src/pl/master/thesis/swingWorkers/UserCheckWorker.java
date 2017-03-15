@@ -22,9 +22,7 @@ public class UserCheckWorker extends ConnectionSwingWorker {
 		
 		@Override
 		public void done(){
-			System.out.println("dialog should be closed");
 			panel.closeDialog();
-			
 		}
 		
 		@Override
