@@ -9,7 +9,7 @@ import java.util.Map;
 
 import javax.swing.JTextField;
 
-import pl.master.thesis.classifier.MyOwnClassifier;
+import pl.master.thesis.classification.ClassificationManager;
 import pl.master.thesis.keyTypingObjects.Digraph;
 import pl.master.thesis.keyTypingObjects.InterKeyTime;
 import pl.master.thesis.keyTypingObjects.KeyHoldingTime;
@@ -31,14 +31,14 @@ public class KeyEventHandler {
 	private String lastKeyPressed;
 	private final String TAB_KEY = "Tab";
 	private WordKeystrokeData currentlyTypedWordData;
-	private MyOwnClassifier classifier;
+	private ClassificationManager classifier;
 	private boolean focusLost;
 	private FieldsInitializer textFieldsInformationHolder;
 	
 	public KeyEventHandler(){
 		
 		currentlyTypedWordData = new WordKeystrokeData("", false);
-		classifier = new MyOwnClassifier();
+		classifier = new ClassificationManager();
 		keyHoldingTime = new ArrayList <>();
 		currentlyPressedKeys=new HashMap <>();
 		lastKeyPressed = "";
@@ -189,7 +189,7 @@ public class KeyEventHandler {
 		focusLost = true;
 	}
 	
-	public MyOwnClassifier getClassifier (){
+	public ClassificationManager getClassifier (){
 		return classifier;
 	}
 	

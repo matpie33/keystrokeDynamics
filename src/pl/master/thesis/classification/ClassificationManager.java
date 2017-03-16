@@ -1,24 +1,24 @@
-package pl.master.thesis.classifier;
+package pl.master.thesis.classification;
 
 import java.util.List;
-
-import org.apache.commons.math3.stat.inference.TTest;
 
 import pl.master.thesis.keyTypingObjects.WordKeystrokeData;
 import pl.master.thesis.others.DataSaver;
 
-public class MyOwnClassifier {
+public class ClassificationManager {
 
 	private DataDivider dataDivider;
 	private double percentOfConsecutiveKeysHold;
 	private StatisticsCalculator statisticsCalculator;
 	private DataSaver dataSaver;
+	private Classifier classifier;
 	
-	public MyOwnClassifier (){
+	public ClassificationManager (){
 		percentOfConsecutiveKeysHold=0;
 		dataDivider = new DataDivider();
 		statisticsCalculator = new StatisticsCalculator();
 		dataSaver = new DataSaver();
+		classifier = new Classifier();
 	}
 	
 	public void addKeystrokeData (WordKeystrokeData newData){
@@ -40,13 +40,8 @@ public class MyOwnClassifier {
 	private void getAndCompareDataSets(){
 		KeystrokeDataArray testDataArray = convertListOfKeystrokeDataToArrays(dataDivider.getTestData());
 		KeystrokeDataArray trainingDataArray = convertListOfKeystrokeDataToArrays(dataDivider.getTrainingData());
-		testDataArray.removeOutliers();
-		trainingDataArray.removeOutliers();
-		boolean same1 = testIfSamplesHaveSameMeans(testDataArray.getHoldTimes(), 
-				trainingDataArray.getHoldTimes());
-		boolean same2 = testIfSamplesHaveSameMeans(testDataArray.getInterKeyTimes(), 
-				trainingDataArray.getInterKeyTimes());
-		System.out.println("are same: "+same1+same2);
+		classifier.saveInputData(testDataArray, trainingDataArray);
+		classifier.compare();
 	}
 			
 	private KeystrokeDataArray convertListOfKeystrokeDataToArrays(List <WordKeystrokeData> data){
@@ -55,13 +50,6 @@ public class MyOwnClassifier {
 		return dataArray;
 	}
 	
-	private boolean testIfSamplesHaveSameMeans(double [] sample1, double [] sample2){
-		TTest test = new TTest();
-		double d = test.tTest(sample1, sample2);
-		System.out.println("prawdopodobienstwo jest: "+d);
-		
-		return test.homoscedasticTTest(sample1, sample2, 0.05);
-	}
 	
 	public void saveDataToFile(String username){
 		DataStatistics d = statisticsCalculator.calculate(dataDivider.getWholeData(), username);

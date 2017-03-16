@@ -1,4 +1,4 @@
-package pl.master.thesis.classifier;
+package pl.master.thesis.classification;
 
 import java.util.ArrayList;
 import java.util.List;
