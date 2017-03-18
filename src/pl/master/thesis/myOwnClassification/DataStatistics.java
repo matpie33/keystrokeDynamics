@@ -1,4 +1,4 @@
-package pl.master.thesis.classification;
+package pl.master.thesis.myOwnClassification;
 
 import java.util.ArrayList;
 import java.util.List;

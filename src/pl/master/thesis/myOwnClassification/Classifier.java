@@ -1,4 +1,4 @@
-package pl.master.thesis.classification;
+package pl.master.thesis.myOwnClassification;
 
 import org.apache.commons.math3.stat.inference.TTest;
 
@@ -40,5 +40,7 @@ public class Classifier {
 
 		return test.homoscedasticTTest(sample1, sample2, 0.05);
 	}
+	
+	
 
 }

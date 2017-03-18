@@ -44,6 +44,7 @@ public class AddUserWorker extends ConnectionSwingWorker{
 			frame.nextPanel();
 			frame.clearData();
 			panel.closeDialog();
+			frame.getKeyEventHandler().getClassifier().saveDataToFile(userName);
 		}
 		catch (SQLException e1) { //TODO do rollback IF ANY SQL EXCEPTION OCCURS
 			panel.closeDialog();
@@ -61,7 +62,7 @@ public class AddUserWorker extends ConnectionSwingWorker{
 			}
 			
 		}
-		frame.getKeyEventHandler().getClassifier().saveDataToFile(userName);
+		
 	}
 	
 	@Override

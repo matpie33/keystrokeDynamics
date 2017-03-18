@@ -9,12 +9,12 @@ import java.util.Map;
 
 import javax.swing.JTextField;
 
-import pl.master.thesis.classification.ClassificationManager;
 import pl.master.thesis.keyTypingObjects.Digraph;
 import pl.master.thesis.keyTypingObjects.InterKeyTime;
 import pl.master.thesis.keyTypingObjects.KeyHoldingTime;
 import pl.master.thesis.keyTypingObjects.WordKeystrokeData;
 import pl.master.thesis.keyTypingObjects.WordType;
+import pl.master.thesis.myOwnClassification.ClassificationManager;
 import pl.master.thesis.others.FieldsInitializer;
 
 public class KeyEventHandler {

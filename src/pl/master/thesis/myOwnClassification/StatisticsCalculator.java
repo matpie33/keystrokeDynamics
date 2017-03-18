@@ -1,46 +1,38 @@
-package pl.master.thesis.classification;
+package pl.master.thesis.myOwnClassification;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
-import pl.master.thesis.features.Feature;
 import pl.master.thesis.keyTypingObjects.InterKeyTime;
 import pl.master.thesis.keyTypingObjects.KeyHoldingTime;
 import pl.master.thesis.keyTypingObjects.WordKeystrokeData;
-import pl.master.thesis.strings.FeaturesNames;
+import pl.master.thesis.neuralNetworkClassification.NeuralNetworkInput;
 
 public class StatisticsCalculator {
 	
 	private final double MEDIAN_PERCENTILE = 50.0;
 	
-	public DataStatistics calculate(List <WordKeystrokeData> wordKeystrokeDatas, String userName){
+	public List <NeuralNetworkInput> transferToNeuralInput(List <WordKeystrokeData> wordKeystrokeDatas, String userName){
 		
-		double tabsPercent = 0;
-		double meanInterKeyTime = 0;
-		double meanHoldTime = 0;
-		int interKeyTimeAmount = 0;
-		int holdTimeAmount = 0;
+		List <NeuralNetworkInput> neuralInputs = new ArrayList <> ();
 		for (WordKeystrokeData word: wordKeystrokeDatas){
+			boolean isTabbed = word.isStartedWithTab();
+			double meanInterKeyTime = 0;
+			double meanHoldTime = 0;
+			int interKeyTimeAmount = 0;
+			int holdTimeAmount = 0;
 			meanInterKeyTime += sumInterKeyTimesInWord(word);
 			interKeyTimeAmount += word.getInterKeyTimes().size();
 			meanHoldTime += sumHoldTimesInWord(word);
 			holdTimeAmount += word.getHoldTimes().size();
-			if (word.isStartedWithTab()){
-				tabsPercent++;
-			}
+			NeuralNetworkInput neuralInput = new NeuralNetworkInput (meanInterKeyTime, 
+					meanHoldTime, isTabbed);
+			neuralInputs.add(neuralInput);
 		}
-		meanInterKeyTime = meanInterKeyTime / (double)interKeyTimeAmount;
-		meanHoldTime = meanHoldTime / (double) holdTimeAmount;
-		tabsPercent = tabsPercent/ (double)(wordKeystrokeDatas.size()-1);
 		
-		DataStatistics statistics = new DataStatistics(userName);
-		statistics.addFeature(new Feature(FeaturesNames.INTER_KEY_TIME, meanInterKeyTime));
-		statistics.addFeature(new Feature(FeaturesNames.HOLD_TIME, meanHoldTime));
-		statistics.addFeature(new Feature(FeaturesNames.TABS_PRESSED_PERCENT, tabsPercent));
-		
-		return statistics;
+		return neuralInputs;
 	}
 	
 	private long sumInterKeyTimesInWord (WordKeystrokeData word){
