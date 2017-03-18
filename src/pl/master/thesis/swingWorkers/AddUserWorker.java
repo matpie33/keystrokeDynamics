@@ -39,12 +39,12 @@ public class AddUserWorker extends ConnectionSwingWorker{
 		String question = FieldsVerifier.findTextField(FormsLabels.RECOVERY_QUESTION, hmap).getText();
 		String answer = FieldsVerifier.findTextField(FormsLabels.ANSWER, hmap).getText();
 		try{
-			SqlStatements.addUser(connection, userName, password,question,answer);		
+			int userId = SqlStatements.addUser(connection, userName, password,question,answer);		
 			
 			frame.nextPanel();
 			frame.clearData();
 			panel.closeDialog();
-			frame.getKeyEventHandler().getClassifier().saveDataToFile(userName);
+			frame.getKeyEventHandler().getClassifier().saveDataToFile(userId);
 		}
 		catch (SQLException e1) { //TODO do rollback IF ANY SQL EXCEPTION OCCURS
 			panel.closeDialog();

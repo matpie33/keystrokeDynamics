@@ -21,10 +21,11 @@ public class NeuralNetworkInput {
 		return userId;
 	}
 	
-	public NeuralNetworkInput (double interTime, double holdTime, boolean moreThan50PercentTabs){
+	public NeuralNetworkInput (int userId, double interTime, double holdTime, boolean moreThan50PercentTabs){
 		meanInterTime = interTime;
 		meanHoldTime = holdTime;
 		this.moreThan50PercentTabs = moreThan50PercentTabs;
+		this.userId = userId;
 	}
 	
 

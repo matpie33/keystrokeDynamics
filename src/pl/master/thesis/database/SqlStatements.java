@@ -1,22 +1,29 @@
 package pl.master.thesis.database;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
 public class SqlStatements {
 	
-	public static void addUser (Connection connection, String username, String password,
+	public static int addUser (Connection connection, String username, String password,
 			String question, String answer) throws SQLException{
-		Statement s = null;
+		PreparedStatement s = null;
 		String query = "INSERT INTO Users (Username,Password, Question, Answer) "
 				+ "VALUES ('"+username+"','"+password+"','"+question+"','"+answer+"')";
+		s=connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+		s.executeUpdate();		
+		ResultSet generatedKeys = s.getGeneratedKeys();
+		int userId = 0;
+		if (generatedKeys.next()){
+			  userId = generatedKeys.getInt(1);
+		}
 		
-		s=connection.createStatement();
-		s.executeUpdate(query);		
 		s.close();
 		connection.close();
+		return userId;
 	}
 	
 	

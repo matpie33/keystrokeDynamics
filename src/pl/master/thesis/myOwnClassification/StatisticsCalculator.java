@@ -14,20 +14,19 @@ public class StatisticsCalculator {
 	
 	private final double MEDIAN_PERCENTILE = 50.0;
 	
-	public List <NeuralNetworkInput> transferToNeuralInput(List <WordKeystrokeData> wordKeystrokeDatas, String userName){
+	public List <NeuralNetworkInput> transferToNeuralInput(List <WordKeystrokeData> wordKeystrokeDatas,
+			int userId){
 		
 		List <NeuralNetworkInput> neuralInputs = new ArrayList <> ();
 		for (WordKeystrokeData word: wordKeystrokeDatas){
 			boolean isTabbed = word.isStartedWithTab();
-			double meanInterKeyTime = 0;
-			double meanHoldTime = 0;
-			int interKeyTimeAmount = 0;
-			int holdTimeAmount = 0;
-			meanInterKeyTime += sumInterKeyTimesInWord(word);
-			interKeyTimeAmount += word.getInterKeyTimes().size();
-			meanHoldTime += sumHoldTimesInWord(word);
-			holdTimeAmount += word.getHoldTimes().size();
-			NeuralNetworkInput neuralInput = new NeuralNetworkInput (meanInterKeyTime, 
+			double meanInterKeyTime = sumInterKeyTimesInWord(word);
+			int interKeyTimeAmount = word.getInterKeyTimes().size();
+			double meanHoldTime = sumHoldTimesInWord(word);
+			int holdTimeAmount = word.getHoldTimes().size();
+			meanInterKeyTime = meanInterKeyTime / (double)interKeyTimeAmount;
+			meanHoldTime = meanHoldTime / (double) holdTimeAmount;
+			NeuralNetworkInput neuralInput = new NeuralNetworkInput (userId, meanInterKeyTime, 
 					meanHoldTime, isTabbed);
 			neuralInputs.add(neuralInput);
 		}

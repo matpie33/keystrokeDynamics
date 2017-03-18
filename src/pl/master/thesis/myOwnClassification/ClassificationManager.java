@@ -52,9 +52,9 @@ public class ClassificationManager {
 	}
 	
 	
-	public void saveDataToFile(String username){
+	public void saveDataToFile(int userId){
 		System.out.println("saving");
-		classifier.learn(statisticsCalculator.transferToNeuralInput(dataDivider.getWholeData(), username));
+		classifier.learn(statisticsCalculator.transferToNeuralInput(dataDivider.getWholeData(), userId));
 	}
 	
 }
