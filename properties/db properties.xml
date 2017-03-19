@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+
+  <entry key="dbms">derby</entry>
+  <entry key="jar_file">C:\\JDBCTutorial\\lib\\JDBCTutorial.jar</entry>
+  <entry key="driver">org.apache.derby.jdbc.ClientDriver</entry>
+  <entry key="database_name">testdbb</entry>
+  <entry key="user_name">App</entry>
+  <entry key="password">dbvir</entry>
+  <entry key="server_name">localhost</entry>
+  <entry key="port_number">1527</entry>
+
+</properties>
