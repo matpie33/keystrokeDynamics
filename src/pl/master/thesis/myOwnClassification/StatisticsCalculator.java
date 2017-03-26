@@ -11,79 +11,83 @@ import pl.master.thesis.keyTypingObjects.WordKeystrokeData;
 import pl.master.thesis.neuralNetworkClassification.NeuralNetworkInput;
 
 public class StatisticsCalculator {
-	
+
 	private final double MEDIAN_PERCENTILE = 50.0;
-	
-	public List <NeuralNetworkInput> transferToNeuralInput(List <WordKeystrokeData> wordKeystrokeDatas,
-			int userId){
-		
-		List <NeuralNetworkInput> neuralInputs = new ArrayList <> ();
-		for (WordKeystrokeData word: wordKeystrokeDatas){
+
+	public List<NeuralNetworkInput> transferToNeuralInput(
+			List<WordKeystrokeData> wordKeystrokeDatas) {
+
+		List<NeuralNetworkInput> neuralInputs = new ArrayList<>();
+		for (WordKeystrokeData word : wordKeystrokeDatas) {
+			if (word.getInterKeyTimes().isEmpty()) {
+				System.out.println("inters size: " + word.getWord());
+			}
 			boolean isTabbed = word.isStartedWithTab();
 			double meanInterKeyTime = sumInterKeyTimesInWord(word);
 			int interKeyTimeAmount = word.getInterKeyTimes().size();
 			double meanHoldTime = sumHoldTimesInWord(word);
 			int holdTimeAmount = word.getHoldTimes().size();
-			meanInterKeyTime = meanInterKeyTime / (double)interKeyTimeAmount;
+			meanInterKeyTime = meanInterKeyTime / (double) interKeyTimeAmount;
 			meanHoldTime = meanHoldTime / (double) holdTimeAmount;
-			NeuralNetworkInput neuralInput = new NeuralNetworkInput (userId, meanInterKeyTime, 
-					meanHoldTime, isTabbed);
+			NeuralNetworkInput neuralInput = new NeuralNetworkInput(meanInterKeyTime, meanHoldTime,
+					isTabbed);
 			neuralInputs.add(neuralInput);
 		}
-		
+
 		return neuralInputs;
 	}
-	
-	private long sumInterKeyTimesInWord (WordKeystrokeData word){
+
+	private long sumInterKeyTimesInWord(WordKeystrokeData word) {
 		long sum = 0;
-		for (InterKeyTime interTime: word.getInterKeyTimes()){
-			sum+=interTime.getInterKeyTime();
+		for (InterKeyTime interTime : word.getInterKeyTimes()) {
+			sum += interTime.getInterKeyTime();
 		}
 		return sum;
 	}
-	
-	private long sumHoldTimesInWord (WordKeystrokeData word){
+
+	private long sumHoldTimesInWord(WordKeystrokeData word) {
 		long sum = 0;
-		for (KeyHoldingTime holdTime: word.getHoldTimes()){
-			sum+=holdTime.getHoldTime();
+		for (KeyHoldingTime holdTime : word.getHoldTimes()) {
+			sum += holdTime.getHoldTime();
 		}
 		return sum;
 	}
-	
-	public double [] removeOutliers(double [] arrayHoldTimes){
+
+	public double[] removeOutliers(double[] arrayHoldTimes) {
 		DescriptiveStatistics d = new DescriptiveStatistics(arrayHoldTimes);
 		double medianInterKeyTime = d.getPercentile(MEDIAN_PERCENTILE);
 		double standDeviationInterKeyTime = d.getStandardDeviation();
-		return removeOutliersForGivenMedianAndStdDev(arrayHoldTimes, standDeviationInterKeyTime, medianInterKeyTime);
+		return removeOutliersForGivenMedianAndStdDev(arrayHoldTimes, standDeviationInterKeyTime,
+				medianInterKeyTime);
 	}
-	
-	private double [] removeOutliersForGivenMedianAndStdDev (double [] array, double stdev, double median){
-		List <Double> arrayList = convertArrayOfDoublesToList(array);
-		System.out.println("arraylist size now: "+arrayList.size());
+
+	private double[] removeOutliersForGivenMedianAndStdDev(double[] array, double stdev,
+			double median) {
+		List<Double> arrayList = convertArrayOfDoublesToList(array);
 		double treshold = 1.5;
-		for (int i = 0; i < arrayList.size(); i++){
-			Double interTime =  arrayList.get(i);
-			if ((interTime>median + treshold*stdev) ||	(interTime< median - treshold*stdev)) {
+		for (int i = 0; i < arrayList.size(); i++) {
+			Double interTime = arrayList.get(i);
+			if ((interTime > median + treshold * stdev)
+					|| (interTime < median - treshold * stdev)) {
 				arrayList.remove(interTime);
-				System.out.println("arraylist size now: "+arrayList.size());
-			}			
+			}
 		}
-		
+
 		return convertListOfDoubleToArray(arrayList);
 	}
-	
-	private List <Double> convertArrayOfDoublesToList (double [] array){
-		List <Double> list = new ArrayList<>();
-		for (double d: array){
+
+	private List<Double> convertArrayOfDoublesToList(double[] array) {
+		List<Double> list = new ArrayList<>();
+		for (double d : array) {
 			list.add(d);
 		}
 		return list;
 	}
-	
-	private double [] convertListOfDoubleToArray (List <Double> list){
-		double [] array = new double [list.size()];
+
+	private double[] convertListOfDoubleToArray(List<Double> list) {
+		double[] array = new double[list.size()];
 		int i = 0;
-		for (Double d: list){
+		for (Double d : list) {
 			array[i] = d;
 			i++;
 		}

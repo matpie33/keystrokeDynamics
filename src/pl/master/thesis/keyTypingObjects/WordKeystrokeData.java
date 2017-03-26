@@ -6,100 +6,96 @@ import java.util.List;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 public class WordKeystrokeData {
-	
-	private List <InterKeyTime> interKeyTimes;
-	private List <KeyHoldingTime> holdTimes;
+
+	private List<InterKeyTime> interKeyTimes;
+	private List<KeyHoldingTime> holdTimes;
 	private String word = "";
 	private int twoConsecutiveKeysHold;
 	private int numberOfInterKeyTimesBetweenTwoDifferentKeys;
 	private WordType wordType;
-	
+
 	private boolean startedWithTab;
-	
-	public WordKeystrokeData(String firstLetter, boolean startedWithTab){
-		word+=firstLetter;
+
+	public WordKeystrokeData(String firstLetter, boolean startedWithTab) {
+		word += firstLetter;
 		twoConsecutiveKeysHold = 0;
-		interKeyTimes = new ArrayList <>();
-		holdTimes = new ArrayList <>();
+		interKeyTimes = new ArrayList<>();
+		holdTimes = new ArrayList<>();
 		this.startedWithTab = startedWithTab;
 	}
-	
-	public WordKeystrokeData(String firstLetter){
+
+	public WordKeystrokeData(String firstLetter) {
 		this(firstLetter, false);
 	}
 
-	public void addInterKeyTime(InterKeyTime inter){
-		if (!inter.isItTimeBetweenSameKey()){
+	public void addInterKeyTime(InterKeyTime inter) {
+		if (!inter.isItTimeBetweenSameKey()) {
 			interKeyTimes.add(inter);
 		}
 	}
-	
-	public void addKeyHoldTime(KeyHoldingTime holdTime){
+
+	public void addKeyHoldTime(KeyHoldingTime holdTime) {
 		holdTimes.add(holdTime);
 	}
-	
-	public void addLetter(String letter){
-		word+=letter;
+
+	public void addLetter(String letter) {
+		word += letter;
 	}
-	
-	public void increaseTwoConsecutiveKeysHold(){
+
+	public void increaseTwoConsecutiveKeysHold() {
 		twoConsecutiveKeysHold++;
 	}
-	
-	public void closeAndCalculate(){
-		System.out.println(interKeyTimes);
+
+	public void closeAndCalculate() {
+		System.out.println("current word: " + word);
 		recalculateNumberOfInterKeyTimes();
 		removeOutliers();
 	}
-	
-	private void recalculateNumberOfInterKeyTimes(){
+
+	private void recalculateNumberOfInterKeyTimes() {
 		numberOfInterKeyTimesBetweenTwoDifferentKeys = interKeyTimes.size();
-		for (InterKeyTime inter: interKeyTimes){
-			if (inter.isItTimeBetweenSameKey()){
+		for (InterKeyTime inter : interKeyTimes) {
+			if (inter.isItTimeBetweenSameKey()) {
 				numberOfInterKeyTimesBetweenTwoDifferentKeys--;
 			}
 		}
 	}
-	
-	private void removeOutliers(){
-		double [] arrayInterKeyTime = new double [interKeyTimes.size()];
-		int i = 0 ;
-		for (InterKeyTime interKeyTime: interKeyTimes){
+
+	private void removeOutliers() {
+		double[] arrayInterKeyTime = new double[interKeyTimes.size()];
+		int i = 0;
+		for (InterKeyTime interKeyTime : interKeyTimes) {
 			arrayInterKeyTime[i] = interKeyTime.getInterKeyTime();
 			i++;
 		}
-		
-		double [] arrayHoldTimes = new double [holdTimes.size()];
-		i=0;
-		for (KeyHoldingTime k: holdTimes){
+
+		double[] arrayHoldTimes = new double[holdTimes.size()];
+		i = 0;
+		for (KeyHoldingTime k : holdTimes) {
 			arrayHoldTimes[i] = k.getHoldTime();
 			i++;
 		}
-		
+
 		DescriptiveStatistics d = new DescriptiveStatistics(arrayInterKeyTime);
 		double medianInterKeyTime = d.getPercentile(50.0);
 		double standDeviationInterKeyTime = d.getStandardDeviation();
 		DescriptiveStatistics d2 = new DescriptiveStatistics(arrayHoldTimes);
-		double medianHoldTime =  d2.getPercentile(50.0);
+		double medianHoldTime = d2.getPercentile(50.0);
 		double standDeviationHoldTime = d2.getStandardDeviation();
-//		System.out.println("median: "+medianInterKeyTime);
-//		System.out.println("standard deviation: "+standDeviationInterKeyTime);
-		
-		for (InterKeyTime interTime: interKeyTimes){
-//			System.out.println("inter time: "+interTime.getInterKeyTime());
-			if ((interTime.getInterKeyTime()>medianInterKeyTime + 3*standDeviationInterKeyTime) ||
-					(interTime.getInterKeyTime()< medianInterKeyTime -
-							3*standDeviationInterKeyTime)) {
-				System.out.println("Outlier!: "+interTime.getDigraph());
+
+		for (InterKeyTime interTime : interKeyTimes) {
+			if ((interTime.getInterKeyTime() > medianInterKeyTime + 3 * standDeviationInterKeyTime)
+					|| (interTime.getInterKeyTime() < medianInterKeyTime
+							- 3 * standDeviationInterKeyTime)) {
 			}
 		}
-		
+
 	}
-	
-	public int getNumberOfInterKeyTimesBetweenTwoDifferentKeys(){
+
+	public int getNumberOfInterKeyTimesBetweenTwoDifferentKeys() {
 		return numberOfInterKeyTimesBetweenTwoDifferentKeys;
 	}
-	
+
 	public List<InterKeyTime> getInterKeyTimes() {
 		return interKeyTimes;
 	}
@@ -108,28 +104,33 @@ public class WordKeystrokeData {
 		return holdTimes;
 	}
 
-	public boolean isStartedWithTab(){
+	public boolean isStartedWithTab() {
 		return startedWithTab;
 	}
-	
-	public String getWord(){
+
+	public String getWord() {
 		return word;
 	}
-	
-	public WordType getType(){
+
+	public WordType getType() {
 		return wordType;
 	}
-	
-	public void setType(WordType type){
-		if (wordType != null){
+
+	public void setType(WordType type) {
+		if (wordType != null) {
 			return;
 		}
 		wordType = type;
 	}
-	
+
 	@Override
-	public String toString(){
-		return "Word: "+word+" type: "+wordType+" interKeyTimes: "+interKeyTimes+ " hold times: "+holdTimes;
+	public String toString() {
+		return "Word: " + word + " type: " + wordType + " interKeyTimes: " + interKeyTimes
+				+ " hold times: " + holdTimes;
 	}
-	
+
+	public boolean isEmpty() {
+		return word.isEmpty();
+	}
+
 }

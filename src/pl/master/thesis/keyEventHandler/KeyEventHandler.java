@@ -26,171 +26,195 @@ public class KeyEventHandler {
 	private double meanTypeSpeed;
 	private int breaks;
 	private int errors;
-	private Map <String, Long> currentlyPressedKeys;
-	private List <KeyHoldingTime> keyHoldingTime;
+	private Map<String, Long> currentlyPressedKeys;
+	private List<KeyHoldingTime> keyHoldingTime;
 	private String lastKeyPressed;
 	private final String TAB_KEY = "Tab";
 	private WordKeystrokeData currentlyTypedWordData;
 	private ClassificationManager classifier;
 	private boolean focusLost;
 	private FieldsInitializer textFieldsInformationHolder;
-	
-	public KeyEventHandler(){
-		
+
+	public KeyEventHandler() {
+
 		currentlyTypedWordData = new WordKeystrokeData("", false);
 		classifier = new ClassificationManager();
-		keyHoldingTime = new ArrayList <>();
-		currentlyPressedKeys=new HashMap <>();
+		keyHoldingTime = new ArrayList<>();
+		currentlyPressedKeys = new HashMap<>();
 		lastKeyPressed = "";
 		focusLost = true;
 	}
-	
-	public void setFieldsInitializer(FieldsInitializer fieldsInitializer){
+
+	public void setFieldsInitializer(FieldsInitializer fieldsInitializer) {
 		textFieldsInformationHolder = fieldsInitializer;
 	}
 
-	public void stopTimerAndCalculateSpeed(){
-		
+	public void stopTimerAndCalculateSpeed() {
+
 		long sum = 0;
-		for (KeyHoldingTime l: keyHoldingTime){ //TODO think about it, do we not duplicate times in worst case?
-			sum+=l.getHoldTime();
+		for (KeyHoldingTime l : keyHoldingTime) { // TODO think about it, do we
+													// not duplicate times in
+													// worst case?
+			sum += l.getHoldTime();
 		}
-		double mean =((double)keysTyped*60D/((double)sum/(1_000_000_000D)));
-		if (sum==0){
+		double mean = ((double) keysTyped * 60D / ((double) sum / (1_000_000_000D)));
+		if (sum == 0) {
 			return;
 		}
-		meanTypeSpeed*=breaks++;
-		meanTypeSpeed+=mean;
-		meanTypeSpeed/=breaks;
+		meanTypeSpeed *= breaks++;
+		meanTypeSpeed += mean;
+		meanTypeSpeed /= breaks;
 	}
-	
-	public void recordKeyPress(KeyEvent e){		
-		//TODO handle right alt properly: it sends alt + ctrl scancodes together
+
+	public void recordKeyPress(KeyEvent e) {
+		// TODO handle right alt properly: it sends alt + ctrl scancodes
+		// together
 		String currentKey = getKeyName(e.getKeyCode());
-		
-		long interKeyTime = calculateInterKeyTime();
-		if (currentlyPressedKeys.containsKey(currentKey)){
+		if (currentKey.equals(TAB_KEY)) {
+			if (e.getComponent() instanceof JTextField) {
+				JTextField f = (JTextField) e.getComponent();
+				WordType type = textFieldsInformationHolder.getTextFieldType(f);
+				savePreviousWordAndWatchNext("", true, type);
+			}
 			return;
 		}
-		
-    	addKeyToCurrentlyPressedList(currentKey);
-		if (!lastKeyPressed.isEmpty() && !lastKeyPressed.equals(TAB_KEY) && !currentKey.equals(TAB_KEY)){
-			InterKeyTime inter = new InterKeyTime (new Digraph(lastKeyPressed, currentKey ), interKeyTime);
+
+		if (currentlyPressedKeys.containsKey(currentKey)) {
+			return;
+		}
+		if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE || e.getKeyCode() == KeyEvent.VK_DELETE) {
+			recordMistypedKey();
+			return;
+		}
+
+		long interKeyTime = calculateInterKeyTime();
+		addKeyToCurrentlyPressedList(currentKey);
+		currentlyTypedWordData.addLetter(currentKey);
+		if (!lastKeyPressed.isEmpty()) {
+			InterKeyTime inter = new InterKeyTime(new Digraph(lastKeyPressed, currentKey),
+					interKeyTime);
 			saveInterKeyTime(inter);
-			currentlyTypedWordData.addLetter(currentKey);		
 		}
 		lastKeyPressed = currentKey;
-		if (e.getKeyCode()==KeyEvent.VK_TAB){
-			if (e.getComponent() instanceof JTextField){
-				JTextField f = (JTextField)e.getComponent();
-				WordType type = textFieldsInformationHolder.getTextFieldType(f);
-				savePreviousWordAndWatchNext(currentKey, true, type);
-			}
-			
-			
-		}
-		if (e.getKeyCode()==KeyEvent.VK_BACK_SPACE || e.getKeyCode() == KeyEvent.VK_DELETE){
-			recordMistypedKey();
-		}
-		
+
 	}
-	
-	private void saveInterKeyTime(InterKeyTime interKeyTime){
+
+	private void saveInterKeyTime(InterKeyTime interKeyTime) {
 		currentlyTypedWordData.addInterKeyTime(interKeyTime);
 	}
-	
-	private long calculateInterKeyTime(){
+
+	private long calculateInterKeyTime() {
 		long lastKeyEventTime = Math.max(lastKeyPressedTime, lastKeyReleasedTime);
-    	lastKeyPressedTime = System.nanoTime();
-    	return lastKeyPressedTime-lastKeyEventTime;
+		lastKeyPressedTime = System.nanoTime();
+		return lastKeyPressedTime - lastKeyEventTime;
 	}
-	
-	private void addKeyToCurrentlyPressedList(String currentKey){
+
+	private void addKeyToCurrentlyPressedList(String currentKey) {
 		currentlyPressedKeys.put(currentKey, lastKeyPressedTime);
-		if (currentlyPressedKeys.size()>1){
+		if (currentlyPressedKeys.size() > 1) {
 			currentlyTypedWordData.increaseTwoConsecutiveKeysHold();
 		}
 		keysTyped++;
 	}
-	
-	private String getKeyName (int keyCode){
+
+	private String getKeyName(int keyCode) {
 		return KeyEvent.getKeyText(keyCode);
 	}
-	
-	public void recordKeyRelease(KeyEvent e){
+
+	public void recordKeyRelease(KeyEvent e) {
 		lastKeyReleasedTime = System.nanoTime();
-		int keyCode = e.getKeyCode();		
+		int keyCode = e.getKeyCode();
 		String keyName = getKeyName(keyCode);
-		long pressTime = currentlyPressedKeys.get(keyName) != null ? currentlyPressedKeys.get(keyName) : 0;
-		if (pressTime == 0){
+		removeKeyFromCurrentlyPressed(keyName);
+	}
+
+	private void removeKeyFromCurrentlyPressed(String keyName) {
+		long pressTime = currentlyPressedKeys.get(keyName) != null
+				? currentlyPressedKeys.get(keyName) : 0;
+		if (pressTime == 0) {
 			return;
 		}
-		long holdingTime = lastKeyReleasedTime-pressTime;
+		long holdingTime = lastKeyReleasedTime - pressTime;
 		currentlyPressedKeys.remove(keyName);
-		Digraph d = new Digraph(lastKeyPressed, keyName);
-		if (!keyName.equals(TAB_KEY)){
-			saveHoldingTime(d, new KeyHoldingTime(keyName,holdingTime, pressTime));
+		if (!keyName.equals(TAB_KEY)) {
+			saveHoldingTime(new KeyHoldingTime(keyName, holdingTime, pressTime));
 		}
-		
 	}
-	
-	private void saveHoldingTime(Digraph d,KeyHoldingTime holdTime){		
+
+	private void saveHoldingTime(KeyHoldingTime holdTime) {
 		currentlyTypedWordData.addKeyHoldTime(holdTime);
 	}
-	
-	private void recordMistypedKey(){
+
+	private void recordMistypedKey() {
 		errors++;
 	}
-	
-	public double getMeanTypeSpeed(){
+
+	public double getMeanTypeSpeed() {
 		return meanTypeSpeed;
 	}
-	
-	public int getErrors(){
+
+	public int getErrors() {
 		return errors;
 	}
-	
-	public int getNumberOfTypedKeys(){
+
+	public int getNumberOfTypedKeys() {
 		return keysTyped;
 	}
-	
-	
-	
-	public void textFieldClicked(Component c){
-		if (focusLost){
-			if (c instanceof JTextField){
-				JTextField f = (JTextField)c;
+
+	public void textFieldClicked(Component c) {
+		if (focusLost && !currentlyTypedWordData.isEmpty()) {
+			if (c instanceof JTextField) {
+				JTextField f = (JTextField) c;
 				WordType type = textFieldsInformationHolder.getTextFieldType(f);
 				savePreviousWordAndWatchNext("", false, type);
 			}
 		}
-		
+
 	}
-	
-	private void savePreviousWordAndWatchNext(String currentKey, boolean startedWithTab, WordType type){
+
+	private void savePreviousWordAndWatchNext(String currentKey, boolean startedWithTab,
+			WordType type) {
 		focusLost = false;
 		classifier.addKeystrokeData(currentlyTypedWordData);
+		if (!currentlyPressedKeys.isEmpty()) {
+			String[] keysPressed = currentlyPressedKeys.keySet().toArray(new String[] {});
+			int i = 0;
+			while (!currentlyPressedKeys.isEmpty()) {
+				String key = keysPressed[i];
+				removeKeyFromCurrentlyPressed(key);
+				i++;
+			}
+		}
 		currentlyTypedWordData.closeAndCalculate();
 		currentlyTypedWordData.setType(type);
 		currentlyTypedWordData = new WordKeystrokeData(currentKey, startedWithTab);
+		// clear();
 	}
-	
-	public void show(){
-		//TODO remove it later
+
+	public void show() {
+		// TODO remove it later
 		classifier.compareData();
 	}
-	
-	public void done(){
+
+	public void done() {
 		savePreviousWordAndWatchNext("", false, WordType.OTHER);
 	}
-	
-	
-	public void focusLost (){
+
+	public void focusLost() {
 		focusLost = true;
 	}
-	
-	public ClassificationManager getClassifier (){
+
+	public ClassificationManager getClassifier() {
 		return classifier;
 	}
-	
+
+	public void clear() {
+		lastKeyPressed = "";
+		lastKeyPressedTime = 0;
+		lastKeyReleasedTime = 0;
+		keyHoldingTime.clear();
+		currentlyPressedKeys.clear();
+		currentlyTypedWordData = new WordKeystrokeData("");
+	}
+
 }

@@ -17,6 +17,7 @@ public class FormsLabels {
 	public static final String REPEAT_PASSWORD = "Potwierdź hasło";
 	public static final String RECOVERY_QUESTION = "Pytanie pomocnicze";
 	public static final String ANSWER = "Odpowiedź";
+	public static final String LOGIN = "Login";
 	
 	
 	public static Map <String, String> defaultValues;

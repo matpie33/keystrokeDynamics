@@ -16,17 +16,18 @@ import pl.master.thesis.strings.FormsLabels;
 
 public class FieldsInitializer {
 
-	private List <String> defaultValues;
-	private Map <JTextField,MyLabel> hmap;
-	private final String OR ="|";
-	
-	public FieldsInitializer(KeyEventHandler handler){
+	private List<String> defaultValues;
+	private Map<JTextField, MyLabel> hmap;
+	private final String OR = "|";
+	private Map<JTextField, MyLabel> welcomeHmap;
+
+	public FieldsInitializer(KeyEventHandler handler) {
 		createDefaultValues();
 		createMapWithTextFieldsAndLabels(handler);
 	}
-	
-	private List <String> createDefaultValues(){
-		defaultValues = new ArrayList <String> ();
+
+	private List<String> createDefaultValues() {
+		defaultValues = new ArrayList<String>();
 		defaultValues.add(FormsLabels.FIRST_NAME);
 		defaultValues.add(FormsLabels.LAST_NAME);
 		defaultValues.add(FormsLabels.DATE_OF_BIRTH);
@@ -40,61 +41,78 @@ public class FieldsInitializer {
 		defaultValues.add(FormsLabels.RECOVERY_QUESTION);
 		defaultValues.add(FormsLabels.ANSWER);
 		return defaultValues;
-	}	
-	
-	private void createMapWithTextFieldsAndLabels (KeyEventHandler handler){
-		
-		Map <JTextField,MyLabel> hmap = new LinkedHashMap <JTextField,MyLabel> (); 
-		int maxFieldCharacters=15;
+	}
+
+	private void createMapWithTextFieldsAndLabels(KeyEventHandler handler) {
+
+		hmap = new LinkedHashMap<JTextField, MyLabel>();
+		int maxFieldCharacters = 15;
 		int maxDateFieldCharacters = 4;
-		
-		for (int i=0; i<defaultValues.size();i++){		
+
+		for (int i = 0; i < defaultValues.size(); i++) {
 			String str = defaultValues.get(i);
 			JTextField textField;
-			MyLabel label = new MyLabel (str);
-			if (str.matches(FormsLabels.PASSWORD+"|"+FormsLabels.REPEAT_PASSWORD))
-				textField = new JPasswordField ("", maxFieldCharacters);			
-			else if (str.matches(FormsLabels.DAY+"|"+FormsLabels.MONTH+"|"+FormsLabels.YEAR))
-				textField = new JTextField ("", maxDateFieldCharacters);				
-			else textField = new JTextField ("", maxFieldCharacters);
+			MyLabel label = new MyLabel(str);
+			if (str.matches(FormsLabels.PASSWORD + "|" + FormsLabels.REPEAT_PASSWORD))
+				textField = new JPasswordField("", maxFieldCharacters);
+			else if (str
+					.matches(FormsLabels.DAY + "|" + FormsLabels.MONTH + "|" + FormsLabels.YEAR))
+				textField = new JTextField("", maxDateFieldCharacters);
+			else
+				textField = new JTextField("", maxFieldCharacters);
 			textField.addMouseListener(MouseListeners.notStartedWithTabKeyIfClicked(handler));
 			hmap.put(textField, label);
 		}
-		this.hmap = hmap;
+		welcomeHmap = new LinkedHashMap<JTextField, MyLabel>();
+		welcomeHmap.put(new JTextField(15), new MyLabel(FormsLabels.LOGIN));
+		welcomeHmap.put(new JPasswordField(15), new MyLabel(FormsLabels.PASSWORD));
 		initializeFieldsWithDefaultValues();
-		
+
 	}
-	
-	public void initializeFieldsWithDefaultValues(){
-			
-		int i=0;
-		for (JTextField field: hmap.keySet()){
+
+	public void initializeFieldsWithDefaultValues() {
+
+		int i = 0;
+		for (JTextField field : hmap.keySet()) {
 			String defaultValue = defaultValues.get(i);
 			field.setText(defaultValue);
 			i++;
 		}
-		
+
 	}
-	
-	public Map <JTextField, MyLabel> getFieldsToLabelMap(){
-		return hmap;		
+
+	public Map<JTextField, MyLabel> getFieldsToLabelMap() {
+		return hmap;
 	}
-	
-	public WordType getTextFieldType(JTextField fiel){
-		String labelsText = hmap.get(fiel).getText();
-		if (labelsText.matches(FormsLabels.PASSWORD+"|"+FormsLabels.REPEAT_PASSWORD)){
+
+	public Map<JTextField, MyLabel> getWelcomeFieldsToLabelMap() {
+		return welcomeHmap;
+	}
+
+	public WordType getTextFieldType(JTextField field) {
+		String labelsText = "";
+		if (hmap.containsKey(field)) {
+			labelsText = hmap.get(field).getText();
+		}
+		else if (welcomeHmap.containsKey(field)) {
+			labelsText = welcomeHmap.get(field).getText();
+		}
+
+		if (labelsText.matches(FormsLabels.PASSWORD + "|" + FormsLabels.REPEAT_PASSWORD)) {
 			return WordType.PASSWORD;
 		}
-		else if (labelsText.matches(FormsLabels.DAY+OR+FormsLabels.MONTH+OR+FormsLabels.YEAR)){
+		else if (labelsText
+				.matches(FormsLabels.DAY + OR + FormsLabels.MONTH + OR + FormsLabels.YEAR)) {
 			return WordType.DATE;
 		}
-		else if (labelsText.equals(FormsLabels.EMAIL_ADDRESS)){
+		else if (labelsText.equals(FormsLabels.EMAIL_ADDRESS)) {
 			return WordType.EMAIL;
 		}
-		else if (labelsText.equals(FormsLabels.USERNAME)){
+		else if (labelsText.equals(FormsLabels.USERNAME)) {
 			return WordType.USERNAME;
 		}
-		else return WordType.OTHER;
+		else
+			return WordType.OTHER;
 	}
-	
+
 }

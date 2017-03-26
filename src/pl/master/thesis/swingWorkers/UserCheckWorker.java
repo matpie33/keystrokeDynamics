@@ -33,9 +33,12 @@ public class UserCheckWorker extends ConnectionSwingWorker {
 		@Override
 		protected void doOtherThings (){
 			if (userExists){				
-				if (panel.isErrorShowing())	panel.removeError();	
-				
+				if (panel.isErrorShowing())	panel.removeError();
+				frame.getKeyEventHandler().getClassifier().classifyUser();
+				//TODO if success
 				frame.gotoPanel(MainWindow.CONGRATULATIONS_PANEL); 
+				
+				
 			}
 			else {
 				String error = Prompts.USER_OR_PASS_INCORRECT;

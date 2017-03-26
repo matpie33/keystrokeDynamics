@@ -98,7 +98,7 @@ public class MainWindow extends JFrame{
 	
 	private void createCardsAndPutThemInOrder(Map <JTextField, MyLabel> hmap){
 		
-		PanelWelcome welcomePanel=new PanelWelcome(this);
+		PanelWelcome welcomePanel=new PanelWelcome(this, fieldsInitializer.getWelcomeFieldsToLabelMap());
 		JTextArea textInfo = createTextAreaWithKeyPressedInfos();
 		JScrollPane scrollPane =new JScrollPane(textInfo);
 		PanelSummary summaryPanel = new PanelSummary(this);

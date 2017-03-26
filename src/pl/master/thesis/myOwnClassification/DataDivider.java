@@ -85,5 +85,11 @@ public class DataDivider {
 	public boolean noData(){
 		return wholeData.isEmpty();
 	}
+	
+	public void cleanData(){
+		wholeData.clear();
+		testData.clear();
+		trainingData.clear();
+	}
 
 }
