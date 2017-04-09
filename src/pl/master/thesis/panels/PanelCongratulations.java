@@ -15,32 +15,32 @@ import pl.master.thesis.others.ElementsMaker;
 import pl.master.thesis.strings.Prompts;
 import pl.master.thesis.strings.TypingStatisticsFormat;
 
-public class PanelCongratulations extends BasicPanel  {
+public class PanelCongratulations extends BasicPanel {
 	private JLabel speed;
 	private JLabel errors;
 	private KeyEventHandler time;
-	
+
 	public PanelCongratulations(MainWindow frame, KeyEventHandler time) {
 		super(frame);
-		this.time=time;
-		
-		JLabel congrats = new MyLabel(Prompts.ACCOUNT_CREATED_SUCCESSFULLY_PROMPT);	
+		this.time = time;
+
+		JLabel congrats = new MyLabel(Prompts.ACCOUNT_CREATED_SUCCESSFULLY_PROMPT);
 		speed = new MyLabel();
 		errors = new MyLabel();
-		JButton btnHome = ElementsMaker.createButton(Prompts.BTN_GO_HOME, 
+		JButton btnHome = ElementsMaker.createButton(Prompts.BTN_GO_HOME,
 				ActionListeners.createGoHomeListener(frame));
-						
+
 		panel.addRow(RowMaker.createUnfilledRow(GridBagConstraints.CENTER, congrats));
 		panel.addRow(RowMaker.createUnfilledRow(GridBagConstraints.CENTER, speed));
 		panel.addRow(RowMaker.createUnfilledRow(GridBagConstraints.CENTER, errors));
 		panel.addRow(RowMaker.createUnfilledRow(GridBagConstraints.CENTER, btnHome));
-		
+
 	}
-		
-	public void update(){
+
+	public void update() {
 		time.stopTimerAndCalculateSpeed();
 		speed.setText(String.format(TypingStatisticsFormat.TYPING_SPEED, time.getMeanTypeSpeed()));
-		errors.setText(String.format(TypingStatisticsFormat.NUMBER_OF_ERRORS, time.getErrors(), 
+		errors.setText(String.format(TypingStatisticsFormat.NUMBER_OF_ERRORS, time.getErrors(),
 				time.getNumberOfTypedKeys()));
 		time.show();
 	}

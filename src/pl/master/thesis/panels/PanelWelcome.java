@@ -88,7 +88,6 @@ public class PanelWelcome extends BasicPanel {
 		return new AbstractAction() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-
 				SwingWorker s = new UserCheckWorker(panel);
 				s.execute();
 				panel.showConnectingDialog();

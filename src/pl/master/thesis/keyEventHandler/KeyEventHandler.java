@@ -188,7 +188,7 @@ public class KeyEventHandler {
 		currentlyTypedWordData.closeAndCalculate();
 		currentlyTypedWordData.setType(type);
 		currentlyTypedWordData = new WordKeystrokeData(currentKey, startedWithTab);
-		// clear();
+		clear();
 	}
 
 	public void show() {
@@ -197,6 +197,7 @@ public class KeyEventHandler {
 	}
 
 	public void done() {
+		System.out.println("donee");
 		savePreviousWordAndWatchNext("", false, WordType.OTHER);
 	}
 

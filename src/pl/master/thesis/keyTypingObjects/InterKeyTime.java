@@ -8,49 +8,45 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class InterKeyTime {
-	
+
 	private Digraph digraph;
 	private long interKeyTime;
-	
-	public InterKeyTime (Digraph digraph, long interKeyTime){
+
+	public InterKeyTime(Digraph digraph, long interKeyTime) {
 		this.digraph = digraph;
 		this.interKeyTime = interKeyTime;
 	}
-	
-	public static Map <Digraph, Integer> getFrequencies(List <InterKeyTime> list){
-		Map <Digraph, Integer> frequenciesMap = new HashMap <> ();
-		for (InterKeyTime keyTime: list){
+
+	public static Map<Digraph, Integer> getFrequencies(List<InterKeyTime> list) {
+		Map<Digraph, Integer> frequenciesMap = new HashMap<>();
+		for (InterKeyTime keyTime : list) {
 			Digraph digraph = keyTime.getDigraph();
-			frequenciesMap.put(digraph, findFrequencyOfDigraph (list, digraph));
+			frequenciesMap.put(digraph, findFrequencyOfDigraph(list, digraph));
 		}
-		Map <Digraph, Integer> sorted = sortByValues(frequenciesMap);
+		Map<Digraph, Integer> sorted = sortByValues(frequenciesMap);
 
 		return frequenciesMap;
 	}
-	
-	private static int findFrequencyOfDigraph (List <InterKeyTime> list, Digraph d){
+
+	private static int findFrequencyOfDigraph(List<InterKeyTime> list, Digraph d) {
 		int result = 0;
-		for (InterKeyTime ikt: list){
-			if (ikt.getDigraph().equals(d)){
+		for (InterKeyTime ikt : list) {
+			if (ikt.getDigraph().equals(d)) {
 				result++;
 			}
 		}
 		return result;
 	}
-	
-	private static Map <Digraph, Integer> sortByValues(Map <Digraph,Integer> map){
-		return map.entrySet()
-				.stream()
+
+	private static Map<Digraph, Integer> sortByValues(Map<Digraph, Integer> map) {
+		return map.entrySet().stream()
 				.sorted(Map.Entry.comparingByValue(Collections.reverseOrder()))
-				.collect(Collectors.toMap(Map.Entry::getKey,
-						Map.Entry::getValue,
-						(e1,e2) -> e1,
-						LinkedHashMap::new
-						));
-		}
-	
-	public String toString(){
-		return digraph+" time: "+interKeyTime;
+				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1,
+						LinkedHashMap::new));
+	}
+
+	public String toString() {
+		return digraph + " time: " + interKeyTime;
 	}
 
 	public Digraph getDigraph() {
@@ -60,10 +56,9 @@ public class InterKeyTime {
 	public long getInterKeyTime() {
 		return interKeyTime;
 	}
-	
-	public boolean isItTimeBetweenSameKey(){
+
+	public boolean isItTimeBetweenSameKey() {
 		return digraph.isSameKey();
 	}
-
 
 }

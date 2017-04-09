@@ -7,27 +7,26 @@ import java.util.Random;
 import pl.master.thesis.keyTypingObjects.WordKeystrokeData;
 
 public class DataDivider {
-	
-	private List <WordKeystrokeData> testData;
-	private List <WordKeystrokeData> trainingData;
-	private List <WordKeystrokeData> wholeData;
-	
-	public DataDivider (){
-		testData = new ArrayList <>();
-		trainingData = new ArrayList <>();
-		wholeData = new ArrayList <>();
+
+	private List<WordKeystrokeData> testData;
+	private List<WordKeystrokeData> trainingData;
+	private List<WordKeystrokeData> wholeData;
+
+	public DataDivider() {
+		testData = new ArrayList<>();
+		trainingData = new ArrayList<>();
+		wholeData = new ArrayList<>();
 	}
-	
-	
-	public void addWordKeystrokeData(WordKeystrokeData newData){
+
+	public void addWordKeystrokeData(WordKeystrokeData newData) {
 		wholeData.add(newData);
 	}
-	
-	public void divideDataToTestAndTrainingSet(){
+
+	public void divideDataToTestAndTrainingSet() {
 		int datesCounter = 0;
 		int passCounter = 0;
-		for (WordKeystrokeData data: wholeData){
-			switch (data.getType()){
+		for (WordKeystrokeData data : wholeData) {
+			switch (data.getType()) {
 			case PASSWORD:
 				addDataBasedOnCounter(data, passCounter);
 				passCounter++;
@@ -48,45 +47,45 @@ public class DataDivider {
 			}
 		}
 	}
-	
-	private void addDataBasedOnCounter(WordKeystrokeData data, int counter){
-		if (counter==0){
+
+	private void addDataBasedOnCounter(WordKeystrokeData data, int counter) {
+		if (counter == 0) {
 			testData.add(data);
 		}
-		else{
+		else {
 			trainingData.add(data);
 		}
 	}
-	
-	private void randomlyAssignData(WordKeystrokeData data){
+
+	private void randomlyAssignData(WordKeystrokeData data) {
 		Random r = new Random();
 		int max = 11;
 		int rand = r.nextInt(max);
-		if (rand < (max-1) / 2){
+		if (rand < (max - 1) / 2) {
 			testData.add(data);
 		}
-		else{
+		else {
 			trainingData.add(data);
 		}
 	}
-	
-	public List <WordKeystrokeData> getTestData(){
+
+	public List<WordKeystrokeData> getTestData() {
 		return testData;
 	}
-	
-	public List <WordKeystrokeData> getTrainingData(){
+
+	public List<WordKeystrokeData> getTrainingData() {
 		return trainingData;
 	}
-	
-	public List <WordKeystrokeData> getWholeData(){
+
+	public List<WordKeystrokeData> getWholeData() {
 		return wholeData;
 	}
-	
-	public boolean noData(){
+
+	public boolean noData() {
 		return wholeData.isEmpty();
 	}
-	
-	public void cleanData(){
+
+	public void cleanData() {
 		wholeData.clear();
 		testData.clear();
 		trainingData.clear();

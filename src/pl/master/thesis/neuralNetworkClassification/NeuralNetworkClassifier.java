@@ -52,7 +52,7 @@ public class NeuralNetworkClassifier {
 							new double[] { inputData.getUserId() }));
 			System.out.println("user id: " + inputData.getUserId());
 		}
-		// scheduleMaxTimeForLearning();
+		scheduleMaxTimeForLearning();
 		System.out.println("do actually learn");
 		neuralNetwork.learn(trainingSet);
 		stopTimer();
@@ -80,7 +80,8 @@ public class NeuralNetworkClassifier {
 
 		neuralNetwork.setInput(data.getMeanHoldTime(), data.getMeanInterTime(), data.getIsTabbed());
 		neuralNetwork.calculate();
-		double output[] = neuralNetwork.getOutput();
+		double[] output = neuralNetwork.getOutput();
+		System.out.println("output: " + output[0]);
 	}
 
 }

@@ -7,17 +7,17 @@ import java.awt.event.MouseListener;
 import pl.master.thesis.keyEventHandler.KeyEventHandler;
 
 public class MouseListeners {
-	
-	public static MouseListener notStartedWithTabKeyIfClicked (final KeyEventHandler handler){
-		return new MouseAdapter (){
+
+	public static MouseListener notStartedWithTabKeyIfClicked(final KeyEventHandler handler) {
+		return new MouseAdapter() {
 			@Override
-			public void mouseClicked (MouseEvent e){
-				if (e.getComponent()==null){
+			public void mouseClicked(MouseEvent e) {
+				if (e.getComponent() == null) {
 					return;
 				}
 				handler.textFieldClicked(e.getComponent());
 			}
-		};	
+		};
 	}
 
 }

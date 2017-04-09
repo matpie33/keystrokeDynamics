@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class FormsLabels {
-	
+
 	public static final String DAY = "Dzień";
 	public static final String MONTH = "Miesiąc";
 	public static final String YEAR = "Rok";
@@ -18,14 +18,13 @@ public class FormsLabels {
 	public static final String RECOVERY_QUESTION = "Pytanie pomocnicze";
 	public static final String ANSWER = "Odpowiedź";
 	public static final String LOGIN = "Login";
-	
-	
-	public static Map <String, String> defaultValues;
-	
-	public static Map <String, String> getDefaultValues(){
-		
-		if (defaultValues==null){
-			defaultValues = new HashMap <String, String> ();
+
+	public static Map<String, String> defaultValues;
+
+	public static Map<String, String> getDefaultValues() {
+
+		if (defaultValues == null) {
+			defaultValues = new HashMap<String, String>();
 			defaultValues.put(FIRST_NAME, "Jacek");
 			defaultValues.put(EMAIL_ADDRESS, "Spaaw@poczta.fm");
 			defaultValues.put(USERNAME, "Kamilo123");
@@ -36,9 +35,9 @@ public class FormsLabels {
 			defaultValues.put(PASSWORD, "degdras11");
 			defaultValues.put(REPEAT_PASSWORD, "degdras11");
 			defaultValues.put(RECOVERY_QUESTION, "Ile masz zwierząt w domu");
-			defaultValues.put(ANSWER, "3");			
+			defaultValues.put(ANSWER, "3");
 		}
-		
+
 		return defaultValues;
 	}
 

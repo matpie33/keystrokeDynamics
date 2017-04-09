@@ -81,6 +81,12 @@ public class FieldsInitializer {
 
 	}
 
+	public void initializeWelcomePanelFields() {
+		for (JTextField field : welcomeHmap.keySet()) {
+			field.setText("");
+		}
+	}
+
 	public Map<JTextField, MyLabel> getFieldsToLabelMap() {
 		return hmap;
 	}

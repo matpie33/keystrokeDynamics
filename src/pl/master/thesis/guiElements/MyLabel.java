@@ -6,22 +6,22 @@ import java.awt.Font;
 import javax.swing.JLabel;
 
 public class MyLabel extends JLabel {
-	
+
 	private Font myFont;
 	private Color myColor;
-	
-	public MyLabel (){
+
+	public MyLabel() {
 		super();
-		myFont = new Font("Segoe ui light",Font.BOLD, 15);
+		myFont = new Font("Segoe ui light", Font.BOLD, 15);
 		myColor = Color.WHITE;
-		setFont (myFont);
-		setForeground (myColor);
-		
+		setFont(myFont);
+		setForeground(myColor);
+
 	}
-	
-	public MyLabel (String text){
+
+	public MyLabel(String text) {
 		this();
 		setText(text);
 	}
-	
+
 }

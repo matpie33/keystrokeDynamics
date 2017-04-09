@@ -8,60 +8,59 @@ import javax.swing.SwingWorker;
 
 import pl.master.thesis.database.Database;
 
-public abstract class ConnectionSwingWorker extends SwingWorker<Void,Void> {
-	
+public abstract class ConnectionSwingWorker extends SwingWorker<Void, Void> {
+
 	private final String propertiesFile = "properties/db properties.xml";
 	protected ProgressMonitor p;
-			
-		@Override
-        public Void doInBackground() throws SQLException {
+
+	@Override
+	public Void doInBackground() throws SQLException {
 		Connection connection = null;
-    		try {
-    			connection = createConnection();     			
-    			doSqlStatements(connection);
-    			doOtherThings();    			
-    		} 
-//    		
-    		catch (SQLException e2) {
-    			e2.printStackTrace();
-    			
-    		}
-    		
-//    		finally {
-//    			tryToCloseConnection(connection);
-//    		}
-            
-            return null;
-        }
-		
-		private void tryToCloseConnection(Connection connection){
-//			try { 
-//				if (connection!=null){
-//    				connection.close();
-//    				connection=null;
-//				}
-//			}
-//			catch (SQLException ex){
-//				ex.printStackTrace();
-//			}
+		try {
+			connection = createConnection();
+			doSqlStatements(connection);
+			doOtherThings();
+		}
+		//
+		catch (SQLException e2) {
+			e2.printStackTrace();
+
 		}
 
-        protected void doOtherThings() {};
+		// finally {
+		// tryToCloseConnection(connection);
+		// }
 
-		protected abstract void doSqlStatements(Connection connection) throws SQLException;
+		return null;
+	}
 
-		@Override
-        public void done() {
-//        	p.setProgress(0); 
-        }        
-        
-        protected Connection createConnection() throws SQLException{
-        	Database d = new Database(propertiesFile);    		
-    		Connection connection = d.createConnection();     		
-    		
-    		return connection;
-        }
-        
+	private void tryToCloseConnection(Connection connection) {
+		// try {
+		// if (connection!=null){
+		// connection.close();
+		// connection=null;
+		// }
+		// }
+		// catch (SQLException ex){
+		// ex.printStackTrace();
+		// }
+	}
+
+	protected void doOtherThings() {
+	};
+
+	protected abstract void doSqlStatements(Connection connection) throws SQLException;
+
+	@Override
+	public void done() {
+		// p.setProgress(0);
+	}
+
+	protected Connection createConnection() throws SQLException {
+		Database d = new Database(propertiesFile);
+		Connection connection = d.createConnection();
+
+		return connection;
+	}
+
 }
-	
-

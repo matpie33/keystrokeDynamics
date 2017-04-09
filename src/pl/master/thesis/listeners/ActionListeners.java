@@ -18,91 +18,88 @@ import pl.master.thesis.strings.FormsLabels;
 import pl.master.thesis.swingWorkers.AddUserWorker;
 
 public class ActionListeners {
-	
-	public static ActionListener createDisposeListener(final Window window){
-		return new ActionListener (){
+
+	public static ActionListener createDisposeListener(final Window window) {
+		return new ActionListener() {
 			@Override
-			public void actionPerformed (ActionEvent e){
+			public void actionPerformed(ActionEvent e) {
 				window.dispose();
 			}
 		};
 	}
-	
-	public static ActionListener createGoHomeListener(final MainWindow frame){
-		return new ActionListener (){
+
+	public static ActionListener createGoHomeListener(final MainWindow frame) {
+		return new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent e){
-				frame.gotoPanel(MainWindow.WELCOME_PANEL);	
+			public void actionPerformed(ActionEvent e) {
+				frame.gotoPanel(MainWindow.WELCOME_PANEL);
 			}
 		};
 	}
-	
-	public static ActionListener createNextPanelListener(final MainWindow frame){
-		return new ActionListener (){
+
+	public static ActionListener createNextPanelListener(final MainWindow frame) {
+		return new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent e){
-				frame.nextPanel();	
+			public void actionPerformed(ActionEvent e) {
+				frame.nextPanel();
 			}
 		};
 	}
-	
-	public static ActionListener createPreviousPanelListener(final MainWindow frame){
-		return new ActionListener (){
+
+	public static ActionListener createPreviousPanelListener(final MainWindow frame) {
+		return new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent e){
+			public void actionPerformed(ActionEvent e) {
 				frame.previousPanel();
 			}
 		};
 	}
-	
-	public static ActionListener createListenerConnect(final PanelSummary panel, 
-			Map <JTextField, MyLabel> map){
-		return new ActionListener (){
+
+	public static ActionListener createListenerConnect(final PanelSummary panel,
+			Map<JTextField, MyLabel> map) {
+		return new ActionListener() {
 			@Override
-			public void actionPerformed (ActionEvent e){
-				SwingWorker s = new AddUserWorker(panel,  map);
+			public void actionPerformed(ActionEvent e) {
+				SwingWorker s = new AddUserWorker(panel, map);
 				s.execute();
 				panel.showConnectingDialog();
 			}
 		};
 	}
-	
-	public static ActionListener createListenerGoToNextPanel(final PanelData dataPanel, 
-			final PanelSummary summaryPanel, final KeyEventHandler handler){
-		
-		return new ActionListener(){
+
+	public static ActionListener createListenerGoToNextPanel(final PanelData dataPanel,
+			final PanelSummary summaryPanel, final KeyEventHandler handler) {
+
+		return new ActionListener() {
 			@Override
-			public void actionPerformed (ActionEvent event){
-				
-				summaryPanel.showFieldsValues(dataPanel.getMap());			
-				String errorText=FieldsVerifier.verifyFields(dataPanel.getMap());
-				if (!errorText.isEmpty()){
+			public void actionPerformed(ActionEvent event) {
+				summaryPanel.showFieldsValues(dataPanel.getMap());
+				String errorText = FieldsVerifier.verifyFields(dataPanel.getMap());
+				if (!errorText.isEmpty()) {
 					dataPanel.showLongMessageDialog(errorText);
-				}	
+				}
 				else {
 					handler.done();
 					dataPanel.getParentFrame().nextPanel();
-					
+
 				}
-				
-								
-			}		
-			
+
+			}
+
 		};
 	}
-	
-	public static ActionListener createExampleInputListener (final Map <JTextField, MyLabel> hmap){
-		return new ActionListener (){
+
+	public static ActionListener createExampleInputListener(final Map<JTextField, MyLabel> hmap) {
+		return new ActionListener() {
 			@Override
-			public void actionPerformed (ActionEvent e){
-				Map <String, String> defaultValues = FormsLabels.getDefaultValues();
-					
-				for (Map.Entry<JTextField, MyLabel> entries: hmap.entrySet()){
+			public void actionPerformed(ActionEvent e) {
+				Map<String, String> defaultValues = FormsLabels.getDefaultValues();
+
+				for (Map.Entry<JTextField, MyLabel> entries : hmap.entrySet()) {
 					String label = entries.getValue().getText();
-					entries.getKey().setText(defaultValues.get(label));	
+					entries.getKey().setText(defaultValues.get(label));
 				}
-					
-				
+
 			}
 		};
 	}

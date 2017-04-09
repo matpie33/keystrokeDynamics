@@ -77,6 +77,7 @@ public class ClassificationManager {
 	public void classifyUser() {
 		List<NeuralNetworkInput> neuralInputs = statisticsCalculator
 				.transferToNeuralInput(dataDivider.getWholeData());
+		System.out.println("neural inputs: " + neuralInputs);
 		for (NeuralNetworkInput neuralInput : neuralInputs) {
 			classifier.classify(neuralInput);
 		}
