@@ -1,4 +1,4 @@
-package pl.master.thesis.others;
+package pl.master.thesis.savers;
 
 import java.io.File;
 import java.io.FileOutputStream;

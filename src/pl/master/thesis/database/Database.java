@@ -20,6 +20,7 @@ public class Database {
 	private int portNumber;
 	private Properties prop;
 	private String driverName;
+	private Properties properties;
 
 	public Database(String file) {
 		prop = new Properties();
@@ -45,7 +46,7 @@ public class Database {
 
 	public Connection createConnection() throws SQLException {
 		Connection connection = null;
-		Properties properties = new Properties();
+		properties = new Properties();
 		properties.put("user", userName);
 		properties.put("password", password);
 
@@ -65,6 +66,11 @@ public class Database {
 
 		}
 		return connection;
+	}
+
+	public void closeConnection() throws SQLException {
+		DriverManager.getConnection(this.urlString + ";shutdown=true", properties);
 
 	}
+
 }

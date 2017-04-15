@@ -29,6 +29,10 @@ public class StatisticsCalculator {
 			int holdTimeAmount = word.getHoldTimes().size();
 			meanInterKeyTime = meanInterKeyTime / (double) interKeyTimeAmount;
 			meanHoldTime = meanHoldTime / (double) holdTimeAmount;
+			meanInterKeyTime /= 1_000_000_000;
+			meanHoldTime /= 1_000_000_000;
+			System.out.println(meanHoldTime);
+			System.out.println(meanInterKeyTime);
 			NeuralNetworkInput neuralInput = new NeuralNetworkInput(meanInterKeyTime, meanHoldTime,
 					isTabbed);
 			neuralInputs.add(neuralInput);

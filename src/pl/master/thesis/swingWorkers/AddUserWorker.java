@@ -13,6 +13,7 @@ import pl.master.thesis.frame.MainWindow;
 import pl.master.thesis.guiElements.MyLabel;
 import pl.master.thesis.keyTypingObjects.WordKeystrokeData;
 import pl.master.thesis.myOwnClassification.ClassificationManager;
+import pl.master.thesis.neuralNetworkClassification.NeuralNetworkInput;
 import pl.master.thesis.others.FieldsVerifier;
 import pl.master.thesis.panels.BasicPanel;
 import pl.master.thesis.panels.PanelSummary;
@@ -29,6 +30,7 @@ public class AddUserWorker extends ConnectionSwingWorker {
 		this.panel = panel;
 		this.hmap = hmap;
 		frame = ((BasicPanel) panel).getParentFrame();
+		frame.addCloseListener(database);
 	}
 
 	@Override
@@ -52,7 +54,8 @@ public class AddUserWorker extends ConnectionSwingWorker {
 						word.isStartedWithTab());
 			}
 			connection.commit();
-			manager.learnData(userId);
+			List<NeuralNetworkInput> neuralInputs = manager.learnData(userId);
+			manager.saveData(neuralInputs);
 			connection.close();
 			frame.nextPanel();
 			frame.clearData();

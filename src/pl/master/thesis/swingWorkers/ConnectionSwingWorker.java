@@ -12,6 +12,10 @@ public abstract class ConnectionSwingWorker extends SwingWorker<Void, Void> {
 
 	private final String propertiesFile = "properties/db properties.xml";
 	protected ProgressMonitor p;
+	protected Database database;
+	{
+		database = new Database(propertiesFile);
+	}
 
 	@Override
 	public Void doInBackground() throws SQLException {
@@ -57,8 +61,8 @@ public abstract class ConnectionSwingWorker extends SwingWorker<Void, Void> {
 	}
 
 	protected Connection createConnection() throws SQLException {
-		Database d = new Database(propertiesFile);
-		Connection connection = d.createConnection();
+
+		Connection connection = database.createConnection();
 
 		return connection;
 	}

@@ -6,6 +6,9 @@ import java.awt.Dimension;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.sql.SQLException;
 import java.util.Map;
 
 import javax.swing.BorderFactory;
@@ -19,6 +22,7 @@ import javax.swing.border.Border;
 import com.guimaker.panels.MainPanel;
 import com.guimaker.row.RowMaker;
 
+import pl.master.thesis.database.Database;
 import pl.master.thesis.guiElements.MyLabel;
 import pl.master.thesis.keyEventHandler.KeyEventHandler;
 import pl.master.thesis.others.ElementsMaker;
@@ -119,6 +123,20 @@ public class MainWindow extends JFrame {
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setTitle(Prompts.TITLE_APPLICATION);
+	}
+
+	public void addCloseListener(Database d) {
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosed(WindowEvent e) {
+				try {
+					d.closeConnection();
+				}
+				catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
 	}
 
 	public void nextPanel() {

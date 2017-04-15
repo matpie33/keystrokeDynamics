@@ -7,7 +7,8 @@ import pl.master.thesis.keyTypingObjects.PreprocessedKeystrokeData;
 import pl.master.thesis.keyTypingObjects.WordKeystrokeData;
 import pl.master.thesis.neuralNetworkClassification.NeuralNetworkClassifier;
 import pl.master.thesis.neuralNetworkClassification.NeuralNetworkInput;
-import pl.master.thesis.others.DataSaver;
+import pl.master.thesis.savers.DataSaver;
+import pl.master.thesis.savers.PlainTextSaver;
 
 public class ClassificationManager {
 
@@ -17,8 +18,10 @@ public class ClassificationManager {
 	private DataSaver dataSaver;
 	private NeuralNetworkClassifier classifier;
 	private WordDataToSimpleObjectConverter converter;
+	private PlainTextSaver plainTextSaver;
 
 	public ClassificationManager() {
+		plainTextSaver = new PlainTextSaver();
 		percentOfConsecutiveKeysHold = 0;
 		dataDivider = new DataDivider();
 		statisticsCalculator = new StatisticsCalculator();
@@ -58,7 +61,7 @@ public class ClassificationManager {
 		return dataArray;
 	}
 
-	public void learnData(int userId) {
+	public List<NeuralNetworkInput> learnData(int userId) {
 		System.out.println("learning");
 		List<NeuralNetworkInput> inputs = statisticsCalculator
 				.transferToNeuralInput(dataDivider.getWholeData());
@@ -66,6 +69,7 @@ public class ClassificationManager {
 		classifyInputsAsUser(inputs, userId);
 		classifier.learn(inputs);
 		System.out.println("done learning");
+		return inputs;
 	}
 
 	private void classifyInputsAsUser(List<NeuralNetworkInput> inputs, int userId) {
@@ -74,7 +78,7 @@ public class ClassificationManager {
 		}
 	}
 
-	public void classifyUser() {
+	public List<NeuralNetworkInput> classifyUser() {
 		List<NeuralNetworkInput> neuralInputs = statisticsCalculator
 				.transferToNeuralInput(dataDivider.getWholeData());
 		System.out.println("neural inputs: " + neuralInputs);
@@ -82,6 +86,7 @@ public class ClassificationManager {
 			classifier.classify(neuralInput);
 		}
 		dataDivider.cleanData();
+		return neuralInputs;
 	}
 
 	public void cleanData() {
@@ -94,6 +99,10 @@ public class ClassificationManager {
 
 	public List<PreprocessedKeystrokeData> convertDataForDbNeeds(WordKeystrokeData wordsData) {
 		return converter.convertSingleWordToSimplestData(wordsData);
+	}
+
+	public void saveData(List<NeuralNetworkInput> data) {
+		plainTextSaver.save(data);
 	}
 
 }
