@@ -4,7 +4,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.SwingUtilities;
 import javax.xml.parsers.ParserConfigurationException;
@@ -31,79 +33,54 @@ public class KeystrokeDynamics {
 		List<Double> meanHoldTimeValuesInRow = new ArrayList<>();
 		List<NeuralNetworkInput> testInputs = new ArrayList<>();
 		List<NeuralNetworkInput> trainingInputs = new ArrayList<>();
+
+		Map<List<String>, Integer> listListStrings = new HashMap<>();
 		int i = 0;
 		int currentId = 0;
 		int sameIdCounter = 0;
 
 		for (CSVRecord record : records) {
+			List<String> row = new ArrayList<>();
 			if (i == 0) {
 				i++;
 				continue;
 			}
-			int columnUDIndex = 5;
-			int columnHIndex = 3;
-			while (columnUDIndex < record.size()) {
-				String cellValue = record.get(columnUDIndex);
-				double cellDouble = Double.parseDouble(cellValue);
-				if (cellDouble > 0) {
-					interKeyTimeValuesInRow.add(cellDouble);
-				}
-				else {
-					double cellDDValue = Double.parseDouble(record.get(columnUDIndex - 1));
-					interKeyTimeValuesInRow.add(cellDDValue);
-				}
-				columnUDIndex += 3;
 
-				double holdTime = Double.parseDouble(record.get(columnHIndex));
-				meanHoldTimeValuesInRow.add(holdTime);
-				columnHIndex += 3;
-			}
-			double holdTime = Double.parseDouble(record.get(columnHIndex));
-			meanHoldTimeValuesInRow.add(holdTime);
-			double meanHoldTime = 0;
-			for (double hold : meanHoldTimeValuesInRow) {
-				meanHoldTime += hold;
-			}
-			meanHoldTime /= meanHoldTimeValuesInRow.size();
+			int index = 3;
+			while (index < record.size()) {
+				row.add(record.get(index));
+				index++;
 
-			double meanInterTime = 0;
-			for (double inter : interKeyTimeValuesInRow) {
-				meanInterTime += inter;
 			}
-			meanInterTime /= interKeyTimeValuesInRow.size();
-			String subjectId = record.get(0);
-			int id = Integer.parseInt(subjectId.substring(2));
-			if (id == currentId) {
+			List<String> strings = new ArrayList<String>();
+
+			for (int j = 0; j < row.size(); j++) {
+				strings.add(row.get(j));
+			}
+
+			// System.out.println(row);
+			// strings.addAll(row);
+			String subjectIdd = record.get(0);
+			int idd = Integer.parseInt(subjectIdd.substring(2));
+			if (idd == currentId) {
 				sameIdCounter++;
 			}
 			else {
 				sameIdCounter = 0;
 			}
-			// if (sameIdCounter > 20) {
-			// continue;
-			// }
-			currentId = id;
-			System.out.println("id: " + id);
-			System.out.println("subjectId: " + subjectId + " hold times: ");
-
-			System.out.println(meanHoldTimeValuesInRow);
-			NeuralNetworkInput input = new NeuralNetworkInput(meanInterTime, meanHoldTime, false);
-			input.setUserId(id);
-			if (sameIdCounter < 5) {
-				testInputs.add(input);
+			if (sameIdCounter > 10) {
+				continue;
 			}
-			else {
-				trainingInputs.add(input);
-			}
+			row.clear();
+			currentId = idd;
+			listListStrings.put(strings, idd);
 
-			interKeyTimeValuesInRow.clear();
-			meanHoldTimeValuesInRow.clear();
 		}
 
 		PlainTextSaver saver = new PlainTextSaver("testData.txt");
-		saver.save(testInputs);
+		saver.save(listListStrings);
 		PlainTextSaver saver2 = new PlainTextSaver("trainingData.txt");
-		saver2.save(trainingInputs);
+		saver2.save(listListStrings);
 		// RealMatrix mx = MatrixUtils.createRealMatrix(new double [][]{
 		// {1,2,3,4,5},
 		// {2,3,4,5,6},

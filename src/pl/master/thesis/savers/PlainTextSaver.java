@@ -4,8 +4,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
-
-import pl.master.thesis.neuralNetworkClassification.NeuralNetworkInput;
+import java.util.Map;
 
 public class PlainTextSaver {
 
@@ -19,13 +18,15 @@ public class PlainTextSaver {
 		this.fileName = filename;
 	}
 
-	public void save(List<NeuralNetworkInput> data) {
+	public void save(Map<List<String>, Integer> data) {
 		try {
 			FileWriter fw = new FileWriter(fileName, true);
-			for (NeuralNetworkInput singleData : data) {
-				fw.write(String.format(Locale.US, " %f, %f, ", singleData.getMeanHoldTime(),
-						singleData.getMeanInterTime()));
-				fw.write(translateIdToBinaryRepresentation(singleData.getUserId(), 56));
+			for (List<String> row : data.keySet()) {
+				for (String element : row) {
+					fw.write(String.format(Locale.US, "%s, ", element));
+
+				}
+				fw.write(translateIdToBinaryRepresentation(data.get(row), 56));
 				fw.write(System.getProperty("line.separator"));
 			}
 			fw.close();
@@ -53,7 +54,8 @@ public class PlainTextSaver {
 		else {
 			binaryRepresentation += "0";
 		}
-		System.out.println("binary representation for: " + id + ": " + binaryRepresentation);
+		// System.out.println("binary representation for: " + id + ": " +
+		// binaryRepresentation);
 		return binaryRepresentation;
 	}
 

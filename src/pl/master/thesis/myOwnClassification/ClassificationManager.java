@@ -102,7 +102,7 @@ public class ClassificationManager {
 	}
 
 	public void saveData(List<NeuralNetworkInput> data) {
-		plainTextSaver.save(data);
+		// plainTextSaver.save(data);
 	}
 
 }
