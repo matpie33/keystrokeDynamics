@@ -6,3 +6,4 @@ derby.log
 bin
 usersData
 neurons.txt
+*.txt
