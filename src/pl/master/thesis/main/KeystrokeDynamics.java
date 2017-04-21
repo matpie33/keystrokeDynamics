@@ -23,7 +23,8 @@ import pl.master.thesis.savers.PlainTextSaver;
 public class KeystrokeDynamics {
 
 	public static void main(String arg[])
-			throws ParserConfigurationException, SAXException, IOException {
+			throws ParserConfigurationException, SAXException, IOException, InterruptedException {
+		DeepLearning4jUsing.use();
 		DataSaver d = new DataSaver();
 		d.readFromXml("usersData/abacad.xml");
 

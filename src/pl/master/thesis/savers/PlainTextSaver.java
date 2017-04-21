@@ -26,7 +26,8 @@ public class PlainTextSaver {
 					fw.write(String.format(Locale.US, "%s, ", element));
 
 				}
-				fw.write(translateIdToBinaryRepresentation(data.get(row), 56));
+				fw.write("" + (int) data.get(row));
+				// 56));
 				fw.write(System.getProperty("line.separator"));
 			}
 			fw.close();
