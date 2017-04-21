@@ -17,19 +17,6 @@ public class KeystrokeDynamics {
 
 		DeepLearning4jUsing.use();
 		CSVProcessing.extractStatisticsFromCSVAndSave();
-
-		// RealMatrix mx = MatrixUtils.createRealMatrix(new double [][]{
-		// {1,2,3,4,5},
-		// {2,3,4,5,6},
-		// {3,4,5,6,7}
-		// });
-		// RealMatrix cov = inverseSquareRootOfCovarianceMatrix(mx);
-		//// testSquareMatrix(cov);
-		// testInverseMatrix( MatrixUtils.createRealMatrix(new double [][]{
-		// {1,4,5},
-		// {2,12,4},
-		// {3,22,5}
-		// }));
 		SwingUtilities.invokeLater(new Runnable() {
 
 			@Override
