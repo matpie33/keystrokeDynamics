@@ -41,12 +41,12 @@ public class DeepLearning4jUsing {
 
 		// Second: the RecordReaderDataSetIterator handles conversion to DataSet
 		// objects, ready for use in neural network
-		int labelIndex = 31; // 5 values in each row of the iris.txt CSV: 4
-								// input
-								// features followed by an integer label (class)
-								// index. Labels are the 5th value (index 4) in
-								// each
-								// row
+		int labelIndex = 2; // 5 values in each row of the iris.txt CSV: 4
+							// input
+							// features followed by an integer label (class)
+							// index. Labels are the 5th value (index 4) in
+							// each
+							// row
 		int numClasses = 58; // 3 classes (types of iris flowers) in the iris
 								// data set. Classes have integer values 0, 1 or
 								// 2
@@ -80,7 +80,7 @@ public class DeepLearning4jUsing {
 										// This is using statistics calculated
 										// from the *training* set
 
-		final int numInputs = 31;
+		final int numInputs = 2;
 		int outputNum = 58;
 		int iterations = 6000;
 		long seed = 6;

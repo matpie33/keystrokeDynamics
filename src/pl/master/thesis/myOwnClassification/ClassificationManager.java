@@ -2,13 +2,13 @@ package pl.master.thesis.myOwnClassification;
 
 import java.util.List;
 
+import pl.master.thesis.csvManipulation.DataSaver;
+import pl.master.thesis.csvManipulation.CSVSaver;
 import pl.master.thesis.dataConverters.WordDataToSimpleObjectConverter;
 import pl.master.thesis.keyTypingObjects.PreprocessedKeystrokeData;
 import pl.master.thesis.keyTypingObjects.WordKeystrokeData;
 import pl.master.thesis.neuralNetworkClassification.NeuralNetworkClassifier;
 import pl.master.thesis.neuralNetworkClassification.NeuralNetworkInput;
-import pl.master.thesis.savers.DataSaver;
-import pl.master.thesis.savers.PlainTextSaver;
 
 public class ClassificationManager {
 
@@ -18,10 +18,10 @@ public class ClassificationManager {
 	private DataSaver dataSaver;
 	private NeuralNetworkClassifier classifier;
 	private WordDataToSimpleObjectConverter converter;
-	private PlainTextSaver plainTextSaver;
+	private CSVSaver plainTextSaver;
 
 	public ClassificationManager() {
-		plainTextSaver = new PlainTextSaver();
+		plainTextSaver = new CSVSaver();
 		percentOfConsecutiveKeysHold = 0;
 		dataDivider = new DataDivider();
 		statisticsCalculator = new StatisticsCalculator();
