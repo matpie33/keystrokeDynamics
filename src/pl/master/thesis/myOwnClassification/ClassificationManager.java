@@ -2,7 +2,6 @@ package pl.master.thesis.myOwnClassification;
 
 import java.util.List;
 
-import pl.master.thesis.csvManipulation.DataSaver;
 import pl.master.thesis.csvManipulation.CSVSaver;
 import pl.master.thesis.dataConverters.WordDataToSimpleObjectConverter;
 import pl.master.thesis.keyTypingObjects.PreprocessedKeystrokeData;
@@ -15,7 +14,6 @@ public class ClassificationManager {
 	private DataDivider dataDivider;
 	private double percentOfConsecutiveKeysHold;
 	private StatisticsCalculator statisticsCalculator;
-	private DataSaver dataSaver;
 	private NeuralNetworkClassifier classifier;
 	private WordDataToSimpleObjectConverter converter;
 	private CSVSaver plainTextSaver;
@@ -25,7 +23,6 @@ public class ClassificationManager {
 		percentOfConsecutiveKeysHold = 0;
 		dataDivider = new DataDivider();
 		statisticsCalculator = new StatisticsCalculator();
-		dataSaver = new DataSaver();
 		classifier = new NeuralNetworkClassifier();
 		converter = new WordDataToSimpleObjectConverter();
 	}

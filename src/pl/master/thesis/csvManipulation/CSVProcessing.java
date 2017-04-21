@@ -18,8 +18,6 @@ public class CSVProcessing {
 
 	public static void extractStatisticsFromCSVAndSave()
 			throws ParserConfigurationException, SAXException, IOException {
-		DataSaver d = new DataSaver();
-		d.readFromXml("usersData/abacad.xml");
 
 		Reader in = new FileReader("C:\\master_thesis\\keystroke_dataset.csv");
 		Iterable<CSVRecord> records = CSVFormat.EXCEL.withSkipHeaderRecord().parse(in);
