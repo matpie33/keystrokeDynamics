@@ -7,7 +7,6 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.xml.sax.SAXException;
 
-import pl.master.thesis.csvManipulation.CSVProcessing;
 import pl.master.thesis.frame.MainWindow;
 
 public class KeystrokeDynamics {
@@ -16,7 +15,8 @@ public class KeystrokeDynamics {
 			throws ParserConfigurationException, SAXException, IOException, InterruptedException {
 
 		DeepLearning4jUsing.use();
-		CSVProcessing.extractStatisticsFromCSVAndSave();
+		// CSVProcessing.extractStatisticsFromCSVAndSave();
+
 		SwingUtilities.invokeLater(new Runnable() {
 
 			@Override

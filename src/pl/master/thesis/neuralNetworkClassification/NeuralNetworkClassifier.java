@@ -7,7 +7,6 @@ import java.util.TimerTask;
 
 import org.neuroph.core.NeuralNetwork;
 import org.neuroph.core.data.DataSet;
-import org.neuroph.core.data.DataSetRow;
 import org.neuroph.nnet.MultiLayerPerceptron;
 
 public class NeuralNetworkClassifier {
@@ -45,11 +44,11 @@ public class NeuralNetworkClassifier {
 		DataSet trainingSet = new DataSet(numberOfInputNeurons, numberOfOutputNeurons);
 		for (NeuralNetworkInput inputData : data) {
 			System.out.println("input data: " + inputData);
-			trainingSet
-					.addRow(new DataSetRow(
-							new double[] { inputData.getMeanHoldTime(),
-									inputData.getMeanInterTime(), inputData.getIsTabbed() },
-							new double[] { inputData.getUserId() }));
+			// trainingSet
+			// .addRow(new DataSetRow(
+			// new double[] { inputData.getMeanHoldTime(),
+			// inputData.getMeanInterTime(), inputData.getIsTabbed() },
+			// new double[] { inputData.getUserId() }));
 			System.out.println("user id: " + inputData.getUserId());
 		}
 		scheduleMaxTimeForLearning();
@@ -78,7 +77,8 @@ public class NeuralNetworkClassifier {
 
 	public void classify(NeuralNetworkInput data) {
 
-		neuralNetwork.setInput(data.getMeanHoldTime(), data.getMeanInterTime(), data.getIsTabbed());
+		// neuralNetwork.setInput(data.getMeanHoldTime(),
+		// data.getMeanInterTime(), data.getIsTabbed());
 		neuralNetwork.calculate();
 		double[] output = neuralNetwork.getOutput();
 		System.out.println("output: " + output[0]);

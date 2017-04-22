@@ -33,9 +33,10 @@ public class StatisticsCalculator {
 			meanHoldTime /= 1_000_000_000;
 			System.out.println(meanHoldTime);
 			System.out.println(meanInterKeyTime);
-			NeuralNetworkInput neuralInput = new NeuralNetworkInput(meanInterKeyTime, meanHoldTime,
-					isTabbed);
-			neuralInputs.add(neuralInput);
+			// NeuralNetworkInput neuralInput = new
+			// NeuralNetworkInput(meanInterKeyTime, meanHoldTime,
+			// isTabbed);
+			// neuralInputs.add(neuralInput);
 		}
 
 		return neuralInputs;

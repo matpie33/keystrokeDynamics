@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
+import pl.master.thesis.neuralNetworkClassification.NeuralFeature;
 import pl.master.thesis.neuralNetworkClassification.NeuralNetworkInput;
 
 public class CSVSaver {
@@ -23,8 +24,13 @@ public class CSVSaver {
 		try {
 			FileWriter fw = new FileWriter(fileName, true);
 			for (NeuralNetworkInput singleData : data) {
-				fw.write(String.format(Locale.US, " %f, %f, %d", singleData.getMeanHoldTime(),
-						singleData.getMeanInterTime(), singleData.getUserId()));
+				NeuralFeature holdTime = singleData.getHoldTime();
+				NeuralFeature interKeyTime = singleData.getInterKeyTime();
+				fw.write(String.format(Locale.US, " %f, %f, %f, %f, %f, %f, %f, %f, %d",
+						holdTime.getMean(), holdTime.getMinValue(), holdTime.getMaxValue(),
+						holdTime.getVariance(), interKeyTime.getMean(), interKeyTime.getMinValue(),
+						interKeyTime.getMaxValue(), interKeyTime.getVariance(),
+						singleData.getUserId()));
 				fw.write(System.getProperty("line.separator"));
 			}
 			fw.close();

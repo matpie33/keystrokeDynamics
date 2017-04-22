@@ -2,17 +2,25 @@ package pl.master.thesis.neuralNetworkClassification;
 
 public class NeuralNetworkInput {
 
-	private double meanInterTime;
-	private double meanHoldTime;
+	private NeuralFeature interKeyTime;
+	private NeuralFeature holdTime;
+
 	private double isTabbed;
 	private int userId;
 
-	public double getMeanInterTime() {
-		return meanInterTime;
+	public NeuralNetworkInput(NeuralFeature interTime, NeuralFeature holdTime,
+			boolean moreThan50PercentTabs) {
+		interKeyTime = interTime;
+		this.holdTime = holdTime;
+		this.isTabbed = translateToInt(moreThan50PercentTabs);
 	}
 
-	public double getMeanHoldTime() {
-		return meanHoldTime;
+	public NeuralFeature getInterKeyTime() {
+		return interKeyTime;
+	}
+
+	public NeuralFeature getHoldTime() {
+		return holdTime;
 	}
 
 	public double getIsTabbed() {
@@ -21,12 +29,6 @@ public class NeuralNetworkInput {
 
 	public int getUserId() {
 		return userId;
-	}
-
-	public NeuralNetworkInput(double interTime, double holdTime, boolean moreThan50PercentTabs) {
-		meanInterTime = interTime;
-		meanHoldTime = holdTime;
-		this.isTabbed = translateToInt(moreThan50PercentTabs);
 	}
 
 	private double translateToInt(boolean booleanValue) {
@@ -42,8 +44,8 @@ public class NeuralNetworkInput {
 	}
 
 	public String toString() {
-		return "interTime: " + meanInterTime + " hold time: " + meanHoldTime + " isTabbed "
-				+ isTabbed;
+		return "interTime: " + interKeyTime.getMean() + " hold time: " + holdTime.getMean()
+				+ " isTabbed " + isTabbed;
 	}
 
 }
