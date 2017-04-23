@@ -12,6 +12,10 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.xml.sax.SAXException;
 
+import pl.master.thesis.keyTypingObjects.Digraph;
+import pl.master.thesis.keyTypingObjects.InterKeyTime;
+import pl.master.thesis.keyTypingObjects.KeyHoldingTime;
+import pl.master.thesis.keyTypingObjects.WordKeystrokeData;
 import pl.master.thesis.neuralNetworkClassification.NeuralFeature;
 import pl.master.thesis.neuralNetworkClassification.NeuralNetworkInput;
 
@@ -42,23 +46,22 @@ public class CSVProcessing {
 			}
 
 			addInterAndHoldTimesElementsToList(record, interTimesList, holdTimesList);
+			List<KeyHoldingTime> holdTimes = convertToHoldTimeObjectsList(holdTimesList);
+			List<InterKeyTime> interKeyTimes = convertToInterKeyTimesObjectsList(interTimesList);
+			WordKeystrokeData wordKeystrokeData = new WordKeystrokeData(false, holdTimes,
+					interKeyTimes);
 			double meanHoldTime = countMean(holdTimesList);
 			double meanInterTime = countMean(interTimesList);
-			System.out.println("hold times list: " + holdTimesList);
-			System.out.println("mean hold time: " + meanHoldTime);
 
 			double minHoldTime = getMinValue(holdTimesList);
 			double minInterTime = getMinValue(interTimesList);
 
-			System.out.println("min hold time: " + minHoldTime);
 			double maxHoldTime = getMaxValue(holdTimesList);
 			double maxInterTime = getMaxValue(interTimesList);
 
-			System.out.println("max hold time: " + maxHoldTime);
 			double varianceHoldTime = getVariance(holdTimesList, meanHoldTime);
 			double varianceInterTime = getVariance(interTimesList, meanInterTime);
 
-			System.out.println("varianceHoldTime: " + varianceHoldTime);
 			NeuralFeature holdTime = new NeuralFeature().minimum(minHoldTime).maximum(maxHoldTime)
 					.mean(meanHoldTime).variance(varianceHoldTime);
 
@@ -85,17 +88,25 @@ public class CSVProcessing {
 		while (columnUDIndex < record.size()) {
 			String cellValue = record.get(columnUDIndex);
 			double cellDouble = Double.parseDouble(cellValue);
+			InterKeyTime interKeyTime;
+			long secondInNano = 1_000_000_000;
 			if (cellDouble > 0) {
 				interTimesList.add(cellDouble);
+				interKeyTime = new InterKeyTime(new Digraph("", ""),
+						(long) (cellDouble * secondInNano));
 			}
 			else {
 				double cellDDValue = Double.parseDouble(record.get(columnUDIndex - 1));
 				interTimesList.add(cellDDValue);
+				interKeyTime = new InterKeyTime(new Digraph("", ""),
+						(long) (cellDDValue * secondInNano));
 			}
 			columnUDIndex += 3;
 
 			double holdTime = Double.parseDouble(record.get(columnHIndex));
 			holdTimesList.add(holdTime);
+			KeyHoldingTime holdTimeObject = new KeyHoldingTime("", (long) (holdTime * secondInNano),
+					0);
 			columnHIndex += 3;
 		}
 		double holdTime = Double.parseDouble(record.get(columnHIndex));
@@ -113,7 +124,7 @@ public class CSVProcessing {
 
 	private int getUserIdAndIncrementCounter(CSVRecord record, int currentId, int sameIdCounter) {
 		String subjectId = record.get(0);
-		int id = Integer.parseInt(subjectId.substring(2)) - 2;
+		int id = Integer.parseInt(subjectId.substring(2)) - 1;
 		if (id == currentId) {
 			sameIdCounter++;
 		}
@@ -150,6 +161,24 @@ public class CSVProcessing {
 			temp += (d - meanValue) * (d - meanValue);
 		}
 		return temp / list.size();
+	}
+
+	private List<KeyHoldingTime> convertToHoldTimeObjectsList(List<Double> holdTimeValues) {
+		List<KeyHoldingTime> keyHoldingTimes = new ArrayList<>();
+		for (Double d : holdTimeValues) {
+			KeyHoldingTime time = new KeyHoldingTime("", (long) (d * 1_000_000_000), 0L);
+			keyHoldingTimes.add(time);
+		}
+		return keyHoldingTimes;
+	}
+
+	private List<InterKeyTime> convertToInterKeyTimesObjectsList(List<Double> interKeyTimeValues) {
+		List<InterKeyTime> interKeyTimes = new ArrayList<>();
+		for (Double d : interKeyTimeValues) {
+			InterKeyTime time = new InterKeyTime(new Digraph("", ""), (long) (d * 1_000_000_000));
+			interKeyTimes.add(time);
+		}
+		return interKeyTimes;
 	}
 
 }

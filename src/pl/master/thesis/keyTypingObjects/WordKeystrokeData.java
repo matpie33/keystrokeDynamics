@@ -24,6 +24,12 @@ public class WordKeystrokeData {
 		this.startedWithTab = startedWithTab;
 	}
 
+	public WordKeystrokeData(boolean startedWithTab, List<KeyHoldingTime> keyHolds,
+			List<InterKeyTime> interKeyTimes) {
+		this.interKeyTimes = interKeyTimes;
+		this.holdTimes = keyHolds;
+	}
+
 	public WordKeystrokeData(String firstLetter) {
 		this(firstLetter, false);
 	}
