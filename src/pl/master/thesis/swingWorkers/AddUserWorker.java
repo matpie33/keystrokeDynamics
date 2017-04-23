@@ -1,5 +1,6 @@
 package pl.master.thesis.swingWorkers;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
@@ -7,6 +8,9 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.JTextField;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.xml.sax.SAXException;
 
 import pl.master.thesis.database.SqlStatements;
 import pl.master.thesis.frame.MainWindow;
@@ -54,8 +58,17 @@ public class AddUserWorker extends ConnectionSwingWorker {
 						word.isStartedWithTab());
 			}
 			connection.commit();
-			List<NeuralNetworkInput> neuralInputs = manager.learnData(userId);
-			manager.saveData(neuralInputs);
+			List<NeuralNetworkInput> neuralInputs;
+			try {
+				neuralInputs = manager.learnData(userId);
+				manager.saveData(neuralInputs);
+			}
+			catch (IOException | InterruptedException | ParserConfigurationException
+					| SAXException e) {
+				panel.showShortMessageDialog(Prompts.ERROR_LEARNING_DATASET + e.getMessage());
+				e.printStackTrace();
+			}
+
 			connection.close();
 			frame.nextPanel();
 			frame.clearData();

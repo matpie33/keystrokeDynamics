@@ -12,10 +12,6 @@ public class CSVSaver {
 
 	private String fileName;
 
-	public CSVSaver() {
-		fileName = "data.txt";
-	}
-
 	public CSVSaver(String filename) {
 		this.fileName = filename;
 	}

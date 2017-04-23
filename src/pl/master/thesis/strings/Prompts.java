@@ -24,6 +24,7 @@ public class Prompts {
 	public static final String ERROR_SQL_USER_EXISTS = "Podany użytkownik już istnieje.";
 	public static final String ERROR_SQL_DATABASE_IN_USE = "Baza danych jest już w użyciu. Prosze spróbować później";
 	public static final String ERROR_SQL_UNKNOWN_ERROR = "Nieznany błąd. Proszę spróbować później.";
+	public static final String ERROR_LEARNING_DATASET = "Wystąpił problem z uczeniem sieci, treśc błędu: ";
 	public static final String USER_OR_PASS_INCORRECT = "Podany login lub hasło jest nieprawidłowe.";
 
 }

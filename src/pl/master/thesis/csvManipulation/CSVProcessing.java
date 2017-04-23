@@ -17,7 +17,13 @@ import pl.master.thesis.neuralNetworkClassification.NeuralNetworkInput;
 
 public class CSVProcessing {
 
-	public static void extractStatisticsFromCSVAndSave()
+	private String fileNameToSave;
+
+	public CSVProcessing(String fileNameToSave) {
+		this.fileNameToSave = fileNameToSave;
+	}
+
+	public void extractStatisticsFromCSVAndSave()
 			throws ParserConfigurationException, SAXException, IOException {
 
 		Reader in = new FileReader("C:\\master_thesis\\keystroke_dataset.csv");
@@ -68,12 +74,12 @@ public class CSVProcessing {
 			holdTimesList.clear();
 		}
 
-		CSVSaver saver2 = new CSVSaver("trainingData.txt");
+		CSVSaver saver2 = new CSVSaver(fileNameToSave);
 		saver2.save(trainingInputs);
 	}
 
-	private static void addInterAndHoldTimesElementsToList(CSVRecord record,
-			List<Double> interTimesList, List<Double> holdTimesList) {
+	private void addInterAndHoldTimesElementsToList(CSVRecord record, List<Double> interTimesList,
+			List<Double> holdTimesList) {
 		int columnUDIndex = 5;
 		int columnHIndex = 3;
 		while (columnUDIndex < record.size()) {
@@ -96,7 +102,7 @@ public class CSVProcessing {
 		holdTimesList.add(holdTime);
 	}
 
-	private static double countMean(List<Double> list) {
+	private double countMean(List<Double> list) {
 		double mean = 0;
 		for (double inter : list) {
 			mean += inter;
@@ -105,8 +111,7 @@ public class CSVProcessing {
 		return mean;
 	}
 
-	private static int getUserIdAndIncrementCounter(CSVRecord record, int currentId,
-			int sameIdCounter) {
+	private int getUserIdAndIncrementCounter(CSVRecord record, int currentId, int sameIdCounter) {
 		String subjectId = record.get(0);
 		int id = Integer.parseInt(subjectId.substring(2)) - 2;
 		if (id == currentId) {
@@ -119,7 +124,7 @@ public class CSVProcessing {
 		return id;
 	}
 
-	public static double getMinValue(List<Double> list) {
+	private double getMinValue(List<Double> list) {
 		double min = Double.MAX_VALUE;
 		for (double d : list) {
 			if (d < min) {
@@ -129,7 +134,7 @@ public class CSVProcessing {
 		return min;
 	}
 
-	public static double getMaxValue(List<Double> list) {
+	private double getMaxValue(List<Double> list) {
 		double max = 0;
 		for (double d : list) {
 			if (d > max) {
@@ -139,7 +144,7 @@ public class CSVProcessing {
 		return max;
 	}
 
-	public static double getVariance(List<Double> list, double meanValue) {
+	private double getVariance(List<Double> list, double meanValue) {
 		double temp = 0;
 		for (double d : list) {
 			temp += (d - meanValue) * (d - meanValue);

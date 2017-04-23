@@ -1,8 +1,13 @@
 package pl.master.thesis.myOwnClassification;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
 
-import pl.master.thesis.csvManipulation.CSVSaver;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.xml.sax.SAXException;
+
 import pl.master.thesis.dataConverters.WordDataToSimpleObjectConverter;
 import pl.master.thesis.keyTypingObjects.PreprocessedKeystrokeData;
 import pl.master.thesis.keyTypingObjects.WordKeystrokeData;
@@ -16,10 +21,8 @@ public class ClassificationManager {
 	private StatisticsCalculator statisticsCalculator;
 	private NeuralNetworkClassifier classifier;
 	private WordDataToSimpleObjectConverter converter;
-	private CSVSaver plainTextSaver;
 
 	public ClassificationManager() {
-		plainTextSaver = new CSVSaver();
 		percentOfConsecutiveKeysHold = 0;
 		dataDivider = new DataDivider();
 		statisticsCalculator = new StatisticsCalculator();
@@ -58,7 +61,8 @@ public class ClassificationManager {
 		return dataArray;
 	}
 
-	public List<NeuralNetworkInput> learnData(int userId) {
+	public List<NeuralNetworkInput> learnData(int userId) throws FileNotFoundException, IOException,
+			InterruptedException, ParserConfigurationException, SAXException {
 		System.out.println("learning");
 		List<NeuralNetworkInput> inputs = statisticsCalculator
 				.transferToNeuralInput(dataDivider.getWholeData());

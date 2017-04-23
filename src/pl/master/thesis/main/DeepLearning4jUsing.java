@@ -1,12 +1,12 @@
 package pl.master.thesis.main;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.datavec.api.records.reader.RecordReader;
 import org.datavec.api.records.reader.impl.csv.CSVRecordReader;
 import org.datavec.api.split.FileSplit;
-import org.datavec.api.util.ClassPathResource;
 import org.deeplearning4j.datasets.datavec.RecordReaderDataSetIterator;
 import org.deeplearning4j.eval.Evaluation;
 import org.deeplearning4j.nn.conf.MultiLayerConfiguration;
@@ -37,7 +37,7 @@ public class DeepLearning4jUsing {
 		int numLinesToSkip = 0;
 		String delimiter = ", ";
 		RecordReader recordReader = new CSVRecordReader(numLinesToSkip, delimiter);
-		recordReader.initialize(new FileSplit(new ClassPathResource("trainingData.txt").getFile()));
+		recordReader.initialize(new FileSplit(new File("trainingData.txt")));
 
 		// Second: the RecordReaderDataSetIterator handles conversion to DataSet
 		// objects, ready for use in neural network
@@ -50,7 +50,7 @@ public class DeepLearning4jUsing {
 		int numClasses = 56; // 3 classes (types of iris flowers) in the iris
 								// data set. Classes have integer values 0, 1 or
 								// 2
-		int batchSize = 1000; // Iris data set: 150 examples total. We are
+		int batchSize = 20000; // Iris data set: 150 examples total. We are
 								// loading all of them into one DataSet (not
 								// recommended for large data sets)
 
@@ -58,7 +58,7 @@ public class DeepLearning4jUsing {
 				labelIndex, numClasses);
 		DataSet allData = iterator.next();
 		allData.shuffle();
-		SplitTestAndTrain testAndTrain = allData.splitTestAndTrain(0.65); // Use
+		SplitTestAndTrain testAndTrain = allData.splitTestAndTrain(0.1); // Use
 																			// 65%
 																			// of
 																			// data
@@ -84,16 +84,22 @@ public class DeepLearning4jUsing {
 		int outputNum = numClasses;
 		int iterations = 6000;
 		long seed = 6;
+		int hiddenLayer1Neurons = 50;
+		int hiddenLayer2Neurons = 100;
 
 		log.info("Build model....");
 		MultiLayerConfiguration conf = new NeuralNetConfiguration.Builder().seed(seed)
 				.iterations(iterations).activation(Activation.TANH).weightInit(WeightInit.XAVIER)
-				.learningRate(0.1).regularization(true).l2(1e-4).list()
-				.layer(0, new DenseLayer.Builder().nIn(numInputs).nOut(70).build())
-				.layer(1, new DenseLayer.Builder().nIn(70).nOut(100).build())
-				.layer(2,
+				.learningRate(0.1).list()
+				.layer(0, new DenseLayer.Builder().nIn(numInputs).nOut(hiddenLayer1Neurons).build())
+				// .layer(1,
+				// new
+				// DenseLayer.Builder().nIn(hiddenLayer1Neurons).nOut(hiddenLayer2Neurons)
+				// .build())
+				.layer(1,
 						new OutputLayer.Builder(LossFunctions.LossFunction.NEGATIVELOGLIKELIHOOD)
-								.activation(Activation.SOFTMAX).nIn(100).nOut(outputNum).build())
+								.activation(Activation.SOFTMAX).nIn(hiddenLayer1Neurons)
+								.nOut(outputNum).build())
 				.backprop(true).pretrain(false).build();
 
 		// run the model
