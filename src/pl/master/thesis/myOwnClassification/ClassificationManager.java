@@ -68,7 +68,7 @@ public class ClassificationManager {
 				.transferToNeuralInput(dataDivider.getWholeData());
 		dataDivider.cleanData();
 		classifyInputsAsUser(inputs, userId);
-		classifier.learn(inputs);
+		classifier.saveNewDataAndLearn(inputs);
 		System.out.println("done learning");
 		return inputs;
 	}
@@ -83,6 +83,7 @@ public class ClassificationManager {
 		List<NeuralNetworkInput> neuralInputs = statisticsCalculator
 				.transferToNeuralInput(dataDivider.getWholeData());
 		System.out.println("neural inputs: " + neuralInputs);
+		System.out.println("whole ata" + dataDivider.getWholeData());
 		for (NeuralNetworkInput neuralInput : neuralInputs) {
 			classifier.classify(neuralInput);
 		}

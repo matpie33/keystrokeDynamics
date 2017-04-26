@@ -16,6 +16,7 @@ import pl.master.thesis.keyTypingObjects.Digraph;
 import pl.master.thesis.keyTypingObjects.InterKeyTime;
 import pl.master.thesis.keyTypingObjects.KeyHoldingTime;
 import pl.master.thesis.keyTypingObjects.WordKeystrokeData;
+import pl.master.thesis.myOwnClassification.StatisticsCalculator;
 import pl.master.thesis.neuralNetworkClassification.NeuralFeature;
 import pl.master.thesis.neuralNetworkClassification.NeuralNetworkInput;
 
@@ -44,31 +45,42 @@ public class CSVProcessing {
 				i++;
 				continue;
 			}
-
+			int id = getUserIdAndIncrementCounter(record, currentId, sameIdCounter);
+			if (id == currentId) {
+				sameIdCounter++;
+			}
+			else if (sameIdCounter != 0) {
+				sameIdCounter = 0;
+			}
+			currentId = id;
+			if (sameIdCounter > 20) {
+				continue;
+			}
 			addInterAndHoldTimesElementsToList(record, interTimesList, holdTimesList);
 			List<KeyHoldingTime> holdTimes = convertToHoldTimeObjectsList(holdTimesList);
 			List<InterKeyTime> interKeyTimes = convertToInterKeyTimesObjectsList(interTimesList);
 			WordKeystrokeData wordKeystrokeData = new WordKeystrokeData(false, holdTimes,
 					interKeyTimes);
-			double meanHoldTime = countMean(holdTimesList);
-			double meanInterTime = countMean(interTimesList);
+			double meanHoldTime = StatisticsCalculator.getMean(holdTimesList);
+			double meanInterTime = StatisticsCalculator.getMean(interTimesList);
 
-			double minHoldTime = getMinValue(holdTimesList);
-			double minInterTime = getMinValue(interTimesList);
+			double minHoldTime = StatisticsCalculator.getMinValue(holdTimesList);
+			double minInterTime = StatisticsCalculator.getMinValue(interTimesList);
 
-			double maxHoldTime = getMaxValue(holdTimesList);
-			double maxInterTime = getMaxValue(interTimesList);
+			double maxHoldTime = StatisticsCalculator.getMaxValue(holdTimesList);
+			double maxInterTime = StatisticsCalculator.getMaxValue(interTimesList);
 
-			double varianceHoldTime = getVariance(holdTimesList, meanHoldTime);
-			double varianceInterTime = getVariance(interTimesList, meanInterTime);
+			double varianceHoldTime = StatisticsCalculator.getVariance(holdTimesList, meanHoldTime);
+			double varianceInterTime = StatisticsCalculator.getVariance(interTimesList,
+					meanInterTime);
 
 			NeuralFeature holdTime = new NeuralFeature().minimum(minHoldTime).maximum(maxHoldTime)
 					.mean(meanHoldTime).variance(varianceHoldTime);
 
 			NeuralFeature interKeyTime = new NeuralFeature().minimum(minInterTime)
 					.maximum(maxInterTime).mean(meanInterTime).variance(varianceInterTime);
+			System.out.println("id is: " + id);
 
-			int id = getUserIdAndIncrementCounter(record, currentId, sameIdCounter);
 			NeuralNetworkInput input = new NeuralNetworkInput(interKeyTime, holdTime, false);
 			input.setUserId(id);
 			trainingInputs.add(input);
@@ -113,54 +125,10 @@ public class CSVProcessing {
 		holdTimesList.add(holdTime);
 	}
 
-	private double countMean(List<Double> list) {
-		double mean = 0;
-		for (double inter : list) {
-			mean += inter;
-		}
-		mean /= list.size();
-		return mean;
-	}
-
 	private int getUserIdAndIncrementCounter(CSVRecord record, int currentId, int sameIdCounter) {
 		String subjectId = record.get(0);
-		int id = Integer.parseInt(subjectId.substring(2)) - 1;
-		if (id == currentId) {
-			sameIdCounter++;
-		}
-		else {
-			sameIdCounter = 0;
-		}
-		currentId = id;
+		int id = Integer.parseInt(subjectId.substring(2)) - 2;
 		return id;
-	}
-
-	private double getMinValue(List<Double> list) {
-		double min = Double.MAX_VALUE;
-		for (double d : list) {
-			if (d < min) {
-				min = d;
-			}
-		}
-		return min;
-	}
-
-	private double getMaxValue(List<Double> list) {
-		double max = 0;
-		for (double d : list) {
-			if (d > max) {
-				max = d;
-			}
-		}
-		return max;
-	}
-
-	private double getVariance(List<Double> list, double meanValue) {
-		double temp = 0;
-		for (double d : list) {
-			temp += (d - meanValue) * (d - meanValue);
-		}
-		return temp / list.size();
 	}
 
 	private List<KeyHoldingTime> convertToHoldTimeObjectsList(List<Double> holdTimeValues) {

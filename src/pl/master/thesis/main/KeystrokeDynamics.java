@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import javax.swing.SwingUtilities;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.log4j.BasicConfigurator;
 import org.xml.sax.SAXException;
 
 import pl.master.thesis.csvManipulation.CSVProcessing;
@@ -18,8 +19,10 @@ public class KeystrokeDynamics {
 	public static void main(String arg[]) throws ParserConfigurationException, SAXException,
 			IOException, InterruptedException, SQLException {
 
-		doTestLearning();
-		addUsersFromDatasetToDatabase();
+		BasicConfigurator.configure();
+
+		// doTestLearning();
+		// addUsersFromDatasetToDatabase();
 
 		SwingUtilities.invokeLater(new Runnable() {
 
@@ -46,6 +49,7 @@ public class KeystrokeDynamics {
 		if (new File(fileName).exists()) {
 			new File(fileName).delete();
 		}
+
 		new CSVProcessing(fileName).extractStatisticsFromCSVAndSave();
 		DeepLearning4jUsing.use();
 	}

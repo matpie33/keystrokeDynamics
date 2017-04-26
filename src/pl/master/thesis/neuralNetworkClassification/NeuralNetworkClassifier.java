@@ -20,11 +20,13 @@ import org.deeplearning4j.nn.weights.WeightInit;
 import org.deeplearning4j.optimize.listeners.ScoreIterationListener;
 import org.deeplearning4j.util.ModelSerializer;
 import org.nd4j.linalg.activations.Activation;
+import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.DataSet;
 import org.nd4j.linalg.dataset.SplitTestAndTrain;
 import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
 import org.nd4j.linalg.dataset.api.preprocessor.DataNormalization;
 import org.nd4j.linalg.dataset.api.preprocessor.NormalizerStandardize;
+import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
 import org.xml.sax.SAXException;
 
@@ -67,10 +69,12 @@ public class NeuralNetworkClassifier {
 		initNeuralNetwork(networkConfiguration);
 		try {
 			learnExistingDataset();
+			saveNeuralNetworkState();
 		}
 		catch (IOException | InterruptedException | ParserConfigurationException | SAXException e) {
 			e.printStackTrace();
 		}
+
 	}
 
 	private MultiLayerConfiguration createNeuralNetworkConfiguration() {
@@ -114,6 +118,10 @@ public class NeuralNetworkClassifier {
 
 	private void createCSVFileFromExistingDataset()
 			throws ParserConfigurationException, SAXException, IOException {
+		if (new File(trainingSetFileName).exists()) {
+			System.out.println("skipping csv creation - beccause it already exists");
+			return;
+		}
 		CSVProcessing processing = new CSVProcessing(trainingSetFileName);
 		processing.extractStatisticsFromCSVAndSave();
 	}
@@ -131,8 +139,7 @@ public class NeuralNetworkClassifier {
 
 		DataSetIterator iterator = new RecordReaderDataSetIterator(recordReader, samplesToRead,
 				classLabelIndex, numClasses);
-		DataSet allData = iterator.next(); // TODO why my data are rounded to 2
-											// decimal places?
+		DataSet allData = iterator.next();
 		allData.shuffle();
 		double percentOfDataTakenForTrainingSet = 0.1;
 		SplitTestAndTrain testAndTrain = allData
@@ -155,23 +162,47 @@ public class NeuralNetworkClassifier {
 		}
 	}
 
-	public void learn(List<NeuralNetworkInput> data) throws FileNotFoundException, IOException,
-			InterruptedException, ParserConfigurationException, SAXException {
+	public void saveNewDataAndLearn(List<NeuralNetworkInput> data) throws FileNotFoundException,
+			IOException, InterruptedException, ParserConfigurationException, SAXException {
 		csvSaver.save(data);
-		System.out.println("do actually learn");
 		learnExistingDataset();
-		boolean saveUpdater = true;
-		ModelSerializer.writeModel(neuralNetwork, neuralNetworkFileName, saveUpdater);
-		System.out.println("saved");
+		saveNeuralNetworkState();
 	}
 
-	public void classify(NeuralNetworkInput data) {
+	private void saveNeuralNetworkState() throws IOException {
+		boolean saveUpdater = true;
+		ModelSerializer.writeModel(neuralNetwork, neuralNetworkFileName, saveUpdater);
+	}
 
-		// neuralNetwork.setInput(data.getMeanHoldTime(),
-		// data.getMeanInterTime(), data.getIsTabbed());
-		// neuralNetwork.calculate();
-		// double[] output = neuralNetwork.getOutput();
-		// System.out.println("output: " + output[0]);
+	public NeuralNetworkOutput classify(NeuralNetworkInput data) {
+
+		NeuralFeature holdTime = data.getHoldTime();
+		NeuralFeature interKeyTime = data.getInterKeyTime();
+		INDArray features = Nd4j.create(
+				new double[] { holdTime.getMean(), holdTime.getMinValue(), holdTime.getMaxValue(),
+						holdTime.getVariance(), interKeyTime.getMean(), interKeyTime.getMinValue(),
+						interKeyTime.getMaxValue(), interKeyTime.getVariance() });
+		INDArray output = neuralNetwork.output(features);
+		NeuralNetworkOutput objectOutput = convertOutputFromArray(output);
+		System.out.println("object output is here");
+		System.out.println(output);
+		System.out.println(objectOutput.getId());
+		System.out.println(objectOutput.getProbability());
+		return objectOutput;
+
+	}
+
+	private NeuralNetworkOutput convertOutputFromArray(INDArray output) {
+		int id = 0;
+		double maximum = 0;
+		for (int i = 0; i < output.size(1); i++) {
+			double element = output.getDouble(i);
+			if (element > maximum) {
+				maximum = element;
+				id = i;
+			}
+		}
+		return new NeuralNetworkOutput(maximum, id);
 	}
 
 }

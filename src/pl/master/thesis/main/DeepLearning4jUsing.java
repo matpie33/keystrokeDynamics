@@ -57,8 +57,12 @@ public class DeepLearning4jUsing {
 		DataSetIterator iterator = new RecordReaderDataSetIterator(recordReader, batchSize,
 				labelIndex, numClasses);
 		DataSet allData = iterator.next();
+		System.out.println("heres all data: " + allData);
+		System.out.println("first features is: " + allData.get(0).getFeatureMatrix());
+		System.out.println("first labels is: " + allData.get(0).getLabels());
+
 		allData.shuffle();
-		SplitTestAndTrain testAndTrain = allData.splitTestAndTrain(0.1); // Use
+		SplitTestAndTrain testAndTrain = allData.splitTestAndTrain(0.65); // Use
 																			// 65%
 																			// of
 																			// data
@@ -92,13 +96,12 @@ public class DeepLearning4jUsing {
 				.iterations(iterations).activation(Activation.TANH).weightInit(WeightInit.XAVIER)
 				.learningRate(0.1).list()
 				.layer(0, new DenseLayer.Builder().nIn(numInputs).nOut(hiddenLayer1Neurons).build())
-				// .layer(1,
-				// new
-				// DenseLayer.Builder().nIn(hiddenLayer1Neurons).nOut(hiddenLayer2Neurons)
-				// .build())
 				.layer(1,
+						new DenseLayer.Builder().nIn(hiddenLayer1Neurons).nOut(hiddenLayer2Neurons)
+								.build())
+				.layer(2,
 						new OutputLayer.Builder(LossFunctions.LossFunction.NEGATIVELOGLIKELIHOOD)
-								.activation(Activation.SOFTMAX).nIn(hiddenLayer1Neurons)
+								.activation(Activation.SOFTMAX).nIn(hiddenLayer2Neurons)
 								.nOut(outputNum).build())
 				.backprop(true).pretrain(false).build();
 
@@ -110,7 +113,7 @@ public class DeepLearning4jUsing {
 		model.fit(trainingData);
 
 		// evaluate the model on the test set
-		Evaluation eval = new Evaluation(3);
+		Evaluation eval = new Evaluation(numClasses);
 		INDArray output = model.output(testData.getFeatureMatrix());
 		eval.eval(testData.getLabels(), output);
 		log.info(eval.stats());

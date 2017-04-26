@@ -8,6 +8,7 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import pl.master.thesis.keyTypingObjects.InterKeyTime;
 import pl.master.thesis.keyTypingObjects.KeyHoldingTime;
 import pl.master.thesis.keyTypingObjects.WordKeystrokeData;
+import pl.master.thesis.neuralNetworkClassification.NeuralFeature;
 import pl.master.thesis.neuralNetworkClassification.NeuralNetworkInput;
 
 public class StatisticsCalculator {
@@ -23,39 +24,45 @@ public class StatisticsCalculator {
 				System.out.println("inters size: " + word.getWord());
 			}
 			boolean isTabbed = word.isStartedWithTab();
-			double meanInterKeyTime = sumInterKeyTimesInWord(word);
-			int interKeyTimeAmount = word.getInterKeyTimes().size();
-			double meanHoldTime = sumHoldTimesInWord(word);
-			int holdTimeAmount = word.getHoldTimes().size();
-			meanInterKeyTime = meanInterKeyTime / (double) interKeyTimeAmount;
-			meanHoldTime = meanHoldTime / (double) holdTimeAmount;
-			meanInterKeyTime /= 1_000_000_000;
-			meanHoldTime /= 1_000_000_000;
-			System.out.println(meanHoldTime);
-			System.out.println(meanInterKeyTime);
-			// NeuralNetworkInput neuralInput = new
-			// NeuralNetworkInput(meanInterKeyTime, meanHoldTime,
-			// isTabbed);
-			// neuralInputs.add(neuralInput);
+			List<Double> interKeyTimes = getInterKeyTimesList(word);
+			List<Double> holdTimes = getHoldTimesList(word);
+			double meanHoldTime = getMean(holdTimes);
+			double minHoldTime = getMinValue(holdTimes);
+			double maxHoldTime = getMaxValue(holdTimes);
+			double varianceHoldTime = getVariance(holdTimes, meanHoldTime);
+
+			NeuralFeature holdTime = new NeuralFeature().maximum(maxHoldTime).minimum(minHoldTime)
+					.mean(meanHoldTime).variance(varianceHoldTime);
+
+			double meanInterKeyTime = getMean(interKeyTimes);
+			double minInterKeyTime = getMinValue(interKeyTimes);
+			double maxInterKeyTime = getMaxValue(interKeyTimes);
+			double varianceInterKeyTime = getVariance(interKeyTimes, meanInterKeyTime);
+
+			NeuralFeature interKeyTime = new NeuralFeature().maximum(maxInterKeyTime)
+					.minimum(minInterKeyTime).mean(meanInterKeyTime).variance(varianceInterKeyTime);
+			NeuralNetworkInput neuralInput = new NeuralNetworkInput(interKeyTime, holdTime,
+					isTabbed);
+			neuralInputs.add(neuralInput);
 		}
 
 		return neuralInputs;
 	}
 
-	private long sumInterKeyTimesInWord(WordKeystrokeData word) {
-		long sum = 0;
+	private List<Double> getInterKeyTimesList(WordKeystrokeData word) {
+		List<Double> listOfInterKeyTimes = new ArrayList<>();
 		for (InterKeyTime interTime : word.getInterKeyTimes()) {
-			sum += interTime.getInterKeyTime();
+			listOfInterKeyTimes.add((double) interTime.getInterKeyTime() / 1_000_000_000D);
 		}
-		return sum;
+		return listOfInterKeyTimes;
 	}
 
-	private long sumHoldTimesInWord(WordKeystrokeData word) {
-		long sum = 0;
+	private List<Double> getHoldTimesList(WordKeystrokeData word) {
+		List<Double> listOfHoldTimes = new ArrayList<>();
 		for (KeyHoldingTime holdTime : word.getHoldTimes()) {
-			sum += holdTime.getHoldTime();
+			listOfHoldTimes.add((double) holdTime.getHoldTime() / 1_000_000_000D);
 		}
-		return sum;
+		return listOfHoldTimes;
 	}
 
 	public double[] removeOutliers(double[] arrayHoldTimes) {
@@ -97,6 +104,43 @@ public class StatisticsCalculator {
 			i++;
 		}
 		return array;
+	}
+
+	public static double getVariance(List<Double> list, double meanValue) {
+		double temp = 0;
+		for (double d : list) {
+			temp += (d - meanValue) * (d - meanValue);
+		}
+		return temp / list.size();
+	}
+
+	public static double getMaxValue(List<Double> list) {
+		double max = 0;
+		for (double d : list) {
+			if (d > max) {
+				max = d;
+			}
+		}
+		return max;
+	}
+
+	public static double getMinValue(List<Double> list) {
+		double min = Double.MAX_VALUE;
+		for (double d : list) {
+			if (d < min) {
+				min = d;
+			}
+		}
+		return min;
+	}
+
+	public static double getMean(List<Double> list) {
+		double mean = 0;
+		for (double inter : list) {
+			mean += inter;
+		}
+		mean /= list.size();
+		return mean;
 	}
 
 }
