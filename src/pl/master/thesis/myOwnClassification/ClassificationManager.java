@@ -107,4 +107,8 @@ public class ClassificationManager {
 		// plainTextSaver.save(data);
 	}
 
+	public int getNumberOfUsers() {
+		return classifier.getNumberOfUsers();
+	}
+
 }

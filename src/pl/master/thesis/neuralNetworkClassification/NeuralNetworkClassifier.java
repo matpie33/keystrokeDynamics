@@ -39,7 +39,7 @@ public class NeuralNetworkClassifier {
 	private int numberOfInputNeurons = 8;
 	private int hiddenLayer1Neurons = 60;
 	private int hiddenLayer2Neurons = 100;
-	private int numberOfOutputNeurons = 56;
+	private int numberOfUsers = 56;
 	private String neuralNetworkFileName = "neurons.txt";
 	private String trainingSetFileName = "trainingData.txt";
 	private CSVSaver csvSaver;
@@ -47,10 +47,12 @@ public class NeuralNetworkClassifier {
 	public NeuralNetworkClassifier() {
 
 		csvSaver = new CSVSaver(trainingSetFileName);
-		File file = new File(neuralNetworkFileName);
-		if (file.exists()) {
+		File neuralNetworkFile = new File(neuralNetworkFileName);
+		File trainingSetFile = new File(trainingSetFileName);
+		if (neuralNetworkFile.exists() && trainingSetFile.exists()) {
+
 			try {
-				neuralNetwork = ModelSerializer.restoreMultiLayerNetwork(file);
+				neuralNetwork = ModelSerializer.restoreMultiLayerNetwork(neuralNetworkFile);
 			}
 			catch (IOException e) {
 				e.printStackTrace();
@@ -58,6 +60,8 @@ public class NeuralNetworkClassifier {
 			// printWeights(neuralNetwork.getWeights());
 		}
 		else {
+			neuralNetworkFile.delete();
+			trainingSetFile.delete();
 			createMultiLayerPerceptron();
 			System.out.println("new neural network");
 		}
@@ -74,7 +78,6 @@ public class NeuralNetworkClassifier {
 		catch (IOException | InterruptedException | ParserConfigurationException | SAXException e) {
 			e.printStackTrace();
 		}
-
 	}
 
 	private MultiLayerConfiguration createNeuralNetworkConfiguration() {
@@ -94,7 +97,7 @@ public class NeuralNetworkClassifier {
 				.layer(1,
 						new OutputLayer.Builder(LossFunctions.LossFunction.NEGATIVELOGLIKELIHOOD)
 								.activation(Activation.SOFTMAX).nIn(hiddenLayer1Neurons)
-								.nOut(numberOfOutputNeurons).build())
+								.nOut(numberOfUsers).build())
 				.backprop(true).pretrain(false).build();
 		return conf;
 	}
@@ -134,7 +137,7 @@ public class NeuralNetworkClassifier {
 		recordReader.initialize(new FileSplit(new File(trainingSetFileName)));
 
 		int classLabelIndex = numberOfInputNeurons;
-		int numClasses = numberOfOutputNeurons;
+		int numClasses = numberOfUsers;
 		int samplesToRead = 20000;
 
 		DataSetIterator iterator = new RecordReaderDataSetIterator(recordReader, samplesToRead,
@@ -164,7 +167,10 @@ public class NeuralNetworkClassifier {
 
 	public void saveNewDataAndLearn(List<NeuralNetworkInput> data) throws FileNotFoundException,
 			IOException, InterruptedException, ParserConfigurationException, SAXException {
+		System.out.println(data);
 		csvSaver.save(data);
+		// TODO adjust neural network parameters after adding new data - more
+		// input neurons
 		learnExistingDataset();
 		saveNeuralNetworkState();
 	}
@@ -203,6 +209,10 @@ public class NeuralNetworkClassifier {
 			}
 		}
 		return new NeuralNetworkOutput(maximum, id);
+	}
+
+	public int getNumberOfUsers() {
+		return numberOfUsers;
 	}
 
 }

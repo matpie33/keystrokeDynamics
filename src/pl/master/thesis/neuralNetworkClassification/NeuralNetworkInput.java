@@ -44,8 +44,10 @@ public class NeuralNetworkInput {
 	}
 
 	public String toString() {
-		return "interTime: " + interKeyTime.getMean() + " hold time: " + holdTime.getMean()
-				+ " isTabbed " + isTabbed;
+		return "interTime: " + interKeyTime.getMean() + "," + interKeyTime.getMinValue() + ","
+				+ interKeyTime.getMaxValue() + "," + interKeyTime.getVariance() + " hold time: "
+				+ holdTime.getMean() + "," + holdTime.getMinValue() + "," + holdTime.getMaxValue()
+				+ "," + holdTime.getVariance() + "," + " isTabbed " + isTabbed;
 	}
 
 }

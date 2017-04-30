@@ -5,17 +5,21 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 
+import pl.master.thesis.csvManipulation.CSVProcessing;
 import pl.master.thesis.keyTypingObjects.PreprocessedKeystrokeData;
+import pl.master.thesis.neuralNetworkClassification.NeuralNetworkInput;
 
 public class SqlStatements {
 
 	public static int addUser(Connection connection, String username, String password,
-			String question, String answer) throws SQLException {
+			String question, String answer, int id) throws SQLException {
 		PreparedStatement statement = null;
-		String query = "INSERT INTO Users (Username,Password, Question, Answer) " + "VALUES ('"
-				+ username + "','" + password + "','" + question + "','" + answer + "')";
+		String query = "INSERT INTO Users (Username,Password, Question, Answer, Id) " + "VALUES ('"
+				+ username + "','" + password + "','" + question + "','" + answer + "'," + id + ")";
+
 		int userId = executeStatementAndGetGeneratedId(query, connection);
 		return userId;
 	}
@@ -77,6 +81,61 @@ public class SqlStatements {
 		values += wordId + ",";
 		values += singleWord.isKeysPressedTogether();
 		return values;
+	}
+
+	public static String getLastUserId(Connection connection) throws SQLException {
+		String query = "SELECT ID FROM USERS ORDER BY ID DESC FETCH FIRST ROW ONLY";
+		Statement statement = connection.createStatement();
+		ResultSet result = statement.executeQuery(query);
+		result.next();
+		return result.getString(1);
+	}
+
+	public static List<NeuralNetworkInput> getAllUsersKeystrokeData(Connection connection)
+			throws SQLException {
+		String query = "SELECT  WORDS.INTERKEYTIME, WORDS.HOLDTIME1, WORDS.HOLDTIME2, WORDS.KEY1, WORDS.KEY2, WORDS.WORDID,"
+				+ "WORDS_LETTERS.USERID FROM WORDS INNER JOIN WORDS_LETTERS ON WORDS.WORDID = WORDS_LETTERS.WORDID "
+				+ "ORDER BY USERID, WORDID";
+		Statement statement = connection.createStatement();
+		ResultSet result = statement.executeQuery(query);
+		List<NeuralNetworkInput> data = new ArrayList<>();
+		List<Double> keyHoldTimes = new ArrayList<>();
+		List<Double> interTimesList = new ArrayList<>();
+		String wordId = "";
+		String userId = "";
+		while (result.next()) {
+
+			if (!result.getString("WORDID").equals(wordId) && !keyHoldTimes.isEmpty()
+					&& !interTimesList.isEmpty()) {
+				NeuralNetworkInput input = CSVProcessing
+						.convertHoldTimesAndInterKeyTimesListsToNeuralInput(keyHoldTimes,
+								interTimesList);
+				input.setUserId(Integer.parseInt(userId));
+				data.add(input);
+				keyHoldTimes = new ArrayList<>();
+				interTimesList = new ArrayList<>();
+			}
+			assert (data != null);
+			double second_in_nano = 1_000_000_000D;
+			long interKeyTime = Long.parseLong(result.getString("INTERKEYTIME"));
+			interTimesList.add((double) interKeyTime / second_in_nano);
+			// data.addInterKeyTime(new InterKeyTime(new Digraph(key1, key2),
+			// interKeyTime));
+
+			long key1HoldTime = Long.parseLong(result.getString("HOLDTIME1"));
+			long key2HoldTime = Long.parseLong(result.getString("HOLDTIME2"));
+			keyHoldTimes.add((double) key1HoldTime / second_in_nano);
+			keyHoldTimes.add((double) key2HoldTime / second_in_nano);
+			// data.addKeyHoldTime(new KeyHoldingTime(key1, key1HoldTime, 0));
+			// data.addKeyHoldTime(new KeyHoldingTime(key2, key2HoldTime, 0));
+			wordId = result.getString("WORDID");
+			userId = result.getString("USERID");
+			System.out.println("userid: " + userId);
+
+		}
+		System.out.println(data);
+		return data;
+
 	}
 
 }

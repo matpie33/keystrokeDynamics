@@ -6,9 +6,9 @@ public class KeyHoldingTime {
 	private long holdTime;
 	private long pressedTime;
 
-	public KeyHoldingTime(String key, long time, long pressedTime) {
+	public KeyHoldingTime(String key, long holdTime, long pressedTime) {
 		this.key = key;
-		this.holdTime = time;
+		this.holdTime = holdTime;
 		this.pressedTime = pressedTime;
 	}
 

@@ -61,27 +61,9 @@ public class CSVProcessing {
 			List<InterKeyTime> interKeyTimes = convertToInterKeyTimesObjectsList(interTimesList);
 			WordKeystrokeData wordKeystrokeData = new WordKeystrokeData(false, holdTimes,
 					interKeyTimes);
-			double meanHoldTime = StatisticsCalculator.getMean(holdTimesList);
-			double meanInterTime = StatisticsCalculator.getMean(interTimesList);
-
-			double minHoldTime = StatisticsCalculator.getMinValue(holdTimesList);
-			double minInterTime = StatisticsCalculator.getMinValue(interTimesList);
-
-			double maxHoldTime = StatisticsCalculator.getMaxValue(holdTimesList);
-			double maxInterTime = StatisticsCalculator.getMaxValue(interTimesList);
-
-			double varianceHoldTime = StatisticsCalculator.getVariance(holdTimesList, meanHoldTime);
-			double varianceInterTime = StatisticsCalculator.getVariance(interTimesList,
-					meanInterTime);
-
-			NeuralFeature holdTime = new NeuralFeature().minimum(minHoldTime).maximum(maxHoldTime)
-					.mean(meanHoldTime).variance(varianceHoldTime);
-
-			NeuralFeature interKeyTime = new NeuralFeature().minimum(minInterTime)
-					.maximum(maxInterTime).mean(meanInterTime).variance(varianceInterTime);
-			System.out.println("id is: " + id);
-
-			NeuralNetworkInput input = new NeuralNetworkInput(interKeyTime, holdTime, false);
+			NeuralNetworkInput input = CSVProcessing
+					.convertHoldTimesAndInterKeyTimesListsToNeuralInput(holdTimesList,
+							interTimesList);
 			input.setUserId(id);
 			trainingInputs.add(input);
 
@@ -91,6 +73,31 @@ public class CSVProcessing {
 
 		CSVSaver saver2 = new CSVSaver(fileNameToSave);
 		saver2.save(trainingInputs);
+	}
+
+	public static NeuralNetworkInput convertHoldTimesAndInterKeyTimesListsToNeuralInput(
+			List<Double> holdTimesList, List<Double> interTimesList) {
+		double meanHoldTime = StatisticsCalculator.getMean(holdTimesList);
+		double meanInterTime = StatisticsCalculator.getMean(interTimesList);
+
+		double minHoldTime = StatisticsCalculator.getMinValue(holdTimesList);
+		double minInterTime = StatisticsCalculator.getMinValue(interTimesList);
+
+		double maxHoldTime = StatisticsCalculator.getMaxValue(holdTimesList);
+		double maxInterTime = StatisticsCalculator.getMaxValue(interTimesList);
+
+		double varianceHoldTime = StatisticsCalculator.getVariance(holdTimesList, meanHoldTime);
+		double varianceInterTime = StatisticsCalculator.getVariance(interTimesList, meanInterTime);
+
+		NeuralFeature holdTime = new NeuralFeature().minimum(minHoldTime).maximum(maxHoldTime)
+				.mean(meanHoldTime).variance(varianceHoldTime);
+
+		NeuralFeature interKeyTime = new NeuralFeature().minimum(minInterTime).maximum(maxInterTime)
+				.mean(meanInterTime).variance(varianceInterTime);
+
+		NeuralNetworkInput input = new NeuralNetworkInput(interKeyTime, holdTime, false);
+		return input;
+
 	}
 
 	private void addInterAndHoldTimesElementsToList(CSVRecord record, List<Double> interTimesList,

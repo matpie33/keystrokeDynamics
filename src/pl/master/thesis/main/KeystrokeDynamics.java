@@ -13,6 +13,7 @@ import org.xml.sax.SAXException;
 import pl.master.thesis.csvManipulation.CSVProcessing;
 import pl.master.thesis.frame.MainWindow;
 import pl.master.thesis.swingWorkers.AddUsersFromDatasetWorker;
+import pl.master.thesis.swingWorkers.GetKeystrokeDataFromDBWorker;
 
 public class KeystrokeDynamics {
 
@@ -23,6 +24,7 @@ public class KeystrokeDynamics {
 
 		// doTestLearning();
 		// addUsersFromDatasetToDatabase();
+		getUsersKeystrokeData();
 
 		SwingUtilities.invokeLater(new Runnable() {
 
@@ -37,10 +39,14 @@ public class KeystrokeDynamics {
 
 	}
 
+	private static void getUsersKeystrokeData() throws SQLException {
+		GetKeystrokeDataFromDBWorker dbWorker = new GetKeystrokeDataFromDBWorker("testData.txt");
+		dbWorker.doInBackground();
+	}
+
 	private static void addUsersFromDatasetToDatabase() throws SQLException {
 		AddUsersFromDatasetWorker user = new AddUsersFromDatasetWorker();
 		user.doInBackground();
-
 	}
 
 	private static void doTestLearning()

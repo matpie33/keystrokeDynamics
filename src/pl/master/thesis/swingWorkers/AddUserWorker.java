@@ -50,8 +50,11 @@ public class AddUserWorker extends ConnectionSwingWorker {
 		String answer = FieldsVerifier.findTextField(FormsLabels.ANSWER, hmap).getText();
 		try {
 			connection.setAutoCommit(false);
-			int userId = SqlStatements.addUser(connection, userName, password, question, answer);
 			ClassificationManager manager = frame.getKeyEventHandler().getClassifier();
+			String userIds = SqlStatements.getLastUserId(connection);
+			int userId = Integer.parseInt(userIds) + 1;
+			SqlStatements.addUser(connection, userName, password, question, answer, userId);
+
 			List<WordKeystrokeData> data = manager.getTypingData();
 			for (WordKeystrokeData word : data) {
 				SqlStatements.addTypingData(connection, manager.convertDataForDbNeeds(word), userId,
