@@ -23,6 +23,8 @@ import pl.master.thesis.neuralNetworkClassification.NeuralNetworkInput;
 public class CSVProcessing {
 
 	private String fileNameToSave;
+	private String dummyUserName = "Użytkownik";
+	private String dummyPassword = "Haslo";
 
 	public CSVProcessing(String fileNameToSave) {
 		this.fileNameToSave = fileNameToSave;
@@ -36,6 +38,7 @@ public class CSVProcessing {
 		List<Double> interTimesList = new ArrayList<>();
 		List<Double> holdTimesList = new ArrayList<>();
 		List<NeuralNetworkInput> trainingInputs = new ArrayList<>();
+		List<WordKeystrokeData> allWordsDataForUser = new ArrayList<>();
 		int i = 0;
 		int currentId = 0;
 		int sameIdCounter = 0;
@@ -51,6 +54,7 @@ public class CSVProcessing {
 			}
 			else if (sameIdCounter != 0) {
 				sameIdCounter = 0;
+
 			}
 			currentId = id;
 			if (sameIdCounter > 20) {
@@ -61,6 +65,8 @@ public class CSVProcessing {
 			List<InterKeyTime> interKeyTimes = convertToInterKeyTimesObjectsList(interTimesList);
 			WordKeystrokeData wordKeystrokeData = new WordKeystrokeData(false, holdTimes,
 					interKeyTimes);
+			allWordsDataForUser.add(wordKeystrokeData);
+
 			NeuralNetworkInput input = CSVProcessing
 					.convertHoldTimesAndInterKeyTimesListsToNeuralInput(holdTimesList,
 							interTimesList);

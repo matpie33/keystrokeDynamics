@@ -1,4 +1,4 @@
-package pl.master.thesis.helpers;
+package pl.master.thesis.others;
 
 import java.util.Random;
 

@@ -10,10 +10,10 @@ import com.guimaker.row.RowMaker;
 
 import pl.master.thesis.frame.MainWindow;
 import pl.master.thesis.guiElements.MyLabel;
-import pl.master.thesis.helpers.PasswordMasker;
 import pl.master.thesis.listeners.ActionListeners;
 import pl.master.thesis.others.ElementsMaker;
 import pl.master.thesis.others.FieldsVerifier;
+import pl.master.thesis.others.PasswordMasker;
 import pl.master.thesis.strings.FormsLabels;
 import pl.master.thesis.strings.Prompts;
 

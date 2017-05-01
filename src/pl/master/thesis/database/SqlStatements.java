@@ -41,17 +41,19 @@ public class SqlStatements {
 	public static void addTypingData(Connection connection, List<PreprocessedKeystrokeData> words,
 			int userId, boolean tabbed) throws SQLException {
 
-		PreparedStatement statement = null;
-		String wordToUserMapQuery = String
-				.format("INSERT INTO APP.WORDS_LETTERS (USERID) VALUES (%d)", userId, tabbed);
-		int wordId = executeStatementAndGetGeneratedId(wordToUserMapQuery, connection);
-		String wordDataQuery = "INSERT INTO WORDS VALUES(%s)";
-
+		System.out.println("adding typing data");
+		System.out.println(words);
+		String wordDataQuery = "INSERT INTO WORDS (INTERKEYTIME, HOLDTIME1, HOLDTIME2,"
+				+ "KEY1, KEY2, PRESSEDTOGETHER) VALUES(%s)";
 		for (PreprocessedKeystrokeData singleWord : words) {
-			String values = getWordDataAsString(singleWord, wordId);
-			statement = connection.prepareStatement(String.format(wordDataQuery, values));
-			statement.executeUpdate();
-			statement.close();
+			String values = getWordDataAsString(singleWord);
+			int wordId = executeStatementAndGetGeneratedId(String.format(wordDataQuery, values),
+					connection);
+			System.out.println(String.format(wordDataQuery, values));
+			String wordToUserMapQuery = String.format(
+					"INSERT INTO APP.WORDS_LETTERS (TABBED, USERID, WORDID) VALUES (%b, %d, %d)",
+					tabbed, userId, wordId);
+			executeStatementAndGetGeneratedId(wordToUserMapQuery, connection);
 		}
 
 	}
@@ -71,14 +73,13 @@ public class SqlStatements {
 		return id;
 	}
 
-	private static String getWordDataAsString(PreprocessedKeystrokeData singleWord, int wordId) {
+	private static String getWordDataAsString(PreprocessedKeystrokeData singleWord) {
 		String values = "";
 		values += "'" + singleWord.getInterKeyTime().getInterKeyTime() + "',";
 		values += "'" + singleWord.getKey1HoldingTime().getHoldTime() + "',";
 		values += "'" + singleWord.getKey2HoldingTime().getHoldTime() + "',";
 		values += "'" + singleWord.getKey1HoldingTime().getKey() + "',";
 		values += "'" + singleWord.getKey2HoldingTime().getKey() + "',";
-		values += wordId + ",";
 		values += singleWord.isKeysPressedTogether();
 		return values;
 	}
@@ -87,8 +88,7 @@ public class SqlStatements {
 		String query = "SELECT ID FROM USERS ORDER BY ID DESC FETCH FIRST ROW ONLY";
 		Statement statement = connection.createStatement();
 		ResultSet result = statement.executeQuery(query);
-		result.next();
-		return result.getString(1);
+		return result.next() ? result.getString(1) : "0";
 	}
 
 	public static List<NeuralNetworkInput> getAllUsersKeystrokeData(Connection connection)

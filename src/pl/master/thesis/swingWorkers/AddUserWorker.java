@@ -10,6 +10,7 @@ import java.util.concurrent.ExecutionException;
 import javax.swing.JTextField;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.derby.shared.common.error.DerbySQLIntegrityConstraintViolationException;
 import org.xml.sax.SAXException;
 
 import pl.master.thesis.database.SqlStatements;
@@ -51,16 +52,19 @@ public class AddUserWorker extends ConnectionSwingWorker {
 		try {
 			connection.setAutoCommit(false);
 			ClassificationManager manager = frame.getKeyEventHandler().getClassifier();
+			List<WordKeystrokeData> data = manager.getTypingData();
 			String userIds = SqlStatements.getLastUserId(connection);
 			int userId = Integer.parseInt(userIds) + 1;
+			System.out.println("adata haee");
+			System.out.println(data);
 			SqlStatements.addUser(connection, userName, password, question, answer, userId);
-
-			List<WordKeystrokeData> data = manager.getTypingData();
 			for (WordKeystrokeData word : data) {
 				SqlStatements.addTypingData(connection, manager.convertDataForDbNeeds(word), userId,
 						word.isStartedWithTab());
 			}
+
 			connection.commit();
+
 			List<NeuralNetworkInput> neuralInputs;
 			try {
 				neuralInputs = manager.learnData(userId);
@@ -72,29 +76,55 @@ public class AddUserWorker extends ConnectionSwingWorker {
 				e.printStackTrace();
 			}
 
-			connection.close();
 			frame.nextPanel();
 			frame.clearData();
 			panel.closeDialog();
 		}
-		catch (SQLException e1) { // TODO do rollback IF ANY SQL EXCEPTION
-									// OCCURS
+		catch (DerbySQLIntegrityConstraintViolationException ex) {
+			try {
+				connection.rollback();
+			}
+			catch (SQLException e) {
+				e.printStackTrace();
+			}
 			panel.closeDialog();
 			frame.previousPanel();
-			if (e1.getSQLState() == "23505") {
-				panel.showShortMessageDialog(Prompts.ERROR_SQL_USER_EXISTS);
+			panel.showShortMessageDialog(Prompts.ERROR_SQL_USER_EXISTS);
+		}
+		catch (SQLException e1) {
+			try {
+				System.out.println("rollbacked");
+				connection.rollback();
 			}
-			else if (e1.getSQLState() == "XJ040") {
+			catch (SQLException e) {
+				e.printStackTrace();
+			}
+			panel.closeDialog();
+			frame.previousPanel();
+			if (e1.getSQLState() == "XJ040") {
 				panel.showShortMessageDialog(Prompts.ERROR_SQL_DATABASE_IN_USE);
 			}
 			else {
 				panel.showShortMessageDialog(Prompts.ERROR_SQL_UNKNOWN_ERROR);
 				e1.printStackTrace();
 			}
-
+		}
+		finally {
+			try {
+				connection.close();
+				System.out.println("did I close it?");
+				System.out.println(connection.isClosed());
+			}
+			catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
 
 		frame.getKeyEventHandler().clear();
+
+	}
+
+	public static void addUserAndHisTypingDataToDatabase() {
 
 	}
 

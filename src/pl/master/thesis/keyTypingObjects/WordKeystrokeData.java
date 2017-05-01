@@ -35,9 +35,7 @@ public class WordKeystrokeData {
 	}
 
 	public void addInterKeyTime(InterKeyTime inter) {
-		if (!inter.isItTimeBetweenSameKey()) {
-			interKeyTimes.add(inter);
-		}
+		interKeyTimes.add(inter);
 	}
 
 	public void addKeyHoldTime(KeyHoldingTime holdTime) {
@@ -53,7 +51,7 @@ public class WordKeystrokeData {
 	}
 
 	public void closeAndCalculate() {
-		System.out.println("current word: " + word);
+		System.out.println("current word: " + getInterKeyTimes());
 		recalculateNumberOfInterKeyTimes();
 		removeOutliers();
 	}
