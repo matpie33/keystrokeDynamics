@@ -14,12 +14,15 @@ import pl.master.thesis.neuralNetworkClassification.NeuralNetworkInput;
 
 public class SqlStatements {
 
-	public static int addUser(Connection connection, String username, String password,
-			String question, String answer, int id) throws SQLException {
-		PreparedStatement statement = null;
+	public static int addUser(Connection connection, UsersTableData userData) throws SQLException {
+		String username = userData.getUserName();
+		String password = userData.getPassword();
+		String question = userData.getQuestion();
+		String answer = userData.getAnswer();
+		int id = userData.getUserId();
 		String query = "INSERT INTO Users (Username,Password, Question, Answer, Id) " + "VALUES ('"
 				+ username + "','" + password + "','" + question + "','" + answer + "'," + id + ")";
-
+		System.out.println("query is: " + query);
 		int userId = executeStatementAndGetGeneratedId(query, connection);
 		return userId;
 	}
@@ -41,19 +44,16 @@ public class SqlStatements {
 	public static void addTypingData(Connection connection, List<PreprocessedKeystrokeData> words,
 			int userId, boolean tabbed) throws SQLException {
 
-		System.out.println("adding typing data");
-		System.out.println(words);
+		String wordToUserMapQuery = String.format(
+				"INSERT INTO APP.WORDS_LETTERS (TABBED, USERID) VALUES (%b, %d)", tabbed, userId);
+		int wordId = executeStatementAndGetGeneratedId(wordToUserMapQuery, connection);
+
 		String wordDataQuery = "INSERT INTO WORDS (INTERKEYTIME, HOLDTIME1, HOLDTIME2,"
-				+ "KEY1, KEY2, PRESSEDTOGETHER) VALUES(%s)";
+				+ "KEY1, KEY2, PRESSEDTOGETHER, WORDID) VALUES(%s)";
 		for (PreprocessedKeystrokeData singleWord : words) {
-			String values = getWordDataAsString(singleWord);
-			int wordId = executeStatementAndGetGeneratedId(String.format(wordDataQuery, values),
-					connection);
-			System.out.println(String.format(wordDataQuery, values));
-			String wordToUserMapQuery = String.format(
-					"INSERT INTO APP.WORDS_LETTERS (TABBED, USERID, WORDID) VALUES (%b, %d, %d)",
-					tabbed, userId, wordId);
-			executeStatementAndGetGeneratedId(wordToUserMapQuery, connection);
+			String values = getWordDataAsString(singleWord, wordId);
+			executeStatementAndGetGeneratedId(String.format(wordDataQuery, values), connection);
+
 		}
 
 	}
@@ -73,14 +73,15 @@ public class SqlStatements {
 		return id;
 	}
 
-	private static String getWordDataAsString(PreprocessedKeystrokeData singleWord) {
+	private static String getWordDataAsString(PreprocessedKeystrokeData singleWord, int wordId) {
 		String values = "";
 		values += "'" + singleWord.getInterKeyTime().getInterKeyTime() + "',";
 		values += "'" + singleWord.getKey1HoldingTime().getHoldTime() + "',";
 		values += "'" + singleWord.getKey2HoldingTime().getHoldTime() + "',";
 		values += "'" + singleWord.getKey1HoldingTime().getKey() + "',";
 		values += "'" + singleWord.getKey2HoldingTime().getKey() + "',";
-		values += singleWord.isKeysPressedTogether();
+		values += singleWord.isKeysPressedTogether() + ",";
+		values += wordId;
 		return values;
 	}
 

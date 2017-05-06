@@ -11,8 +11,10 @@ import org.apache.log4j.BasicConfigurator;
 import org.xml.sax.SAXException;
 
 import pl.master.thesis.csvManipulation.CSVProcessing;
+import pl.master.thesis.dataConverters.WordDataToSimpleObjectConverter;
 import pl.master.thesis.frame.MainWindow;
-import pl.master.thesis.swingWorkers.AddUsersFromDatasetWorker;
+import pl.master.thesis.swingWorkers.AddUserDataOnlyWorker;
+import pl.master.thesis.swingWorkers.AddUsersFromDatasetIfNotInDBWorker;
 import pl.master.thesis.swingWorkers.GetKeystrokeDataFromDBWorker;
 
 public class KeystrokeDynamics {
@@ -45,18 +47,20 @@ public class KeystrokeDynamics {
 	}
 
 	private static void addUsersFromDatasetToDatabase() throws SQLException {
-		AddUsersFromDatasetWorker user = new AddUsersFromDatasetWorker();
+		AddUsersFromDatasetIfNotInDBWorker user = new AddUsersFromDatasetIfNotInDBWorker(56);
 		user.doInBackground();
 	}
 
-	private static void doTestLearning()
-			throws ParserConfigurationException, SAXException, IOException, InterruptedException {
+	private static void doTestLearning() throws ParserConfigurationException, SAXException,
+			IOException, InterruptedException, SQLException {
 		String fileName = "trainingData.txt";
 		if (new File(fileName).exists()) {
 			new File(fileName).delete();
 		}
 
-		new CSVProcessing(fileName).extractStatisticsFromCSVAndSave();
+		new CSVProcessing(fileName,
+				new AddUserDataOnlyWorker(new WordDataToSimpleObjectConverter()))
+						.extractStatisticsFromCSVAndSave();
 		DeepLearning4jUsing.use();
 	}
 

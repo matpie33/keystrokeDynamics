@@ -2,6 +2,7 @@ package pl.master.thesis.myOwnClassification;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -26,8 +27,9 @@ public class ClassificationManager {
 		percentOfConsecutiveKeysHold = 0;
 		dataDivider = new DataDivider();
 		statisticsCalculator = new StatisticsCalculator();
-		classifier = new NeuralNetworkClassifier();
 		converter = new WordDataToSimpleObjectConverter();
+		classifier = new NeuralNetworkClassifier(converter);
+
 	}
 
 	public void addKeystrokeData(WordKeystrokeData newData) {
@@ -62,13 +64,14 @@ public class ClassificationManager {
 	}
 
 	public List<NeuralNetworkInput> learnData(int userId) throws FileNotFoundException, IOException,
-			InterruptedException, ParserConfigurationException, SAXException {
+			InterruptedException, ParserConfigurationException, SAXException, SQLException {
 		System.out.println("learning");
 		List<NeuralNetworkInput> inputs = statisticsCalculator
 				.transferToNeuralInput(dataDivider.getWholeData());
 		dataDivider.cleanData();
 		classifyInputsAsUser(inputs, userId);
-		classifier.saveNewDataAndLearn(inputs);
+		classifier.recreateNeuralNetwork();
+		classifier.saveDataInTemporaryFileAndLearn(inputs);
 		System.out.println("done learning");
 		return inputs;
 	}
@@ -109,6 +112,14 @@ public class ClassificationManager {
 
 	public int getNumberOfUsers() {
 		return classifier.getNumberOfUsers();
+	}
+
+	public WordDataToSimpleObjectConverter getWordToSimpleObjectConverter() {
+		return converter;
+	}
+
+	public void setNumberOfUsers(int numberOfUsers) {
+		classifier.setNumberOfUsers(numberOfUsers);
 	}
 
 }

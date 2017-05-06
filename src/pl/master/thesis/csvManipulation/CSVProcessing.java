@@ -3,6 +3,7 @@ package pl.master.thesis.csvManipulation;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,6 +13,7 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.xml.sax.SAXException;
 
+import pl.master.thesis.database.UsersTableData;
 import pl.master.thesis.keyTypingObjects.Digraph;
 import pl.master.thesis.keyTypingObjects.InterKeyTime;
 import pl.master.thesis.keyTypingObjects.KeyHoldingTime;
@@ -19,19 +21,23 @@ import pl.master.thesis.keyTypingObjects.WordKeystrokeData;
 import pl.master.thesis.myOwnClassification.StatisticsCalculator;
 import pl.master.thesis.neuralNetworkClassification.NeuralFeature;
 import pl.master.thesis.neuralNetworkClassification.NeuralNetworkInput;
+import pl.master.thesis.swingWorkers.AddUserDataOnlyWorker;
 
 public class CSVProcessing {
 
 	private String fileNameToSave;
 	private String dummyUserName = "Użytkownik";
 	private String dummyPassword = "Haslo";
+	private AddUserDataOnlyWorker addUserDataWorker;
+	private int samplesPerUserToTake = 20;
 
-	public CSVProcessing(String fileNameToSave) {
+	public CSVProcessing(String fileNameToSave, AddUserDataOnlyWorker userDataWorker) {
 		this.fileNameToSave = fileNameToSave;
+		addUserDataWorker = userDataWorker;
 	}
 
 	public void extractStatisticsFromCSVAndSave()
-			throws ParserConfigurationException, SAXException, IOException {
+			throws ParserConfigurationException, SAXException, IOException, SQLException {
 
 		Reader in = new FileReader("C:\\master_thesis\\keystroke_dataset.csv");
 		Iterable<CSVRecord> records = CSVFormat.EXCEL.withSkipHeaderRecord().parse(in);
@@ -48,16 +54,19 @@ public class CSVProcessing {
 				i++;
 				continue;
 			}
-			int id = getUserIdAndIncrementCounter(record, currentId, sameIdCounter);
+			int id = getUserIdAndIncrementCounter(record, currentId);
 			if (id == currentId) {
 				sameIdCounter++;
 			}
-			else if (sameIdCounter != 0) {
+			else {
 				sameIdCounter = 0;
-
+				System.out.println("here is: " + id);
+				UsersTableData userData = createUserData(id);
+				addUserDataWorker.addData(userData, allWordsDataForUser);
+				allWordsDataForUser.clear();
 			}
 			currentId = id;
-			if (sameIdCounter > 20) {
+			if (sameIdCounter > samplesPerUserToTake) {
 				continue;
 			}
 			addInterAndHoldTimesElementsToList(record, interTimesList, holdTimesList);
@@ -72,13 +81,21 @@ public class CSVProcessing {
 							interTimesList);
 			input.setUserId(id);
 			trainingInputs.add(input);
-
 			interTimesList.clear();
 			holdTimesList.clear();
 		}
 
+		System.out.println("in csv processing: " + allWordsDataForUser.get(0).getInterKeyTimes());
 		CSVSaver saver2 = new CSVSaver(fileNameToSave);
-		saver2.save(trainingInputs);
+		saver2.saveTemporary(trainingInputs);
+		addUserDataWorker.doInBackground();
+	}
+
+	private UsersTableData createUserData(int userId) {
+		String answer = "answer";
+		String question = "question";
+		return new UsersTableData().setAnswer(answer).setQuestion(question)
+				.setPassword(dummyPassword).setUserName(dummyUserName + userId).setUserId(userId);
 	}
 
 	public static NeuralNetworkInput convertHoldTimesAndInterKeyTimesListsToNeuralInput(
@@ -138,7 +155,7 @@ public class CSVProcessing {
 		holdTimesList.add(holdTime);
 	}
 
-	private int getUserIdAndIncrementCounter(CSVRecord record, int currentId, int sameIdCounter) {
+	private int getUserIdAndIncrementCounter(CSVRecord record, int currentId) {
 		String subjectId = record.get(0);
 		int id = Integer.parseInt(subjectId.substring(2)) - 2;
 		return id;

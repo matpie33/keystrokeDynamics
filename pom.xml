@@ -79,6 +79,14 @@
 	    <artifactId>slf4j-log4j12</artifactId>
 	    <version>1.7.5</version>
 	</dependency>
+	
+	<!-- https://mvnrepository.com/artifact/org.datavec/datavec-dataframe -->
+	<dependency>
+	    <groupId>org.datavec</groupId>
+	    <artifactId>datavec-dataframe</artifactId>
+	    <version>0.8.0</version>
+	</dependency>
+
   
    </dependencies>
   

@@ -16,7 +16,7 @@ public class CSVSaver {
 		this.fileName = filename;
 	}
 
-	public void save(List<NeuralNetworkInput> data) {
+	public void saveTemporary(List<NeuralNetworkInput> data) {
 		try {
 			FileWriter fw = new FileWriter(fileName, true);
 			for (NeuralNetworkInput singleData : data) {

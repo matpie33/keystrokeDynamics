@@ -3,6 +3,7 @@ package pl.master.thesis.neuralNetworkClassification;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -32,6 +33,8 @@ import org.xml.sax.SAXException;
 
 import pl.master.thesis.csvManipulation.CSVProcessing;
 import pl.master.thesis.csvManipulation.CSVSaver;
+import pl.master.thesis.dataConverters.WordDataToSimpleObjectConverter;
+import pl.master.thesis.swingWorkers.AddUserDataOnlyWorker;
 
 public class NeuralNetworkClassifier {
 
@@ -43,14 +46,25 @@ public class NeuralNetworkClassifier {
 	private String neuralNetworkFileName = "neurons.txt";
 	private String trainingSetFileName = "trainingData.txt";
 	private CSVSaver csvSaver;
+	private WordDataToSimpleObjectConverter wordDataConverter;
 
-	public NeuralNetworkClassifier() {
+	public NeuralNetworkClassifier(WordDataToSimpleObjectConverter wordConverter) {
 
+		wordDataConverter = wordConverter;
 		csvSaver = new CSVSaver(trainingSetFileName);
 		File neuralNetworkFile = new File(neuralNetworkFileName);
-		File trainingSetFile = new File(trainingSetFileName);
-		if (neuralNetworkFile.exists() && trainingSetFile.exists()) {
 
+		// AddUsersFromDatasetIfNotInDBWorker user = new
+		// AddUsersFromDatasetIfNotInDBWorker(
+		// numberOfUsers);
+		System.out.println("going further");
+		// try {
+		// user.doInBackground();
+		// }
+		// catch (SQLException e1) {
+		// e1.printStackTrace();
+		// }
+		if (neuralNetworkFile.exists()) {
 			try {
 				neuralNetwork = ModelSerializer.restoreMultiLayerNetwork(neuralNetworkFile);
 			}
@@ -60,9 +74,16 @@ public class NeuralNetworkClassifier {
 			// printWeights(neuralNetwork.getWeights());
 		}
 		else {
-			neuralNetworkFile.delete();
-			trainingSetFile.delete();
 			createMultiLayerPerceptron();
+			try {
+				createCSVFileFromExistingDataset();
+				learnExistingDataset();
+				saveNeuralNetworkState();
+			}
+			catch (IOException | InterruptedException | ParserConfigurationException | SAXException
+					| SQLException e) {
+				e.printStackTrace();
+			}
 			System.out.println("new neural network");
 		}
 
@@ -71,13 +92,6 @@ public class NeuralNetworkClassifier {
 	private void createMultiLayerPerceptron() {
 		MultiLayerConfiguration networkConfiguration = createNeuralNetworkConfiguration();
 		initNeuralNetwork(networkConfiguration);
-		try {
-			learnExistingDataset();
-			saveNeuralNetworkState();
-		}
-		catch (IOException | InterruptedException | ParserConfigurationException | SAXException e) {
-			e.printStackTrace();
-		}
 	}
 
 	private MultiLayerConfiguration createNeuralNetworkConfiguration() {
@@ -109,23 +123,24 @@ public class NeuralNetworkClassifier {
 	}
 
 	private void learnExistingDataset() throws FileNotFoundException, IOException,
-			InterruptedException, ParserConfigurationException, SAXException {
-		createCSVFileFromExistingDataset();
+			InterruptedException, ParserConfigurationException, SAXException, SQLException {
 		SplitTestAndTrain testAndTrain = readExistingDataset();
 		DataSet trainingData = testAndTrain.getTrain();
 		DataSet testData = testAndTrain.getTest();
 		normalizeData(trainingData, testData);
 		neuralNetwork.fit(trainingData);
+		new File(trainingSetFileName).delete();
 
 	}
 
 	private void createCSVFileFromExistingDataset()
-			throws ParserConfigurationException, SAXException, IOException {
-		if (new File(trainingSetFileName).exists()) {
-			System.out.println("skipping csv creation - beccause it already exists");
-			return;
+			throws ParserConfigurationException, SAXException, IOException, SQLException {
+		File trainingFile = new File(trainingSetFileName);
+		if (trainingFile.exists()) {
+			trainingFile.delete();
 		}
-		CSVProcessing processing = new CSVProcessing(trainingSetFileName);
+		AddUserDataOnlyWorker addUserDataOnly = new AddUserDataOnlyWorker(wordDataConverter);
+		CSVProcessing processing = new CSVProcessing(trainingSetFileName, addUserDataOnly);
 		processing.extractStatisticsFromCSVAndSave();
 	}
 
@@ -165,12 +180,10 @@ public class NeuralNetworkClassifier {
 		}
 	}
 
-	public void saveNewDataAndLearn(List<NeuralNetworkInput> data) throws FileNotFoundException,
-			IOException, InterruptedException, ParserConfigurationException, SAXException {
-		System.out.println(data);
-		csvSaver.save(data);
-		// TODO adjust neural network parameters after adding new data - more
-		// input neurons
+	public void saveDataInTemporaryFileAndLearn(List<NeuralNetworkInput> data)
+			throws FileNotFoundException, IOException, InterruptedException,
+			ParserConfigurationException, SAXException, SQLException {
+		csvSaver.saveTemporary(data);
 		learnExistingDataset();
 		saveNeuralNetworkState();
 	}
@@ -181,7 +194,6 @@ public class NeuralNetworkClassifier {
 	}
 
 	public NeuralNetworkOutput classify(NeuralNetworkInput data) {
-
 		NeuralFeature holdTime = data.getHoldTime();
 		NeuralFeature interKeyTime = data.getInterKeyTime();
 		INDArray features = Nd4j.create(
@@ -190,12 +202,7 @@ public class NeuralNetworkClassifier {
 						interKeyTime.getMaxValue(), interKeyTime.getVariance() });
 		INDArray output = neuralNetwork.output(features);
 		NeuralNetworkOutput objectOutput = convertOutputFromArray(output);
-		System.out.println("object output is here");
-		System.out.println(output);
-		System.out.println(objectOutput.getId());
-		System.out.println(objectOutput.getProbability());
 		return objectOutput;
-
 	}
 
 	private NeuralNetworkOutput convertOutputFromArray(INDArray output) {
@@ -213,6 +220,15 @@ public class NeuralNetworkClassifier {
 
 	public int getNumberOfUsers() {
 		return numberOfUsers;
+	}
+
+	public void setNumberOfUsers(int numberOfUsers) {
+		this.numberOfUsers = numberOfUsers;
+	}
+
+	public void recreateNeuralNetwork() {
+		new File(neuralNetworkFileName).delete();
+		createMultiLayerPerceptron();
 	}
 
 }

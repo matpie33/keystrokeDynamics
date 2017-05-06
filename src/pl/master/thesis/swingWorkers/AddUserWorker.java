@@ -13,7 +13,9 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.derby.shared.common.error.DerbySQLIntegrityConstraintViolationException;
 import org.xml.sax.SAXException;
 
+import pl.master.thesis.dataConverters.WordDataToSimpleObjectConverter;
 import pl.master.thesis.database.SqlStatements;
+import pl.master.thesis.database.UsersTableData;
 import pl.master.thesis.frame.MainWindow;
 import pl.master.thesis.guiElements.MyLabel;
 import pl.master.thesis.keyTypingObjects.WordKeystrokeData;
@@ -55,14 +57,12 @@ public class AddUserWorker extends ConnectionSwingWorker {
 			List<WordKeystrokeData> data = manager.getTypingData();
 			String userIds = SqlStatements.getLastUserId(connection);
 			int userId = Integer.parseInt(userIds) + 1;
-			System.out.println("adata haee");
-			System.out.println(data);
-			SqlStatements.addUser(connection, userName, password, question, answer, userId);
-			for (WordKeystrokeData word : data) {
-				SqlStatements.addTypingData(connection, manager.convertDataForDbNeeds(word), userId,
-						word.isStartedWithTab());
-			}
+			manager.setNumberOfUsers(userId + 1);
+			UsersTableData userData = new UsersTableData().setAnswer(answer).setPassword(password)
+					.setQuestion(question).setUserId(userId).setUserName(userName);
 
+			AddUserWorker.addUserAndHisTypingDataToDatabase(connection, userData, data,
+					manager.getWordToSimpleObjectConverter());
 			connection.commit();
 
 			List<NeuralNetworkInput> neuralInputs;
@@ -124,8 +124,16 @@ public class AddUserWorker extends ConnectionSwingWorker {
 
 	}
 
-	public static void addUserAndHisTypingDataToDatabase() {
-
+	public static void addUserAndHisTypingDataToDatabase(Connection connection,
+			UsersTableData userData, List<WordKeystrokeData> data,
+			WordDataToSimpleObjectConverter manager) throws SQLException {
+		SqlStatements.addUser(connection, userData);
+		System.out.println("User id: " + userData.getUserId());
+		for (int i = 0; i < data.size(); i++) {
+			WordKeystrokeData word = data.get(i);
+			SqlStatements.addTypingData(connection, manager.convertSingleWordToSimplestData(word),
+					userData.getUserId(), word.isStartedWithTab());
+		}
 	}
 
 	@Override
