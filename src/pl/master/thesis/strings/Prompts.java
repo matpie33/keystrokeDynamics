@@ -28,5 +28,5 @@ public class Prompts {
 	public static final String ERROR_SQL_UNKNOWN_ERROR = "Nieznany błąd. Proszę spróbować później.";
 	public static final String ERROR_LEARNING_DATASET = "Wystąpił problem z uczeniem sieci, treśc błędu: ";
 	public static final String USER_OR_PASS_INCORRECT = "Podany login lub hasło jest nieprawidłowe.";
-
+	public static final String CANNOT_CONNECT_TO_DB = "Nie można się połączyć z bazą danych.";
 }

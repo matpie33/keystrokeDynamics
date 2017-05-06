@@ -22,21 +22,19 @@ import pl.master.thesis.main.MainWindow;
 import pl.master.thesis.myOwnClassification.ClassificationManager;
 import pl.master.thesis.neuralNetworkClassification.NeuralNetworkInput;
 import pl.master.thesis.others.FieldsVerifier;
-import pl.master.thesis.panels.BasicPanel;
 import pl.master.thesis.panels.PanelSummary;
 import pl.master.thesis.strings.FormsLabels;
 import pl.master.thesis.strings.Prompts;
 
 public class AddUserWorker extends ConnectionSwingWorker {
 
-	private PanelSummary panel;
 	private Map<JTextField, MyLabel> hmap;
 	private MainWindow frame;
 
 	public AddUserWorker(PanelSummary panel, Map<JTextField, MyLabel> hmap) {
 		this.panel = panel;
 		this.hmap = hmap;
-		frame = ((BasicPanel) panel).getParentFrame();
+		frame = panel.getParentFrame();
 		frame.addCloseListener(database);
 	}
 
