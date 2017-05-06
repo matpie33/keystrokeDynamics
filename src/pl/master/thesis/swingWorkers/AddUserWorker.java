@@ -61,10 +61,11 @@ public class AddUserWorker extends ConnectionSwingWorker {
 			UsersTableData userData = new UsersTableData().setAnswer(answer).setPassword(password)
 					.setQuestion(question).setUserId(userId).setUserName(userName);
 
+			panel.setMessage(Prompts.ADDING_USER_TYPING_DATA_PROMPT);
 			AddUserWorker.addUserAndHisTypingDataToDatabase(connection, userData, data,
 					manager.getWordToSimpleObjectConverter());
 			connection.commit();
-
+			panel.setMessage(Prompts.LEARNING_NEURAL_NETWORK_PROMPT);
 			List<NeuralNetworkInput> neuralInputs;
 			try {
 				neuralInputs = manager.learnData(userId);

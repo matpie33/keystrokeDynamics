@@ -53,7 +53,7 @@ public class MyDialog extends JDialog {
 		catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
-		text = new MyLabel(Prompts.CONNECTING_PROMPT);
+		text = new MyLabel(Prompts.ADDING_USER_INFO_PROMPT);
 		mainPanel.addRow(RowMaker.createUnfilledRow(GridBagConstraints.CENTER, text));
 		mainPanel.addRow(RowMaker.createUnfilledRow(GridBagConstraints.CENTER, gif));
 		setProperties();
@@ -116,6 +116,15 @@ public class MyDialog extends JDialog {
 		revalidate();
 		repaint();
 		pack();
+		setLocationRelativeTo(null);
+	}
+
+	public void setMessage(String message) {
+		if (text == null) {
+			return;
+		}
+		text.setText(message);
+		update();
 	}
 
 }

@@ -18,7 +18,9 @@ public class Prompts {
 
 	public static final String WELCOME_PROMPT = "Witam w moim programie. Jeśli masz już założone konto, zaloguj się korzystając z poniższych pól."
 			+ "W przeciwnym przypadku załóż nowe konto używając odpowiedniego przycisku.";
-	public static final String CONNECTING_PROMPT = "Łączenie z bazą danych";
+	public static final String ADDING_USER_INFO_PROMPT = "Trwa dodawanie informacji o użytkowniku do bazy danych...";
+	public static final String ADDING_USER_TYPING_DATA_PROMPT = "Trwa dodawanie informacji o sposobie pisania użytkownika do bazy danych...";
+	public static final String LEARNING_NEURAL_NETWORK_PROMPT = "Trwa uczenie się sieci neuronowej...";
 	public static final String MESSAGE_CORRECTION_NEEDED = "Proszę wprowadzić poprawki.";
 	public static final String ACCOUNT_CREATED_SUCCESSFULLY_PROMPT = "Gratulacje, pomyślnie założono konto.";
 	public static final String ERROR_SQL_USER_EXISTS = "Podany użytkownik już istnieje.";

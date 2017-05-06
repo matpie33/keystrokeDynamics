@@ -85,4 +85,8 @@ public class BasicPanel {
 		dialog.dispose();
 	}
 
+	public void setMessage(String message) {
+		dialog.setMessage(message);
+	}
+
 }
