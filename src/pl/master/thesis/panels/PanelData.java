@@ -13,11 +13,11 @@ import javax.swing.SwingUtilities;
 import com.guimaker.panels.MainPanel;
 import com.guimaker.row.RowMaker;
 
-import pl.master.thesis.frame.MainWindow;
 import pl.master.thesis.guiElements.MyButton;
 import pl.master.thesis.guiElements.MyLabel;
 import pl.master.thesis.listeners.ActionListeners;
 import pl.master.thesis.listeners.FocusListeners;
+import pl.master.thesis.main.MainWindow;
 import pl.master.thesis.others.ElementsMaker;
 import pl.master.thesis.strings.FormsLabels;
 import pl.master.thesis.strings.Prompts;

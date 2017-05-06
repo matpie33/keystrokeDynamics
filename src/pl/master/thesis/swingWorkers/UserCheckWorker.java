@@ -4,7 +4,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import pl.master.thesis.database.SqlStatements;
-import pl.master.thesis.frame.MainWindow;
+import pl.master.thesis.main.MainWindow;
 import pl.master.thesis.panels.BasicPanel;
 import pl.master.thesis.panels.PanelWelcome;
 import pl.master.thesis.strings.Prompts;

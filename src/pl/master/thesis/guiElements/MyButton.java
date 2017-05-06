@@ -10,6 +10,8 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.JButton;
 
+import pl.master.thesis.others.MyColors;
+
 public class MyButton extends JButton {
 
 	private static final long serialVersionUID = -2392177191789587997L;
@@ -21,9 +23,9 @@ public class MyButton extends JButton {
 
 		addListeners();
 		setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		defaultColor = Color.YELLOW;
-		hoverColor = Color.GREEN;
-		clickedColor = new Color(51, 102, 0);
+		defaultColor = MyColors.ORANGE;
+		hoverColor = MyColors.YELLOW;
+		clickedColor = MyColors.DARK_ORANGE;
 		setContentAreaFilled(false);
 		setFocusPainted(false);
 		setBorderPainted(false);
@@ -42,7 +44,7 @@ public class MyButton extends JButton {
 				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		g2d.setRenderingHints(rh);
 		g2d.setColor(getBackground());
-		g2d.fillRoundRect(0, 0, getWidth(), getHeight(), 50, 50);
+		g2d.fillRoundRect(0, 0, getWidth(), getHeight(), 40, 20);
 		super.paintComponent(g2d);
 	}
 

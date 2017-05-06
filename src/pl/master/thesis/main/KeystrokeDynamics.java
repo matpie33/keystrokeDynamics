@@ -12,7 +12,6 @@ import org.xml.sax.SAXException;
 
 import pl.master.thesis.csvManipulation.CSVProcessing;
 import pl.master.thesis.dataConverters.WordDataToSimpleObjectConverter;
-import pl.master.thesis.frame.MainWindow;
 import pl.master.thesis.swingWorkers.AddUserDataOnlyWorker;
 import pl.master.thesis.swingWorkers.AddUsersFromDatasetIfNotInDBWorker;
 import pl.master.thesis.swingWorkers.GetKeystrokeDataFromDBWorker;

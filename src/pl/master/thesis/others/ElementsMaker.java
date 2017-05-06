@@ -1,5 +1,6 @@
 package pl.master.thesis.others;
 
+import java.awt.Color;
 import java.awt.event.ActionListener;
 import java.util.Map;
 
@@ -35,6 +36,8 @@ public class ElementsMaker {
 		hello.setEditable(false);
 		hello.setOpaque(false);
 		hello.setHighlighter(null);
+		hello.setForeground(Color.WHITE);
+		hello.setFont(hello.getFont().deriveFont(16f));
 		return hello;
 	}
 

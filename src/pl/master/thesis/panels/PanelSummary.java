@@ -8,9 +8,9 @@ import javax.swing.JTextField;
 
 import com.guimaker.row.RowMaker;
 
-import pl.master.thesis.frame.MainWindow;
 import pl.master.thesis.guiElements.MyLabel;
 import pl.master.thesis.listeners.ActionListeners;
+import pl.master.thesis.main.MainWindow;
 import pl.master.thesis.others.ElementsMaker;
 import pl.master.thesis.others.FieldsVerifier;
 import pl.master.thesis.others.PasswordMasker;
@@ -30,14 +30,14 @@ public class PanelSummary extends BasicPanel {
 
 	public void showFieldsValues(Map<JTextField, MyLabel> hmap) {
 
-		panel.getPanel().removeAll();
+		panel.clear();
 		MyLabel title = ElementsMaker.createLabel(Prompts.TITLE_SUMMARY);
 		JButton btnConnect = ElementsMaker.createButton(Prompts.BTN_CONTINUE,
 				ActionListeners.createListenerConnect(this, hmap));
 
 		panel.addRow(RowMaker.createUnfilledRow(GridBagConstraints.CENTER, title));
 		addValuesFromTextFieldsAndLabels(hmap);
-		panel.addRow(RowMaker.createUnfilledRow(GridBagConstraints.CENTER, btnBack, btnConnect));
+		panel.addRow(RowMaker.createUnfilledRow(GridBagConstraints.SOUTHEAST, btnBack, btnConnect));
 
 	}
 

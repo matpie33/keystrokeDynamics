@@ -7,10 +7,10 @@ import javax.swing.JLabel;
 
 import com.guimaker.row.RowMaker;
 
-import pl.master.thesis.frame.MainWindow;
 import pl.master.thesis.guiElements.MyLabel;
 import pl.master.thesis.keyEventHandler.KeyEventHandler;
 import pl.master.thesis.listeners.ActionListeners;
+import pl.master.thesis.main.MainWindow;
 import pl.master.thesis.others.ElementsMaker;
 import pl.master.thesis.strings.Prompts;
 import pl.master.thesis.strings.TypingStatisticsFormat;

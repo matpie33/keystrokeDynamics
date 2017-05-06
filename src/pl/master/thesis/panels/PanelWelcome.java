@@ -16,10 +16,10 @@ import javax.swing.SwingWorker;
 
 import com.guimaker.row.RowMaker;
 
-import pl.master.thesis.frame.MainWindow;
 import pl.master.thesis.guiElements.MyButton;
 import pl.master.thesis.guiElements.MyLabel;
 import pl.master.thesis.listeners.KeyListeners;
+import pl.master.thesis.main.MainWindow;
 import pl.master.thesis.others.ElementsMaker;
 import pl.master.thesis.strings.FormsLabels;
 import pl.master.thesis.strings.Prompts;
@@ -33,7 +33,7 @@ public class PanelWelcome extends BasicPanel {
 
 	public PanelWelcome(final MainWindow frame, final Map<JTextField, MyLabel> hmap) {
 
-		super(frame);
+		super(frame, false);
 		JTextArea hello = ElementsMaker.createWelcomeMessage(Prompts.WELCOME_PROMPT);
 		Map.Entry<JTextField, MyLabel> userName = searchForTextField(FormsLabels.LOGIN, hmap);
 		Map.Entry<JTextField, MyLabel> password = searchForTextField(FormsLabels.PASSWORD, hmap);

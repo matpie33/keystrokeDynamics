@@ -1,4 +1,4 @@
-package pl.master.thesis.frame;
+package pl.master.thesis.main;
 
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -69,7 +69,7 @@ public class MainWindow extends JFrame {
 		fieldsInitializer = new FieldsInitializer(keyHandler);
 		keyHandler.setFieldsInitializer(fieldsInitializer);
 
-		panel = new MainPanel(MyColors.DARK_GREEN);
+		panel = new MainPanel(MyColors.DARK_BLUE);
 		card = initializePanelWithCards();
 		panel.addRow(RowMaker.createBothSidesFilledRow(card));
 
@@ -94,7 +94,7 @@ public class MainWindow extends JFrame {
 	private JPanel initializePanelWithCards() {
 		JPanel card = new JPanel();
 		card.setLayout(new CardLayout());
-		Border blackline = BorderFactory.createLineBorder(Color.black, 5);
+		Border blackline = BorderFactory.createLineBorder(Color.black, 3);
 		card.setBorder(blackline);
 		return card;
 	}

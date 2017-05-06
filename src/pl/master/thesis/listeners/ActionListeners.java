@@ -8,9 +8,9 @@ import java.util.Map;
 import javax.swing.JTextField;
 import javax.swing.SwingWorker;
 
-import pl.master.thesis.frame.MainWindow;
 import pl.master.thesis.guiElements.MyLabel;
 import pl.master.thesis.keyEventHandler.KeyEventHandler;
+import pl.master.thesis.main.MainWindow;
 import pl.master.thesis.others.FieldsVerifier;
 import pl.master.thesis.panels.PanelData;
 import pl.master.thesis.panels.PanelSummary;

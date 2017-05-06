@@ -1,6 +1,5 @@
 package pl.master.thesis.panels;
 
-import java.awt.Color;
 import java.awt.Insets;
 
 import javax.swing.JLabel;
@@ -9,10 +8,10 @@ import javax.swing.JPanel;
 import com.guimaker.panels.MainPanel;
 
 import pl.master.thesis.dialogs.MyDialog;
-import pl.master.thesis.frame.MainWindow;
 import pl.master.thesis.guiElements.ErrorLabel;
 import pl.master.thesis.guiElements.MyButton;
 import pl.master.thesis.listeners.ActionListeners;
+import pl.master.thesis.main.MainWindow;
 import pl.master.thesis.others.ElementsMaker;
 import pl.master.thesis.others.MyColors;
 import pl.master.thesis.strings.Prompts;
@@ -32,7 +31,11 @@ public class BasicPanel {
 	private MyDialog dialog;
 
 	public BasicPanel(MainWindow frame) {
-		this(frame, MyColors.LIGHT_BLUE);
+		this(frame, true);
+	}
+
+	public BasicPanel(MainWindow frame, boolean putRowsAsHighestAsPossible) {
+		panel = new MainPanel(MyColors.LIGHT_BLUE, putRowsAsHighestAsPossible);
 		errorLabel = new ErrorLabel();
 		isErrorShowing = false;
 		this.frame = frame;
@@ -40,10 +43,6 @@ public class BasicPanel {
 				ActionListeners.createNextPanelListener(frame));
 		btnBack = ElementsMaker.createButton(Prompts.BTN_GO_BACK,
 				ActionListeners.createPreviousPanelListener(frame));
-	}
-
-	public BasicPanel(MainWindow frame, Color color) {
-		panel = new MainPanel(color);
 	}
 
 	public MainWindow getParentFrame() {
