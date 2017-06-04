@@ -33,7 +33,7 @@ import org.xml.sax.SAXException;
 
 import pl.master.thesis.csvManipulation.CSVProcessing;
 import pl.master.thesis.csvManipulation.CSVSaver;
-import pl.master.thesis.dataConverters.WordDataToSimpleObjectConverter;
+import pl.master.thesis.dataConverters.WordToDigraphsConverter;
 import pl.master.thesis.swingWorkers.AddUserDataOnlyWorker;
 
 public class NeuralNetworkClassifier {
@@ -46,9 +46,9 @@ public class NeuralNetworkClassifier {
 	private String neuralNetworkFileName = "neurons.txt";
 	private String trainingSetFileName = "trainingData.txt";
 	private CSVSaver csvSaver;
-	private WordDataToSimpleObjectConverter wordDataConverter;
+	private WordToDigraphsConverter wordDataConverter;
 
-	public NeuralNetworkClassifier(WordDataToSimpleObjectConverter wordConverter) {
+	public NeuralNetworkClassifier(WordToDigraphsConverter wordConverter) {
 
 		wordDataConverter = wordConverter;
 		csvSaver = new CSVSaver(trainingSetFileName);

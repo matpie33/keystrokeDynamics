@@ -21,7 +21,7 @@ public class PanelCongratulations extends BasicPanel {
 	private KeyEventHandler time;
 
 	public PanelCongratulations(MainWindow frame, KeyEventHandler time) {
-		super(frame);
+		super(frame, false);
 		this.time = time;
 
 		JLabel congrats = new MyLabel(Prompts.ACCOUNT_CREATED_SUCCESSFULLY_PROMPT);

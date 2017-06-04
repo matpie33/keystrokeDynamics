@@ -4,20 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pl.master.thesis.dataConverters.KeystrokeDataToArrayConverter;
-import pl.master.thesis.dataConverters.WordDataToSimpleObjectConverter;
+import pl.master.thesis.dataConverters.WordToDigraphsConverter;
 
 public class KeystrokeDataBeforePreprocessing {
 
-	private List<PreprocessedKeystrokeData> digraphFeatures;
+	private List<DigraphTimingData> digraphFeatures;
 	private List<InterKeyTime> interKeyTimes;
 	private List<KeyHoldingTime> holdTimes;
-	private WordDataToSimpleObjectConverter converter;
+	private WordToDigraphsConverter converter;
 	private KeystrokeDataToArrayConverter dataToArrayConverter;
 
 	public KeystrokeDataBeforePreprocessing() {
 		interKeyTimes = new ArrayList<>();
 		holdTimes = new ArrayList<>();
-		converter = new WordDataToSimpleObjectConverter();
+		converter = new WordToDigraphsConverter();
 		dataToArrayConverter = new KeystrokeDataToArrayConverter();
 		digraphFeatures = new ArrayList<>();
 	}
@@ -35,7 +35,7 @@ public class KeystrokeDataBeforePreprocessing {
 	}
 
 	public void addUsernameHoldingTime(Digraph d, KeyHoldingTime hold) {
-		for (PreprocessedKeystrokeData time : digraphFeatures) {
+		for (DigraphTimingData time : digraphFeatures) {
 			if (time.getDigraph().equals(d)) {
 				if (!time.hasKey1Set()) {
 					time.setKey1HoldTime(hold);

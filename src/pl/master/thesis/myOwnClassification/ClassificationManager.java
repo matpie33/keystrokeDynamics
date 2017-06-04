@@ -9,8 +9,8 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.xml.sax.SAXException;
 
-import pl.master.thesis.dataConverters.WordDataToSimpleObjectConverter;
-import pl.master.thesis.keyTypingObjects.PreprocessedKeystrokeData;
+import pl.master.thesis.dataConverters.WordToDigraphsConverter;
+import pl.master.thesis.keyTypingObjects.DigraphTimingData;
 import pl.master.thesis.keyTypingObjects.WordKeystrokeData;
 import pl.master.thesis.neuralNetworkClassification.NeuralNetworkClassifier;
 import pl.master.thesis.neuralNetworkClassification.NeuralNetworkInput;
@@ -21,13 +21,13 @@ public class ClassificationManager {
 	private double percentOfConsecutiveKeysHold;
 	private StatisticsCalculator statisticsCalculator;
 	private NeuralNetworkClassifier classifier;
-	private WordDataToSimpleObjectConverter converter;
+	private WordToDigraphsConverter converter;
 
 	public ClassificationManager() {
 		percentOfConsecutiveKeysHold = 0;
 		dataDivider = new DataDivider();
 		statisticsCalculator = new StatisticsCalculator();
-		converter = new WordDataToSimpleObjectConverter();
+		converter = new WordToDigraphsConverter();
 		classifier = new NeuralNetworkClassifier(converter);
 
 	}
@@ -102,7 +102,7 @@ public class ClassificationManager {
 		return dataDivider.getWholeData();
 	}
 
-	public List<PreprocessedKeystrokeData> convertDataForDbNeeds(WordKeystrokeData wordsData) {
+	public List<DigraphTimingData> convertDataForDbNeeds(WordKeystrokeData wordsData) {
 		return converter.convertSingleWordToSimplestData(wordsData);
 	}
 
@@ -114,7 +114,7 @@ public class ClassificationManager {
 		return classifier.getNumberOfUsers();
 	}
 
-	public WordDataToSimpleObjectConverter getWordToSimpleObjectConverter() {
+	public WordToDigraphsConverter getWordToSimpleObjectConverter() {
 		return converter;
 	}
 

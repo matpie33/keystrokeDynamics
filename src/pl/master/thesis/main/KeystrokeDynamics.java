@@ -11,7 +11,7 @@ import org.apache.log4j.BasicConfigurator;
 import org.xml.sax.SAXException;
 
 import pl.master.thesis.csvManipulation.CSVProcessing;
-import pl.master.thesis.dataConverters.WordDataToSimpleObjectConverter;
+import pl.master.thesis.dataConverters.WordToDigraphsConverter;
 import pl.master.thesis.swingWorkers.AddUserDataOnlyWorker;
 import pl.master.thesis.swingWorkers.AddUsersFromDatasetIfNotInDBWorker;
 import pl.master.thesis.swingWorkers.GetKeystrokeDataFromDBWorker;
@@ -22,11 +22,13 @@ public class KeystrokeDynamics {
 			IOException, InterruptedException, SQLException {
 
 		BasicConfigurator.configure();
-
-		// doTestLearning();
+		doTestLearning();
 		// addUsersFromDatasetToDatabase();
-		getUsersKeystrokeData();
+		// getUsersKeystrokeData();
 
+		if (true) {
+			return;
+		}
 		SwingUtilities.invokeLater(new Runnable() {
 
 			@Override
@@ -57,9 +59,8 @@ public class KeystrokeDynamics {
 			new File(fileName).delete();
 		}
 
-		new CSVProcessing(fileName,
-				new AddUserDataOnlyWorker(new WordDataToSimpleObjectConverter()))
-						.extractStatisticsFromCSVAndSave();
+		new CSVProcessing(fileName, new AddUserDataOnlyWorker(new WordToDigraphsConverter()))
+				.extractStatisticsFromCSVAndSave();
 		DeepLearning4jUsing.use();
 	}
 

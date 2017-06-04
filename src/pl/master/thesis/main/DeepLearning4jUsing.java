@@ -27,6 +27,10 @@ import org.nd4j.linalg.lossfunctions.LossFunctions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import pl.master.thesis.crossValidation.AcceptingStrategyBasedOnThreshold;
+import pl.master.thesis.crossValidation.FoldsCreator;
+import pl.master.thesis.crossValidation.KFoldsValidationManager;
+
 public class DeepLearning4jUsing {
 
 	private static Logger log = LoggerFactory.getLogger(DeepLearning4jUsing.class);
@@ -37,7 +41,7 @@ public class DeepLearning4jUsing {
 		int numLinesToSkip = 0;
 		String delimiter = ", ";
 		RecordReader recordReader = new CSVRecordReader(numLinesToSkip, delimiter);
-		recordReader.initialize(new FileSplit(new File("trainingData.txt")));
+		recordReader.initialize(new FileSplit(new File("Zeszyt1.csv")));
 
 		// Second: the RecordReaderDataSetIterator handles conversion to DataSet
 		// objects, ready for use in neural network
@@ -50,16 +54,15 @@ public class DeepLearning4jUsing {
 		int numClasses = 56; // 3 classes (types of iris flowers) in the iris
 								// data set. Classes have integer values 0, 1 or
 								// 2
-		int batchSize = 20000; // Iris data set: 150 examples total. We are
-								// loading all of them into one DataSet (not
-								// recommended for large data sets)
+		int batchSize = 99; // Iris data set: 150 examples total. We are
+		// loading all of them into one DataSet (not
+		// recommended for large data sets)
 
 		DataSetIterator iterator = new RecordReaderDataSetIterator(recordReader, batchSize,
 				labelIndex, numClasses);
 		DataSet allData = iterator.next();
-		System.out.println("heres all data: " + allData);
-		System.out.println("first features is: " + allData.get(0).getFeatureMatrix());
-		System.out.println("first labels is: " + allData.get(0).getLabels());
+		FoldsCreator c = new FoldsCreator();
+		c.createFolds(allData);
 
 		allData.shuffle();
 		SplitTestAndTrain testAndTrain = allData.splitTestAndTrain(0.65); // Use
@@ -71,6 +74,13 @@ public class DeepLearning4jUsing {
 
 		DataSet trainingData = testAndTrain.getTrain();
 		DataSet testData = testAndTrain.getTest();
+
+		KFoldsValidationManager manager = new KFoldsValidationManager(allData,
+				new AcceptingStrategyBasedOnThreshold());
+
+		if (true) {
+			return;
+		}
 
 		// We need to normalize our data. We'll use NormalizeStandardize (which
 		// gives us mean 0, unit variance):

@@ -5,16 +5,16 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import pl.master.thesis.dataConverters.WordDataToSimpleObjectConverter;
+import pl.master.thesis.dataConverters.WordToDigraphsConverter;
 import pl.master.thesis.database.UsersTableAndWordsTableData;
 import pl.master.thesis.database.UsersTableData;
 import pl.master.thesis.keyTypingObjects.WordKeystrokeData;
 
 public class AddUserDataOnlyWorker extends ConnectionSwingWorker {
 	private List<UsersTableAndWordsTableData> allUsersInfoAndTypingData;
-	private WordDataToSimpleObjectConverter converter;
+	private WordToDigraphsConverter converter;
 
-	public AddUserDataOnlyWorker(WordDataToSimpleObjectConverter wordDataConverter) {
+	public AddUserDataOnlyWorker(WordToDigraphsConverter wordDataConverter) {
 		this.converter = wordDataConverter;
 		allUsersInfoAndTypingData = new ArrayList<>();
 	}

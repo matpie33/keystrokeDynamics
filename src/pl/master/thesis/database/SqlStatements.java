@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pl.master.thesis.csvManipulation.CSVProcessing;
-import pl.master.thesis.keyTypingObjects.PreprocessedKeystrokeData;
+import pl.master.thesis.keyTypingObjects.DigraphTimingData;
 import pl.master.thesis.neuralNetworkClassification.NeuralNetworkInput;
 
 public class SqlStatements {
@@ -41,7 +41,7 @@ public class SqlStatements {
 		return r.next();
 	}
 
-	public static void addTypingData(Connection connection, List<PreprocessedKeystrokeData> words,
+	public static void addTypingData(Connection connection, List<DigraphTimingData> words,
 			int userId, boolean tabbed) throws SQLException {
 
 		String wordToUserMapQuery = String.format(
@@ -50,7 +50,7 @@ public class SqlStatements {
 
 		String wordDataQuery = "INSERT INTO WORDS (INTERKEYTIME, HOLDTIME1, HOLDTIME2,"
 				+ "KEY1, KEY2, PRESSEDTOGETHER, WORDID) VALUES(%s)";
-		for (PreprocessedKeystrokeData singleWord : words) {
+		for (DigraphTimingData singleWord : words) {
 			String values = getWordDataAsString(singleWord, wordId);
 			executeStatementAndGetGeneratedId(String.format(wordDataQuery, values), connection);
 
@@ -73,7 +73,7 @@ public class SqlStatements {
 		return id;
 	}
 
-	private static String getWordDataAsString(PreprocessedKeystrokeData singleWord, int wordId) {
+	private static String getWordDataAsString(DigraphTimingData singleWord, int wordId) {
 		String values = "";
 		values += "'" + singleWord.getInterKeyTime().getInterKeyTime() + "',";
 		values += "'" + singleWord.getKey1HoldingTime().getHoldTime() + "',";

@@ -134,6 +134,17 @@ public class StatisticsCalculator {
 		return min;
 	}
 
+	public static int getIndexOfMinValue(List<Double> list) {
+		int indexOfMin = 0;
+		double min = Double.MAX_VALUE;
+		for (int i = 0; i < list.size(); i++) {
+			if (list.get(i) < min) {
+				indexOfMin = i;
+			}
+		}
+		return indexOfMin;
+	}
+
 	public static double getMean(List<Double> list) {
 		double mean = 0;
 		for (double inter : list) {

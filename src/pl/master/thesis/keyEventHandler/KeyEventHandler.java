@@ -88,6 +88,7 @@ public class KeyEventHandler {
 		}
 
 		long interKeyTime = calculateInterKeyTime();
+		System.out.println("interkeytime@@@: " + interKeyTime);
 		addKeyToCurrentlyPressedList(currentKey);
 		currentlyTypedWordData.addLetter(currentKey);
 		if (!lastKeyPressed.isEmpty()) {
@@ -104,9 +105,17 @@ public class KeyEventHandler {
 	}
 
 	private long calculateInterKeyTime() {
-		long lastKeyEventTime = Math.max(lastKeyPressedTime, lastKeyReleasedTime);
+		// long lastKeyPressTime = Math.max(lastKeyPressedTime,
+		// lastKeyReleasedTime);
+		long lastKeyPressTime = lastKeyPressedTime;
 		lastKeyPressedTime = System.nanoTime();
-		return lastKeyPressedTime - lastKeyEventTime;
+		if (lastKeyPressedTime > lastKeyPressTime) {
+			return lastKeyPressedTime - lastKeyPressTime;
+		}
+		else {
+			return lastKeyPressedTime - lastKeyReleasedTime;
+		}
+
 	}
 
 	private void addKeyToCurrentlyPressedList(String currentKey) {

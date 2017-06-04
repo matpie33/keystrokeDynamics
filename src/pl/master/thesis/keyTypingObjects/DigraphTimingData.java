@@ -1,6 +1,6 @@
 package pl.master.thesis.keyTypingObjects;
 
-public class PreprocessedKeystrokeData {
+public class DigraphTimingData {
 
 	private InterKeyTime interKeyTime;
 	private KeyHoldingTime key1HoldingTime;
@@ -40,7 +40,7 @@ public class PreprocessedKeystrokeData {
 		return key2HoldingTime;
 	}
 
-	public PreprocessedKeystrokeData(InterKeyTime interTime) {
+	public DigraphTimingData(InterKeyTime interTime) {
 		interKeyTime = interTime;
 	}
 

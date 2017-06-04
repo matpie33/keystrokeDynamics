@@ -13,7 +13,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.derby.shared.common.error.DerbySQLIntegrityConstraintViolationException;
 import org.xml.sax.SAXException;
 
-import pl.master.thesis.dataConverters.WordDataToSimpleObjectConverter;
+import pl.master.thesis.dataConverters.WordToDigraphsConverter;
 import pl.master.thesis.database.SqlStatements;
 import pl.master.thesis.database.UsersTableData;
 import pl.master.thesis.guiElements.MyLabel;
@@ -125,7 +125,7 @@ public class AddUserWorker extends ConnectionSwingWorker {
 
 	public static void addUserAndHisTypingDataToDatabase(Connection connection,
 			UsersTableData userData, List<WordKeystrokeData> data,
-			WordDataToSimpleObjectConverter manager) throws SQLException {
+			WordToDigraphsConverter manager) throws SQLException {
 		SqlStatements.addUser(connection, userData);
 		System.out.println("User id: " + userData.getUserId());
 		for (int i = 0; i < data.size(); i++) {
