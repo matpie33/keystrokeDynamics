@@ -22,13 +22,10 @@ public class KeystrokeDynamics {
 			IOException, InterruptedException, SQLException {
 
 		BasicConfigurator.configure();
-		doTestLearning();
+		// doTestLearning();
 		// addUsersFromDatasetToDatabase();
 		// getUsersKeystrokeData();
 
-		if (true) {
-			return;
-		}
 		SwingUtilities.invokeLater(new Runnable() {
 
 			@Override

@@ -1,6 +1,6 @@
 package pl.master.thesis.crossValidation;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,12 +12,12 @@ public class KFoldsValidationManager {
 
 	private Map<Integer, Double> numberOfNeuronsToClassificationErrorMapping;
 	private final int minimalNeurons = 10;
-	private final int maximalNeurons = 100;
+	private final int maximalNeurons = 200;
 	private final int differenceBetweenNumberOfNeurons = 10;
 	private FoldsCreator foldsCreator;
 
 	public KFoldsValidationManager(DataSet dataSet, AcceptingStrategy acceptStrategy) {
-		numberOfNeuronsToClassificationErrorMapping = new HashMap<>();
+		numberOfNeuronsToClassificationErrorMapping = new LinkedHashMap<>();
 		foldsCreator = new FoldsCreator();
 		foldsCreator.createFolds(dataSet);
 		initiateMap();

@@ -10,15 +10,10 @@ import pl.master.thesis.neuralNetworkClassification.NeuralNetworkHandler;
 
 public class FoldsCreator {
 
-	private int numberOfFolds = 3; // known as k
+	private int numberOfFolds = 8; // known as k
 	private List<Fold> folds;
 	private List<Integer> indexesOfFolds;
-
-	// TODO manager class: has the list of possible hidden neurons, for each of
-	// them it asks folds creator
-	// to do next round and return the mean error, the manager holds map of:
-	// neuron number -> error
-	// then the manager chooses the least error
+	private int numberOfUsers = 56;
 
 	public void createFolds(DataSet allData) {
 		if (folds != null) {
@@ -37,16 +32,13 @@ public class FoldsCreator {
 				Random r = new Random();
 				int indexFromIndexesList = r.nextInt(indexesOfExamples.size());
 				int indexFromExamplesList = indexesOfExamples.get(indexFromIndexesList);
-				System.out.println("getting row number: " + indexFromExamplesList);
 				indexesOfExamples.remove(indexesOfExamples.indexOf(indexFromExamplesList));
-				System.out.println("indexes size after remove: " + indexesOfExamples.size());
 				// indexes.remove(new Integer(index));
 				DataSet randomRow = allData.get(indexFromExamplesList);
 				fold.addRowFromDataSet(randomRow);
 			}
 			fold.mergeRowsAndGet();
 			folds.add(fold);
-			System.out.println("created fold: " + fold);
 		}
 		System.out.println("after, the size is: " + indexesOfExamples.size());
 		List<Integer> foldsIndexes = generateListOfIndexes(numberOfFolds);
@@ -61,7 +53,6 @@ public class FoldsCreator {
 					.addRowFromDataSet(allData.get(indexesOfExamples.get(0)));
 			indexesOfExamples.remove(0);
 		}
-		System.out.println("folds done: " + folds);
 		this.folds = folds;
 	}
 
@@ -74,7 +65,8 @@ public class FoldsCreator {
 	}
 
 	public List<Double> nextRound(int hiddenLayerNeurons, AcceptingStrategy acceptingStrategy) {
-		NeuralNetworkHandler neuralNetworkHandler = new NeuralNetworkHandler(acceptingStrategy);
+		NeuralNetworkHandler neuralNetworkHandler = new NeuralNetworkHandler(acceptingStrategy,
+				numberOfUsers);
 		neuralNetworkHandler.initiateNetwork(hiddenLayerNeurons);
 		indexesOfFolds = generateListOfIndexes(numberOfFolds);
 		System.out.println("Next round .........................................");
@@ -83,21 +75,23 @@ public class FoldsCreator {
 			System.out.println();
 			System.out.println("Fold number: " + (i + 1));
 			TrainingAndTestSet nextSets = getNextRandomTrainingAndTestSets();
-			System.out.println(nextSets);
+			// System.out.println(nextSets);
 			List<Boolean> rowsCorrectClassification = neuralNetworkHandler.learnDataSet(nextSets);
-			classificationErrors.add(calculateClassificationError(rowsCorrectClassification));
+			double error = calculateClassificationError(rowsCorrectClassification);
+			System.out.println("the error: " + error);
+			classificationErrors.add(error);
 		}
 		return classificationErrors;
 	}
 
 	private double calculateClassificationError(List<Boolean> correctMatchesList) {
-		int numberOfCorrectMatches = 0;
+		int numberOfWrongClassifications = 0;
 		for (boolean b : correctMatchesList) {
-			if (b) {
-				numberOfCorrectMatches++;
+			if (!b) {
+				numberOfWrongClassifications++;
 			}
 		}
-		return (double) numberOfCorrectMatches / (double) correctMatchesList.size();
+		return (double) numberOfWrongClassifications / (double) correctMatchesList.size();
 	}
 
 	private TrainingAndTestSet getNextRandomTrainingAndTestSets() {
@@ -120,7 +114,7 @@ public class FoldsCreator {
 		TrainingAndTestSet t = new TrainingAndTestSet(trainingSet, testSet);
 		System.out.println("******************************");
 		System.out.println("Next: ");
-		System.out.println(t);
+		// System.out.println(t);
 
 		return t;
 

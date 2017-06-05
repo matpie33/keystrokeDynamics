@@ -12,25 +12,18 @@ import org.datavec.api.records.reader.RecordReader;
 import org.datavec.api.records.reader.impl.csv.CSVRecordReader;
 import org.datavec.api.split.FileSplit;
 import org.deeplearning4j.datasets.datavec.RecordReaderDataSetIterator;
-import org.deeplearning4j.nn.conf.MultiLayerConfiguration;
-import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
-import org.deeplearning4j.nn.conf.layers.DenseLayer;
-import org.deeplearning4j.nn.conf.layers.OutputLayer;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
-import org.deeplearning4j.nn.weights.WeightInit;
-import org.deeplearning4j.optimize.listeners.ScoreIterationListener;
 import org.deeplearning4j.util.ModelSerializer;
-import org.nd4j.linalg.activations.Activation;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.DataSet;
-import org.nd4j.linalg.dataset.SplitTestAndTrain;
 import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
 import org.nd4j.linalg.dataset.api.preprocessor.DataNormalization;
 import org.nd4j.linalg.dataset.api.preprocessor.NormalizerStandardize;
 import org.nd4j.linalg.factory.Nd4j;
-import org.nd4j.linalg.lossfunctions.LossFunctions;
 import org.xml.sax.SAXException;
 
+import pl.master.thesis.crossValidation.AcceptingStrategyBasedOnThreshold;
+import pl.master.thesis.crossValidation.KFoldsValidationManager;
 import pl.master.thesis.csvManipulation.CSVProcessing;
 import pl.master.thesis.csvManipulation.CSVSaver;
 import pl.master.thesis.dataConverters.WordToDigraphsConverter;
@@ -47,6 +40,7 @@ public class NeuralNetworkClassifier {
 	private String trainingSetFileName = "trainingData.txt";
 	private CSVSaver csvSaver;
 	private WordToDigraphsConverter wordDataConverter;
+	private NeuralNetworkHandler neuralNetworkHandler;
 
 	public NeuralNetworkClassifier(WordToDigraphsConverter wordConverter) {
 
@@ -74,8 +68,8 @@ public class NeuralNetworkClassifier {
 			// printWeights(neuralNetwork.getWeights());
 		}
 		else {
-			createMultiLayerPerceptron();
 			try {
+				createMultiLayerPerceptron();
 				createCSVFileFromExistingDataset();
 				learnExistingDataset();
 				saveNeuralNetworkState();
@@ -90,45 +84,17 @@ public class NeuralNetworkClassifier {
 	}
 
 	private void createMultiLayerPerceptron() {
-		MultiLayerConfiguration networkConfiguration = createNeuralNetworkConfiguration();
-		initNeuralNetwork(networkConfiguration);
-	}
-
-	private MultiLayerConfiguration createNeuralNetworkConfiguration() {
-		long seed = 6;
-		int iterations = 1000;
-
-		MultiLayerConfiguration conf = new NeuralNetConfiguration.Builder().seed(seed)
-				.iterations(iterations).activation(Activation.TANH).weightInit(WeightInit.XAVIER)
-				.learningRate(0.1).regularization(true).l2(1e-4).list()
-				.layer(0,
-						new DenseLayer.Builder().nIn(numberOfInputNeurons).nOut(hiddenLayer1Neurons)
-								.build())
-				// .layer(1,
-				// new
-				// DenseLayer.Builder().nIn(hiddenLayer1Neurons).nOut(hiddenLayer2Neurons)
-				// .build())
-				.layer(1,
-						new OutputLayer.Builder(LossFunctions.LossFunction.NEGATIVELOGLIKELIHOOD)
-								.activation(Activation.SOFTMAX).nIn(hiddenLayer1Neurons)
-								.nOut(numberOfUsers).build())
-				.backprop(true).pretrain(false).build();
-		return conf;
-	}
-
-	private void initNeuralNetwork(MultiLayerConfiguration configuration) {
-		neuralNetwork = new MultiLayerNetwork(configuration);
-		neuralNetwork.init();
-		neuralNetwork.setListeners(new ScoreIterationListener(100));
+		neuralNetworkHandler = new NeuralNetworkHandler(new AcceptingStrategyBasedOnThreshold(),
+				numberOfUsers);
 	}
 
 	private void learnExistingDataset() throws FileNotFoundException, IOException,
 			InterruptedException, ParserConfigurationException, SAXException, SQLException {
-		SplitTestAndTrain testAndTrain = readExistingDataset();
-		DataSet trainingData = testAndTrain.getTrain();
-		DataSet testData = testAndTrain.getTest();
-		normalizeData(trainingData, testData);
-		neuralNetwork.fit(trainingData);
+		DataSet wholeData = readExistingDataset();
+		KFoldsValidationManager kfolds = new KFoldsValidationManager(wholeData,
+				new AcceptingStrategyBasedOnThreshold());
+		// neuralNetworkHandler.learnDataSet(dataset);
+		// normalizeData(trainingData, testData);
 		new File(trainingSetFileName).delete();
 
 	}
@@ -144,7 +110,7 @@ public class NeuralNetworkClassifier {
 		processing.extractStatisticsFromCSVAndSave();
 	}
 
-	private SplitTestAndTrain readExistingDataset()
+	private DataSet readExistingDataset()
 			throws FileNotFoundException, IOException, InterruptedException {
 		int numLinesToSkip = 0;
 		String delimiter = ", ";
@@ -153,16 +119,13 @@ public class NeuralNetworkClassifier {
 
 		int classLabelIndex = numberOfInputNeurons;
 		int numClasses = numberOfUsers;
-		int samplesToRead = 20000;
+		int samplesToRead = 999999999;
 
 		DataSetIterator iterator = new RecordReaderDataSetIterator(recordReader, samplesToRead,
 				classLabelIndex, numClasses);
 		DataSet allData = iterator.next();
-		allData.shuffle();
-		double percentOfDataTakenForTrainingSet = 0.1;
-		SplitTestAndTrain testAndTrain = allData
-				.splitTestAndTrain(percentOfDataTakenForTrainingSet);
-		return testAndTrain;
+
+		return allData;
 	}
 
 	private void normalizeData(DataSet trainingData, DataSet testData) {

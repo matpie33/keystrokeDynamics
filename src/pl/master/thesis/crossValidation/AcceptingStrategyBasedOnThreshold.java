@@ -10,6 +10,8 @@ public class AcceptingStrategyBasedOnThreshold implements AcceptingStrategy {
 	private double treshold = 0.5;
 
 	public List<Boolean> isUserAccepted(INDArray testSet, INDArray neuralNetworkOutput) {
+		System.out.println(testSet);
+		System.out.println(neuralNetworkOutput);
 
 		if (testSet.rows() != neuralNetworkOutput.rows()) {
 			throw new IllegalArgumentException("first set has: " + testSet.rows() + ""
