@@ -28,8 +28,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import pl.master.thesis.crossValidation.AcceptingStrategyBasedOnThreshold;
-import pl.master.thesis.crossValidation.FoldsCreator;
 import pl.master.thesis.crossValidation.KFoldsValidationManager;
+import pl.master.thesis.neuralNetworkClassification.ModelParameters;
 
 public class DeepLearning4jUsing {
 
@@ -51,9 +51,9 @@ public class DeepLearning4jUsing {
 							// index. Labels are the 5th value (index 4) in
 							// each
 							// row
-		int numClasses = 56; // 3 classes (types of iris flowers) in the iris
-								// data set. Classes have integer values 0, 1 or
-								// 2
+		int numClasses = 6; // 3 classes (types of iris flowers) in the iris
+							// data set. Classes have integer values 0, 1 or
+							// 2
 		int batchSize = 99; // Iris data set: 150 examples total. We are
 		// loading all of them into one DataSet (not
 		// recommended for large data sets)
@@ -61,8 +61,9 @@ public class DeepLearning4jUsing {
 		DataSetIterator iterator = new RecordReaderDataSetIterator(recordReader, batchSize,
 				labelIndex, numClasses);
 		DataSet allData = iterator.next();
-		FoldsCreator c = new FoldsCreator();
-		c.createFolds(allData);
+		KFoldsValidationManager kfolds = new KFoldsValidationManager(allData,
+				new AcceptingStrategyBasedOnThreshold(),
+				new ModelParameters(numClasses, 3, numClasses), 3);
 
 		allData.shuffle();
 		SplitTestAndTrain testAndTrain = allData.splitTestAndTrain(0.65); // Use
@@ -74,9 +75,6 @@ public class DeepLearning4jUsing {
 
 		DataSet trainingData = testAndTrain.getTrain();
 		DataSet testData = testAndTrain.getTest();
-
-		KFoldsValidationManager manager = new KFoldsValidationManager(allData,
-				new AcceptingStrategyBasedOnThreshold());
 
 		if (true) {
 			return;

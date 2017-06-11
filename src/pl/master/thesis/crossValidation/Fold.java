@@ -25,7 +25,12 @@ public class Fold {
 
 	@Override
 	public String toString() {
-		return "fold: " + rowsFromDataset;
+		String s = "\nNew fold: ";
+		for (int i = 0; i < rowsFromDataset.size(); i++) {
+			s += "\nUser: " + i + "  ";
+			s += rowsFromDataset.get(i);
+		}
+		return s;
 	}
 
 }

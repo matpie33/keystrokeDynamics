@@ -7,18 +7,20 @@ import java.util.Map;
 import org.nd4j.linalg.dataset.DataSet;
 
 import pl.master.thesis.myOwnClassification.StatisticsCalculator;
+import pl.master.thesis.neuralNetworkClassification.ModelParameters;
 
 public class KFoldsValidationManager {
 
 	private Map<Integer, Double> numberOfNeuronsToClassificationErrorMapping;
-	private final int minimalNeurons = 10;
+	private final int minimalNeurons = 100;
 	private final int maximalNeurons = 200;
 	private final int differenceBetweenNumberOfNeurons = 10;
 	private FoldsCreator foldsCreator;
 
-	public KFoldsValidationManager(DataSet dataSet, AcceptingStrategy acceptStrategy) {
+	public KFoldsValidationManager(DataSet dataSet, AcceptingStrategy acceptStrategy,
+			ModelParameters params, int numberOfFolds) {
 		numberOfNeuronsToClassificationErrorMapping = new LinkedHashMap<>();
-		foldsCreator = new FoldsCreator();
+		foldsCreator = new FoldsCreator(params, numberOfFolds);
 		foldsCreator.createFolds(dataSet);
 		initiateMap();
 		calculateErrorForEachNeuronsStructure(acceptStrategy);

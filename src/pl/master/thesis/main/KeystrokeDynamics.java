@@ -56,7 +56,7 @@ public class KeystrokeDynamics {
 			new File(fileName).delete();
 		}
 
-		new CSVProcessing(fileName, new AddUserDataOnlyWorker(new WordToDigraphsConverter()))
+		new CSVProcessing(fileName, new AddUserDataOnlyWorker(new WordToDigraphsConverter()), 20)
 				.extractStatisticsFromCSVAndSave();
 		DeepLearning4jUsing.use();
 	}

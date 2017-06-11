@@ -13,6 +13,7 @@ public class WordKeystrokeData {
 	private int twoConsecutiveKeysHold;
 	private int numberOfInterKeyTimesBetweenTwoDifferentKeys;
 	private WordType wordType;
+	private int userId;
 
 	private boolean startedWithTab;
 
@@ -22,6 +23,14 @@ public class WordKeystrokeData {
 		interKeyTimes = new ArrayList<>();
 		holdTimes = new ArrayList<>();
 		this.startedWithTab = startedWithTab;
+	}
+
+	public void setUserId(int id) {
+		userId = id;
+	}
+
+	public int getUserId() {
+		return userId;
 	}
 
 	public WordKeystrokeData(boolean startedWithTab, List<KeyHoldingTime> keyHolds,

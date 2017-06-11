@@ -29,11 +29,13 @@ public class CSVProcessing {
 	private String dummyUserName = "Użytkownik";
 	private String dummyPassword = "Haslo";
 	private AddUserDataOnlyWorker addUserDataWorker;
-	private int samplesPerUserToTake = 20;
+	private int samplesPerUserToTake;
 
-	public CSVProcessing(String fileNameToSave, AddUserDataOnlyWorker userDataWorker) {
+	public CSVProcessing(String fileNameToSave, AddUserDataOnlyWorker userDataWorker,
+			int samplesPerUser) {
 		this.fileNameToSave = fileNameToSave;
 		addUserDataWorker = userDataWorker;
+		samplesPerUserToTake = samplesPerUser;
 	}
 
 	public void extractStatisticsFromCSVAndSave()
@@ -45,9 +47,10 @@ public class CSVProcessing {
 		List<Double> holdTimesList = new ArrayList<>();
 		List<NeuralNetworkInput> trainingInputs = new ArrayList<>();
 		List<WordKeystrokeData> allWordsDataForUser = new ArrayList<>();
+		List<WordKeystrokeData> allWordsData = new ArrayList<>();
 		int i = 0;
-		int currentId = 0;
-		int sameIdCounter = 0;
+		int currentId = -1;
+		int sameIdCounter = 1;
 
 		for (CSVRecord record : records) {
 			if (i == 0) {
@@ -59,7 +62,8 @@ public class CSVProcessing {
 				sameIdCounter++;
 			}
 			else {
-				sameIdCounter = 0;
+				System.out.println("!!!!" + sameIdCounter);
+				sameIdCounter = 1;
 				System.out.println("here is: " + id);
 				UsersTableData userData = createUserData(id);
 				addUserDataWorker.addData(userData, allWordsDataForUser);
@@ -74,7 +78,9 @@ public class CSVProcessing {
 			List<InterKeyTime> interKeyTimes = convertToInterKeyTimesObjectsList(interTimesList);
 			WordKeystrokeData wordKeystrokeData = new WordKeystrokeData(false, holdTimes,
 					interKeyTimes);
+			wordKeystrokeData.setUserId(id);
 			allWordsDataForUser.add(wordKeystrokeData);
+			allWordsData.add(wordKeystrokeData);
 
 			NeuralNetworkInput input = CSVProcessing
 					.convertHoldTimesAndInterKeyTimesListsToNeuralInput(holdTimesList,
@@ -85,9 +91,9 @@ public class CSVProcessing {
 			holdTimesList.clear();
 		}
 
-		System.out.println("in csv processing: " + allWordsDataForUser.get(0).getInterKeyTimes());
+		System.out.println("in csv processing: " + allWordsDataForUser.size());
 		CSVSaver saver2 = new CSVSaver(fileNameToSave);
-		saver2.saveTemporary(trainingInputs);
+		saver2.saveTemporaryWordData(allWordsData);
 		addUserDataWorker.doInBackground();
 	}
 

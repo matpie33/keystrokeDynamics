@@ -27,20 +27,24 @@ import pl.master.thesis.crossValidation.KFoldsValidationManager;
 import pl.master.thesis.csvManipulation.CSVProcessing;
 import pl.master.thesis.csvManipulation.CSVSaver;
 import pl.master.thesis.dataConverters.WordToDigraphsConverter;
+import pl.master.thesis.keyTypingObjects.WordKeystrokeData;
 import pl.master.thesis.swingWorkers.AddUserDataOnlyWorker;
 
 public class NeuralNetworkClassifier {
 
 	private MultiLayerNetwork neuralNetwork;
-	private int numberOfInputNeurons = 8;
+	private int numberOfInputNeurons = 21;
 	private int hiddenLayer1Neurons = 60;
 	private int hiddenLayer2Neurons = 100;
-	private int numberOfUsers = 56;
+	private int numberOfUsers = 51;
+	private int samplesPerUser = 24;
 	private String neuralNetworkFileName = "neurons.txt";
 	private String trainingSetFileName = "trainingData.txt";
 	private CSVSaver csvSaver;
 	private WordToDigraphsConverter wordDataConverter;
 	private NeuralNetworkHandler neuralNetworkHandler;
+	private int numberOfFolds = 4;
+	private int lastUserIdPlusOne = 56;
 
 	public NeuralNetworkClassifier(WordToDigraphsConverter wordConverter) {
 
@@ -91,8 +95,10 @@ public class NeuralNetworkClassifier {
 	private void learnExistingDataset() throws FileNotFoundException, IOException,
 			InterruptedException, ParserConfigurationException, SAXException, SQLException {
 		DataSet wholeData = readExistingDataset();
+		ModelParameters model = new ModelParameters(numberOfUsers, samplesPerUser,
+				lastUserIdPlusOne);
 		KFoldsValidationManager kfolds = new KFoldsValidationManager(wholeData,
-				new AcceptingStrategyBasedOnThreshold());
+				new AcceptingStrategyBasedOnThreshold(), model, numberOfFolds);
 		// neuralNetworkHandler.learnDataSet(dataset);
 		// normalizeData(trainingData, testData);
 		new File(trainingSetFileName).delete();
@@ -106,7 +112,8 @@ public class NeuralNetworkClassifier {
 			trainingFile.delete();
 		}
 		AddUserDataOnlyWorker addUserDataOnly = new AddUserDataOnlyWorker(wordDataConverter);
-		CSVProcessing processing = new CSVProcessing(trainingSetFileName, addUserDataOnly);
+		CSVProcessing processing = new CSVProcessing(trainingSetFileName, addUserDataOnly,
+				samplesPerUser);
 		processing.extractStatisticsFromCSVAndSave();
 	}
 
@@ -118,7 +125,7 @@ public class NeuralNetworkClassifier {
 		recordReader.initialize(new FileSplit(new File(trainingSetFileName)));
 
 		int classLabelIndex = numberOfInputNeurons;
-		int numClasses = numberOfUsers;
+		int numClasses = lastUserIdPlusOne;
 		int samplesToRead = 999999999;
 
 		DataSetIterator iterator = new RecordReaderDataSetIterator(recordReader, samplesToRead,
@@ -143,10 +150,10 @@ public class NeuralNetworkClassifier {
 		}
 	}
 
-	public void saveDataInTemporaryFileAndLearn(List<NeuralNetworkInput> data)
+	public void saveDataInTemporaryFileAndLearn(List<WordKeystrokeData> data)
 			throws FileNotFoundException, IOException, InterruptedException,
 			ParserConfigurationException, SAXException, SQLException {
-		csvSaver.saveTemporary(data);
+		csvSaver.saveTemporaryWordData(data);
 		learnExistingDataset();
 		saveNeuralNetworkState();
 	}

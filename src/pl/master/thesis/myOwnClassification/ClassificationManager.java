@@ -71,7 +71,7 @@ public class ClassificationManager {
 		dataDivider.cleanData();
 		classifyInputsAsUser(inputs, userId);
 		classifier.recreateNeuralNetwork();
-		classifier.saveDataInTemporaryFileAndLearn(inputs);
+		classifier.saveDataInTemporaryFileAndLearn(dataDivider.getWholeData());
 		System.out.println("done learning");
 		return inputs;
 	}

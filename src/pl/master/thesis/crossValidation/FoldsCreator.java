@@ -1,19 +1,31 @@
 package pl.master.thesis.crossValidation;
 
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 import org.nd4j.linalg.dataset.DataSet;
 
+import pl.master.thesis.neuralNetworkClassification.ModelParameters;
 import pl.master.thesis.neuralNetworkClassification.NeuralNetworkHandler;
 
 public class FoldsCreator {
 
-	private int numberOfFolds = 8; // known as k
+	private int numberOfFolds = 3; // known as k
 	private List<Fold> folds;
 	private List<Integer> indexesOfFolds;
-	private int numberOfUsers = 56;
+	private int numberOfUsers;
+	private int lastUserIdPlusOne;
+	private int samplesPerUser;
+
+	public FoldsCreator(ModelParameters parameters, int numberOfFolds) {
+		numberOfUsers = parameters.getNumberOfClasses();
+		samplesPerUser = parameters.getSamplesPerClass();
+		this.numberOfFolds = numberOfFolds;
+		lastUserIdPlusOne = parameters.getLastClassIdPlusOne();
+	}
 
 	public void createFolds(DataSet allData) {
 		if (folds != null) {
@@ -23,20 +35,40 @@ public class FoldsCreator {
 		folds = new ArrayList<>();
 
 		int numberOfExamples = allData.numExamples();
-		int foldSize = numberOfExamples / numberOfFolds;
+		System.out.println("number of examples " + numberOfExamples);
 		List<Integer> indexesOfExamples = generateListOfIndexes(numberOfExamples);
 		List<Fold> folds = new ArrayList<>();
-		for (int j = 0; j < numberOfFolds; j++) {
+		int freeSamplesPerUser = samplesPerUser;
+		for (int i = 0; i < numberOfFolds; i++) {
+			System.out.println("in fold no. " + i);
+			int userSamplesPerFold = samplesPerUser / numberOfFolds;
 			Fold fold = new Fold();
-			for (int n = 0; n < foldSize; n++) {
-				Random r = new Random();
-				int indexFromIndexesList = r.nextInt(indexesOfExamples.size());
-				int indexFromExamplesList = indexesOfExamples.get(indexFromIndexesList);
-				indexesOfExamples.remove(indexesOfExamples.indexOf(indexFromExamplesList));
-				// indexes.remove(new Integer(index));
-				DataSet randomRow = allData.get(indexFromExamplesList);
-				fold.addRowFromDataSet(randomRow);
+			for (int j = 0; j < numberOfUsers; j++) {
+				System.out.println("Taking samples from user: " + j);
+
+				int freeSamplesPerPreviousUser = freeSamplesPerUser;
+				freeSamplesPerUser = samplesPerUser - userSamplesPerFold * i;
+				System.out
+						.println("Previous user has: " + freeSamplesPerPreviousUser + " samples.");
+				System.out.println("Next users have: " + freeSamplesPerUser + " samples.");
+				for (int k = 0; k < userSamplesPerFold; k++) {
+					System.out.println("Taking " + k + "-th sample from user.");
+					Random r = new Random();
+					int rangeStart = j * freeSamplesPerPreviousUser;
+					int indexFromIndexesList = rangeStart + r.nextInt(freeSamplesPerUser);
+					System.out.println("range start: " + rangeStart + "; range end: "
+							+ (rangeStart + freeSamplesPerUser));
+					System.out.println("examples left to take: " + indexesOfExamples.size());
+
+					int indexFromExamplesList = indexesOfExamples.get(indexFromIndexesList);
+					indexesOfExamples.remove(indexFromIndexesList);
+					DataSet randomRow = allData.get(indexFromExamplesList);
+					fold.addRowFromDataSet(randomRow);
+					freeSamplesPerUser--;
+				}
+
 			}
+			System.out.println();
 			fold.mergeRowsAndGet();
 			folds.add(fold);
 		}
@@ -54,6 +86,22 @@ public class FoldsCreator {
 			indexesOfExamples.remove(0);
 		}
 		this.folds = folds;
+		saveToFile();
+		System.out.println("created folds: " + folds);
+	}
+
+	private void saveToFile() {
+		PrintWriter pw;
+		try {
+			pw = new PrintWriter("output.txt");
+			pw.println(folds);
+			pw.close();
+		}
+		catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 
 	private List<Integer> generateListOfIndexes(int numberOfIndexes) {
@@ -66,7 +114,7 @@ public class FoldsCreator {
 
 	public List<Double> nextRound(int hiddenLayerNeurons, AcceptingStrategy acceptingStrategy) {
 		NeuralNetworkHandler neuralNetworkHandler = new NeuralNetworkHandler(acceptingStrategy,
-				numberOfUsers);
+				lastUserIdPlusOne);
 		neuralNetworkHandler.initiateNetwork(hiddenLayerNeurons);
 		indexesOfFolds = generateListOfIndexes(numberOfFolds);
 		System.out.println("Next round .........................................");

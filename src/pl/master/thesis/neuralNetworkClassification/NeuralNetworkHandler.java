@@ -22,7 +22,7 @@ import pl.master.thesis.crossValidation.TrainingAndTestSet;
 
 public class NeuralNetworkHandler {
 
-	private int numberOfInputNeurons = 8;
+	private int numberOfInputNeurons = 21;
 	private int numberOfUsers;
 	private MultiLayerConfiguration configuration;
 	private AcceptingStrategy acceptingStrategy;
@@ -39,7 +39,7 @@ public class NeuralNetworkHandler {
 		int iterations = 1000;
 
 		configuration = new NeuralNetConfiguration.Builder().seed(seed).iterations(iterations)
-				.activation(Activation.TANH).weightInit(WeightInit.XAVIER_UNIFORM).learningRate(0.8)
+				.activation(Activation.TANH).weightInit(WeightInit.XAVIER_UNIFORM).learningRate(0.2)
 				.list()
 				.layer(0,
 						new DenseLayer.Builder().nIn(numberOfInputNeurons).nOut(hiddenLayerNeurons)
@@ -75,7 +75,7 @@ public class NeuralNetworkHandler {
 		// System.out.println("result of learning: " + output);
 		// System.out.println("test set output: " + testData.getLabels());
 		List<Boolean> rowsCorrectClassification = acceptingStrategy
-				.isUserAccepted(trainingData.getLabels(), output);
+				.isUserAccepted(testData.getLabels(), output);
 		System.out.println("accept list: " + rowsCorrectClassification);
 		return rowsCorrectClassification;
 	}
