@@ -25,6 +25,7 @@ public class KeystrokeDynamics {
 		// doTestLearning();
 		// addUsersFromDatasetToDatabase();
 		// getUsersKeystrokeData();
+		System.out.println("TEST: " + String.format("%.3f", 2.138921));
 
 		SwingUtilities.invokeLater(new Runnable() {
 

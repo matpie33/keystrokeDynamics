@@ -8,4 +8,6 @@ public interface AcceptingStrategy {
 
 	public List<Boolean> isUserAccepted(INDArray dataset, INDArray neuralNetworkOutput);
 
+	public List<Boolean> isUserDeniedAsOtherUser(INDArray neuralNetworkOutput, int otherUserId);
+
 }

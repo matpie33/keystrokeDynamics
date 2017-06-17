@@ -7,11 +7,9 @@ import org.nd4j.linalg.api.ndarray.INDArray;
 
 public class AcceptingStrategyBasedOnThreshold implements AcceptingStrategy {
 
-	private double treshold = 0.5;
+	private double treshold = 0.98;
 
 	public List<Boolean> isUserAccepted(INDArray testSet, INDArray neuralNetworkOutput) {
-		System.out.println(testSet);
-		System.out.println(neuralNetworkOutput);
 
 		if (testSet.rows() != neuralNetworkOutput.rows()) {
 			throw new IllegalArgumentException("first set has: " + testSet.rows() + ""
@@ -26,6 +24,19 @@ public class AcceptingStrategyBasedOnThreshold implements AcceptingStrategy {
 					idOfUserAccepted, rowFromTestSet);
 			rowsCorrectClassification.add(isThisCorrectClassified);
 
+		}
+		return rowsCorrectClassification;
+
+	}
+
+	public List<Boolean> isUserDeniedAsOtherUser(INDArray neuralNetworkOutput, int otherUserId) {
+
+		List<Boolean> rowsCorrectClassification = new ArrayList<>();
+		for (int i = 0; i < neuralNetworkOutput.rows(); i++) {
+			INDArray rowFromNeuralNetwork = neuralNetworkOutput.getRow(i);
+			int idOfUserAccepted = getAcceptedUser(rowFromNeuralNetwork);
+			boolean isUserAcceptedAsOtherUser = idOfUserAccepted != otherUserId;
+			rowsCorrectClassification.add(isUserAcceptedAsOtherUser);
 		}
 		return rowsCorrectClassification;
 

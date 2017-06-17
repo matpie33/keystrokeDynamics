@@ -22,8 +22,8 @@ import org.nd4j.linalg.dataset.api.preprocessor.NormalizerStandardize;
 import org.nd4j.linalg.factory.Nd4j;
 import org.xml.sax.SAXException;
 
+import pl.master.thesis.classificatorEvaluation.ClassificationEvaluator;
 import pl.master.thesis.crossValidation.AcceptingStrategyBasedOnThreshold;
-import pl.master.thesis.crossValidation.KFoldsValidationManager;
 import pl.master.thesis.csvManipulation.CSVProcessing;
 import pl.master.thesis.csvManipulation.CSVSaver;
 import pl.master.thesis.dataConverters.WordToDigraphsConverter;
@@ -34,16 +34,17 @@ public class NeuralNetworkClassifier {
 
 	private MultiLayerNetwork neuralNetwork;
 	private int numberOfInputNeurons = 21;
-	private int hiddenLayer1Neurons = 60;
+	private int hiddenLayer1Neurons = 80;
 	private int hiddenLayer2Neurons = 100;
 	private int numberOfUsers = 51;
-	private int samplesPerUser = 24;
+	private int samplesForKFoldsPerUser = 24;
+	private int totalSamplesPerUser = 400;
 	private String neuralNetworkFileName = "neurons.txt";
 	private String trainingSetFileName = "trainingData.txt";
 	private CSVSaver csvSaver;
 	private WordToDigraphsConverter wordDataConverter;
 	private NeuralNetworkHandler neuralNetworkHandler;
-	private int numberOfFolds = 4;
+	private int numberOfFolds = 8;
 	private int lastUserIdPlusOne = 56;
 
 	public NeuralNetworkClassifier(WordToDigraphsConverter wordConverter) {
@@ -95,10 +96,16 @@ public class NeuralNetworkClassifier {
 	private void learnExistingDataset() throws FileNotFoundException, IOException,
 			InterruptedException, ParserConfigurationException, SAXException, SQLException {
 		DataSet wholeData = readExistingDataset();
-		ModelParameters model = new ModelParameters(numberOfUsers, samplesPerUser,
+		ModelParameters model = new ModelParameters(numberOfUsers, samplesForKFoldsPerUser,
 				lastUserIdPlusOne);
-		KFoldsValidationManager kfolds = new KFoldsValidationManager(wholeData,
-				new AcceptingStrategyBasedOnThreshold(), model, numberOfFolds);
+		// KFoldsValidationManager kfolds = new
+		// KFoldsValidationManager(wholeData,
+		// new AcceptingStrategyBasedOnThreshold(), model, numberOfFolds);
+		System.out.println("lets evaluate");
+		ClassificationEvaluator evaluator = new ClassificationEvaluator(wholeData, numberOfUsers,
+				totalSamplesPerUser, hiddenLayer1Neurons, lastUserIdPlusOne);
+		evaluator.evaluateClassificator();
+		System.out.println("************************** done");
 		// neuralNetworkHandler.learnDataSet(dataset);
 		// normalizeData(trainingData, testData);
 		new File(trainingSetFileName).delete();
@@ -113,7 +120,7 @@ public class NeuralNetworkClassifier {
 		}
 		AddUserDataOnlyWorker addUserDataOnly = new AddUserDataOnlyWorker(wordDataConverter);
 		CSVProcessing processing = new CSVProcessing(trainingSetFileName, addUserDataOnly,
-				samplesPerUser);
+				totalSamplesPerUser);
 		processing.extractStatisticsFromCSVAndSave();
 	}
 

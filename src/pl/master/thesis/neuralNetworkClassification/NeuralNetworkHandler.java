@@ -26,6 +26,8 @@ public class NeuralNetworkHandler {
 	private int numberOfUsers;
 	private MultiLayerConfiguration configuration;
 	private AcceptingStrategy acceptingStrategy;
+	private MultiLayerNetwork model;
+	private DataSet trainingData;
 
 	public NeuralNetworkHandler(AcceptingStrategy acceptingStrategy, int numberOfUsers) {
 		this.numberOfUsers = numberOfUsers;
@@ -39,7 +41,7 @@ public class NeuralNetworkHandler {
 		int iterations = 1000;
 
 		configuration = new NeuralNetConfiguration.Builder().seed(seed).iterations(iterations)
-				.activation(Activation.TANH).weightInit(WeightInit.XAVIER_UNIFORM).learningRate(0.2)
+				.activation(Activation.TANH).weightInit(WeightInit.XAVIER_UNIFORM).learningRate(0.5)
 				.list()
 				.layer(0,
 						new DenseLayer.Builder().nIn(numberOfInputNeurons).nOut(hiddenLayerNeurons)
@@ -55,27 +57,46 @@ public class NeuralNetworkHandler {
 				.backprop(true).pretrain(true).build();
 	}
 
-	public List<Boolean> learnDataSet(TrainingAndTestSet set) {
-		MultiLayerNetwork model = new MultiLayerNetwork(configuration);
+	public List<Boolean> learnAndEvaluateDataSet(TrainingAndTestSet set) {
+		model = new MultiLayerNetwork(configuration);
 		model.init();
 		model.setListeners(new ScoreIterationListener(100));
-		DataSet trainingData = set.getTrainingSet();
+		trainingData = set.getTrainingSet();
 		DataSet testData = set.getTestSet();
 		normalizeData(trainingData, testData);
+		System.out.println("training set size: " + trainingData.numExamples());
+		System.out.println("test set size: " + testData.numExamples());
 		model.fit(trainingData);
 
+		return evaluateTestSet(testData);
 		// evaluate the model on the test set
-		INDArray output = model.output(testData.getFeatureMatrix());
-		System.out.println("output is here");
-		System.out.println(output);
+
+	}
+
+	public List<Boolean> evaluateTestSet(DataSet testSet) {
+		INDArray output = model.output(testSet.getFeatureMatrix());
+		// System.out.println("output is here");
+		// System.out.println(output);
 		Evaluation e = new Evaluation(numberOfUsers);
-		e.eval(testData.getLabels(), output);
+		e.eval(testSet.getLabels(), output);
 		System.out.println(e.stats());
 
 		// System.out.println("result of learning: " + output);
 		// System.out.println("test set output: " + testData.getLabels());
 		List<Boolean> rowsCorrectClassification = acceptingStrategy
-				.isUserAccepted(testData.getLabels(), output);
+				.isUserAccepted(testSet.getLabels(), output);
+		System.out.println("accept list: " + rowsCorrectClassification);
+		return rowsCorrectClassification;
+	}
+
+	public List<Boolean> evaluateImposterSet(DataSet testSet, int otherUserId) {
+		normalizeData(trainingData, testSet);
+		INDArray output = model.output(testSet.getFeatureMatrix());
+		System.out.println("output is here");
+		System.out.println(output);
+
+		List<Boolean> rowsCorrectClassification = acceptingStrategy
+				.isUserDeniedAsOtherUser(output, otherUserId);
 		System.out.println("accept list: " + rowsCorrectClassification);
 		return rowsCorrectClassification;
 	}

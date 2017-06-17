@@ -8,6 +8,7 @@ import java.util.Random;
 
 import org.nd4j.linalg.dataset.DataSet;
 
+import pl.master.thesis.classificatorEvaluation.ClassificationEvaluator;
 import pl.master.thesis.neuralNetworkClassification.ModelParameters;
 import pl.master.thesis.neuralNetworkClassification.NeuralNetworkHandler;
 
@@ -124,22 +125,13 @@ public class FoldsCreator {
 			System.out.println("Fold number: " + (i + 1));
 			TrainingAndTestSet nextSets = getNextRandomTrainingAndTestSets();
 			// System.out.println(nextSets);
-			List<Boolean> rowsCorrectClassification = neuralNetworkHandler.learnDataSet(nextSets);
-			double error = calculateClassificationError(rowsCorrectClassification);
+			List<Boolean> rowsCorrectClassification = neuralNetworkHandler.learnAndEvaluateDataSet(nextSets);
+			double error = ClassificationEvaluator
+					.calculateClassificationError(rowsCorrectClassification);
 			System.out.println("the error: " + error);
 			classificationErrors.add(error);
 		}
 		return classificationErrors;
-	}
-
-	private double calculateClassificationError(List<Boolean> correctMatchesList) {
-		int numberOfWrongClassifications = 0;
-		for (boolean b : correctMatchesList) {
-			if (!b) {
-				numberOfWrongClassifications++;
-			}
-		}
-		return (double) numberOfWrongClassifications / (double) correctMatchesList.size();
 	}
 
 	private TrainingAndTestSet getNextRandomTrainingAndTestSets() {
